@@ -10,4 +10,5 @@ export interface BtnProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
   height?: number;
   name?: string;
   bgStyle?: string;
+  iconNext?: boolean;
 }

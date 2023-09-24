@@ -1,12 +1,15 @@
 import { createBrowserRouter, redirect } from "react-router-dom";
 // Views
 import {
-  Home,
-  Projects,
+  // auth pages
   Login,
   Register,
   ForgotPassword,
   ResetPassword,
+  // other pages
+  Home,
+  Projects,
+  ProjectInfo,
 } from "@/views/imports";
 // Components
 import { DefaultLayout, AuthLayout } from "@/components/imports";
@@ -53,6 +56,10 @@ const routes = createBrowserRouter([
         path: RoutesPath.PROJECTS,
         element: <Projects />,
       },
+      {
+        path: RoutesPath.PROJECTINFO,
+        element: <ProjectInfo />
+      }
     ],
   },
 ]);

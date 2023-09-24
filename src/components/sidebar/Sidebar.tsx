@@ -1,14 +1,13 @@
+import { useLocation } from "react-router-dom";
 import { Link, NavLink } from "react-router-dom"; // Import Link from react-router-dom
 import { RoutesPath } from "@/types/router"; // Import your route paths
 import { Icon } from "@/components/imports";
 import { CloseImage } from "@/assets/imports";
-import {
-  navMenuConfig,
-  guideMenuConfig,
-  actionsMenuConfig,
-} from "@/config/menu.config";
 
 function Sidebar() {
+  const location = useLocation();
+  const showHiddenPaths = [RoutesPath.PROJECTINFO, "/projects/about"];
+  const shouldShowHiddenLinks = showHiddenPaths.includes(location.pathname);
   return (
     <aside className="left-[-300%] absolute md:relative md:left-0 w-full h-screen bg-white pl-4 pr-6 pt-6 pb-10 transition-all">
       <div className="w-full h-full flex flex-col justify-between">
@@ -25,36 +24,129 @@ function Sidebar() {
           </div>
           <nav className="relative w-full">
             <ul className="w-full flex flex-col gap-3">
-              {navMenuConfig.map((item, index) => (
-                <NavLink
-                  key={index}
-                  to={item.to}
-                  className={({ isActive }) =>
-                    `${
-                      isActive ? "nav-active" : ""
-                    } flex items-center gap-3 px-4 py-3 rounded-md group hover:bg-blue transition-all`
-                  }
-                >
-                  <Icon
-                    className="nav-icon stroke text-black group-hover:text-white transition-all"
-                    icon={item.icon}
-                    width={18}
-                    height={18}
-                  />
-                  <p className="nav-text font-secondary-medium text-base text-black tracking-[-2%] group-hover:text-white transition-all">
-                    {item.text}
-                  </p>
-                </NavLink>
-              ))}
+              <NavLink
+                to={RoutesPath.PROJECTS}
+                className={({ isActive }) =>
+                  `${
+                    isActive ? "nav-active" : ""
+                  } flex items-center gap-3 px-4 py-3 rounded-md group hover:bg-blue transition-all`
+                }
+              >
+                <Icon
+                  className="nav-icon stroke text-black group-hover:text-white transition-all"
+                  icon="category"
+                  width={18}
+                  height={18}
+                />
+                <p className="nav-text font-secondary-medium text-base text-black tracking-[-2%] group-hover:text-white transition-all">
+                  Projects
+                </p>
+              </NavLink>
+              {shouldShowHiddenLinks && (
+                <>
+                  <NavLink
+                    to={RoutesPath.PROJECTINFO}
+                    className={({ isActive }) =>
+                      `${
+                        isActive ? "nav-active-additional" : ""
+                      } flex items-center gap-3 px-4 py-3 rounded-md group hover:bg-blue transition-all`
+                    }
+                  >
+                    <Icon
+                      className="nav-icon stroke text-black group-hover:text-white transition-all"
+                      icon="info"
+                      width={18}
+                      height={18}
+                    />
+                    <p className="nav-text font-secondary-medium text-base text-black tracking-[-2%] group-hover:text-white transition-all">
+                      Info
+                    </p>
+                  </NavLink>
+                  <NavLink
+                    to="/projects/messages"
+                    className={({ isActive }) =>
+                      `${
+                        isActive ? "nav-active" : ""
+                      } flex items-center gap-3 px-4 py-3 rounded-md group hover:bg-blue transition-all`
+                    }
+                  >
+                    <Icon
+                      className="nav-icon stroke text-black group-hover:text-white transition-all"
+                      icon="message"
+                      width={18}
+                      height={18}
+                    />
+                    <p className="nav-text font-secondary-medium text-base text-black tracking-[-2%] group-hover:text-white transition-all">
+                      messages
+                    </p>
+                  </NavLink>
+                  <div className="border-b pb-3">
+                    <NavLink
+                      to="/projects/contents"
+                      className={({ isActive }) =>
+                        `${
+                          isActive ? "nav-active" : ""
+                        } flex items-center gap-3 px-4 py-3 rounded-md group hover:bg-blue transition-all`
+                      }
+                    >
+                      <Icon
+                        className="nav-icon stroke text-black group-hover:text-white transition-all"
+                        icon="content"
+                        width={18}
+                        height={18}
+                      />
+                      <p className="nav-text font-secondary-medium text-base text-black tracking-[-2%] group-hover:text-white transition-all">
+                        Contents
+                      </p>
+                    </NavLink>
+                  </div>
+                </>
+              )}
+
+              <NavLink
+                to="/billings"
+                className={({ isActive }) =>
+                  `${
+                    isActive ? "nav-active" : ""
+                  } flex items-center gap-3 px-4 py-3 rounded-md group hover:bg-blue transition-all`
+                }
+              >
+                <Icon
+                  className="nav-icon stroke text-black group-hover:text-white transition-all"
+                  icon="wallet"
+                  width={18}
+                  height={18}
+                />
+                <p className="nav-text font-secondary-medium text-base text-black tracking-[-2%] group-hover:text-white transition-all">
+                  Billings
+                </p>
+              </NavLink>
+              <NavLink
+                to="/usage"
+                className={({ isActive }) =>
+                  `${
+                    isActive ? "nav-active" : ""
+                  } flex items-center gap-3 px-4 py-3 rounded-md group hover:bg-blue transition-all`
+                }
+              >
+                <Icon
+                  className="nav-icon stroke text-black group-hover:text-white transition-all"
+                  icon="chart"
+                  width={18}
+                  height={18}
+                />
+                <p className="nav-text font-secondary-medium text-base text-black tracking-[-2%] group-hover:text-white transition-all">
+                  Usage
+                </p>
+              </NavLink>
             </ul>
           </nav>
         </div>
         <div className="flex flex-col gap-4">
           <div className="pb-4 border-b border-b-gray-100">
-            {guideMenuConfig.map((item, index) => (
+            {!shouldShowHiddenLinks && (
               <NavLink
-                key={index}
-                to={item.to}
+                to="/guide"
                 className={({ isActive }) =>
                   `${
                     isActive ? "nav-active" : ""
@@ -63,38 +155,53 @@ function Sidebar() {
               >
                 <Icon
                   className="nav-icon stroke text-black group-hover:text-white transition-all"
-                  icon={item.icon}
+                  icon="star"
                   width={18}
                   height={18}
                 />
                 <p className="nav-text font-secondary-medium text-base text-black tracking-[-2%] group-hover:text-white transition-all">
-                  {item.text}
+                  Starter Guide
                 </p>
               </NavLink>
-            ))}
+            )}
           </div>
           <div>
-            {actionsMenuConfig.map((item, index) => (
-              <NavLink
-                key={index}
-                to={item.to}
-                className={({ isActive }) =>
-                  `${
-                    isActive ? "nav-active" : ""
-                  } flex items-center gap-3 px-4 py-3 rounded-md group hover:bg-blue transition-all`
-                }
-              >
-                <Icon
-                  className="nav-icon text-black group-hover:text-white transition-all"
-                  icon={item.icon}
-                  width={21}
-                  height={21}
-                />
-                <p className="nav-text font-secondary-medium text-base text-black tracking-[-2%] group-hover:text-white transition-all">
-                  {item.text}
-                </p>
-              </NavLink>
-            ))}
+            <NavLink
+              to="/settings"
+              className={({ isActive }) =>
+                `${
+                  isActive ? "nav-active" : ""
+                } flex items-center gap-3 px-4 py-3 rounded-md group hover:bg-blue transition-all`
+              }
+            >
+              <Icon
+                className="nav-icon text-black group-hover:text-white transition-all"
+                icon="setting"
+                width={21}
+                height={21}
+              />
+              <p className="nav-text font-secondary-medium text-base text-black tracking-[-2%] group-hover:text-white transition-all">
+                Settings
+              </p>
+            </NavLink>
+            <NavLink
+              to="/logout"
+              className={({ isActive }) =>
+                `${
+                  isActive ? "nav-active" : ""
+                } flex items-center gap-3 px-4 py-3 rounded-md group hover:bg-blue transition-all`
+              }
+            >
+              <Icon
+                className="nav-icon text-black group-hover:text-white transition-all"
+                icon="logout"
+                width={21}
+                height={21}
+              />
+              <p className="nav-text font-secondary-medium text-base text-black tracking-[-2%] group-hover:text-white transition-all">
+                Logout
+              </p>
+            </NavLink>
           </div>
         </div>
       </div>

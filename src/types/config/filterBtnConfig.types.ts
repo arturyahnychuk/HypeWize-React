@@ -1,5 +1,3 @@
-import { IconSet } from "../components/icon.types";
-
 export interface filterBtnConfigTypes {
   text: string;
   icon: boolean; // if true button has icon

@@ -15,8 +15,11 @@ export default {
           200: "#F2F2F2",
           300: "#8C8FA7",
           400: "#D6DFE8",
+          500: "#EEF0F3",
         },
         redLight: "#FF7E7E",
+        red: "#F56161",
+        green: "#17B294",
         orange: "#FB8477",
       },
       fontSize: {

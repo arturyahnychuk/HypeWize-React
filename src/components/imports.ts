@@ -1,5 +1,6 @@
 import DefaultLayout from "@/components/layout/DefaultLayout";
 import AuthLayout from "@/components/layout/AuthLayout";
+import PageLayout from "@/components/layout/PageLayout";
 import Filter from "@/components/filter/Filter";
 import Icon from "@/components/icon/Icon";
 import Btn from "@/components/btn/Btn";
@@ -9,11 +10,14 @@ import Slider from "@/components/slider/slider";
 import Screen from "@/components/slider/screen";
 import FormLayout from "@/components/layout/FormLayout";
 import Input from "@/components/input/Input";
-import CheckBox from "./checkbox/checkbox";
-
+import Textarea from "@/components/input/Textarea.tsx";
+import CheckBox from "@/components/checkbox/checkbox";
+import ProjectsCard from "@/components/projects-card/projectsCard";
+import Tooltip from "@/components/tooltip/tooltip";
 export {
   DefaultLayout,
   AuthLayout,
+  PageLayout,
   Filter,
   Icon,
   Btn,
@@ -24,4 +28,7 @@ export {
   FormLayout,
   Input,
   CheckBox,
+  ProjectsCard,
+  Textarea,
+  Tooltip
 };

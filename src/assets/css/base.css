@@ -7,6 +7,9 @@ body {
 .nav-active {
   background: theme("colors.blue");
 }
+.nav-active-additional {
+  background: theme("colors.gray.200");
+}
 .nav-active .nav-icon svg {
   stroke: theme("colors.white") !important;
   transition: all 0.3s ease;
@@ -30,7 +33,7 @@ body {
 }
 
 .filter-btn.active .btn-icon svg {
-  fill: theme('colors.white');
+  fill: theme("colors.white");
 }
 .filter-btn.active .btn-text {
   color: theme("colors.white");
@@ -38,6 +41,29 @@ body {
 
 .layout.grid {
   grid-template-columns: 1fr 1fr;
+}
+.layout.grid .actions-list {
+  display: none;
+}
+.layout.list .actions-list {
+  display: flex;
+}
+.layout.grid .actions-grid {
+  display: flex;
+}
+.layout.list .actions-grid {
+  display: none;
+}
+.layout.grid .main.body .head {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+}
+.layout.list .main.body .head {
+  display: flex;
+  gap: 15px;
 }
 @media screen and (min-width: theme("screens.xl")) {
   .layout.grid {
@@ -52,8 +78,25 @@ body {
     gap: 30px;
   }
 }
+@media screen and (max-width: theme("screens.sm")) {
+  .layout.list .main.body .head {
+    display: flex;
+    align-items: center;
+  }
+  .layout.list .main.body.edit-mode {
+    flex-direction: column-reverse;
+    align-items: end;
+  }
+}
 .layout.list {
-  grid-template-columns: 1fr !important;
+  display: flex;
+  flex-direction: column;
+}
+.layout.list textarea {
+  height: 40px;
+}
+.layout.list .list-input {
+  width: max-content;
 }
 .layout.list .parent {
   height: auto;
@@ -138,6 +181,27 @@ body {
 .submit-btn.text-black p {
   color: theme("colors.black");
 }
+.primary-btn p {
+  color: theme("colors.white");
+}
+.primary-btn.fill .btn-icon svg {
+  fill: theme("colors.white");
+}
+.primary-btn.stroke .btn-icon svg {
+  stroke: theme("colors.white");
+}
+
+.btn-main-text {
+  background: transparent;
+}
+.btn-main-text .btn-icon svg {
+  fill: theme("colors.blue");
+}
+.btn-main-text .btn-text {
+  color: theme("colors.blue");
+  font-size: theme("fontSize.sm");
+  font-family: theme("fontFamily.secondary-medium");
+}
 
 .checkbox .checkbox-label {
   font-size: theme("fontSize.sm");
@@ -154,5 +218,45 @@ body {
 .icon svg {
   width: 100%;
   height: 100%;
-  fill: theme('colors.black')
+  fill: theme("colors.black");
+}
+
+.action-btn.danger .btn-text {
+  color: theme("colors.red");
+}
+.action-btn.success .btn-text {
+  color: theme("colors.green");
+}
+.action-btn.success .btn-icon svg {
+  fill: theme("colors.green");
+}
+.danger-icon svg {
+  fill: theme('colors.red');
+}
+.action-btn.success.stroke .btn-icon svg {
+  stroke: theme("colors.green");
+}
+.action-btn.success:hover .btn-text {
+  color: theme("colors.white");
+}
+.action-btn.success.hover-green:hover .btn-text {
+  color: theme("colors.green");
+}
+.switch-btn {
+  background: theme("colors.white");
+  border: 1px solid theme("colors.blue");
+  padding: 4px 7px;
+}
+.switch-btn .btn-text {
+  color: theme("colors.blue");
+}
+.switch-btn .btn-icon svg {
+  fill: theme("colors.blue");
+}
+.primary-icon svg{
+  fill: theme('colors.blue');
+}
+
+.stroke svg {
+  fill: transparent !important;
 }

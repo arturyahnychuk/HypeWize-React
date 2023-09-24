@@ -3,21 +3,26 @@ import React, { InputHTMLAttributes, useState } from "react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   showhide?: boolean; // additional
+  className?: string;
 }
 
-const Input: React.FC<InputProps> = ({ showhide = false, ...props }) => {
+const Input: React.FC<InputProps> = ({
+  className,
+  showhide = false,
+  ...props
+}) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleShowHide = (e: React.MouseEvent<HTMLDivElement>) => {
     let showHide = !showPassword;
-    let target = e.target as Element
-    let input = target.closest('.input-parent')?.querySelector('input')
-    if(input) {
-        if(showHide) {
-            input.type = 'text'
-        }else {
-            input.type = 'password'
-        }
+    let target = e.target as Element;
+    let input = target.closest(".input-parent")?.querySelector("input");
+    if (input) {
+      if (showHide) {
+        input.type = "text";
+      } else {
+        input.type = "password";
+      }
     }
 
     setShowPassword(showHide);
@@ -26,7 +31,7 @@ const Input: React.FC<InputProps> = ({ showhide = false, ...props }) => {
   return (
     <div className="relative w-full input-parent">
       <input
-        className="w-full font-secondary-regular text-sm placeholder:text-gray-300 px-[19px] py-[15px] bg-transparent rounded-[6px] border border-gray-100 focus:border-gray-300 outline-none transition-all"
+        className={`w-full font-secondary-regular text-sm placeholder:text-gray-300 px-[19px] py-[15px] bg-transparent rounded-[6px] border border-gray-100 focus:border-gray-300 outline-none transition-all ${className}`}
         {...props}
       />
       {showhide && (

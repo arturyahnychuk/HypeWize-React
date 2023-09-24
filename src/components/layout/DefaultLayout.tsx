@@ -5,7 +5,7 @@ function DefaultLayout() {
     <div className="grid grid-cols-1 md:grid-cols-[233px,auto]">
       <Header />
       <Sidebar />
-      <div className="w-full pt-5 pl-6 pr-6 pb-8">
+      <div className="w-full pt-5 pl-6 pr-6 pb-8 h-[calc(100vh-84px)] md:h-screen max-h-screen overflow-auto">
         <Outlet />
       </div>
     </div>
