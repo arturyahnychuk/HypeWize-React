@@ -293,10 +293,10 @@ function ProjectInfo() {
                   <div className="w-full px-4 mb-4">
                     <div className="w-full h-full bg-white rounded-[10px]">
                       <div className="w-full break-all">
-                        <span className="text-blue">&lt;script </span>{" "}
+                        <span className="text-blue">&lt;script </span>
                         src="https://cdn.jsdelivr.net/gh/wisdomcsharp/hypewize-chatbot/chat.js"
                         id="64f32b78bbb9c780db148a1f"{" "}
-                        <span className="text-blue">&gt;&lt;/script&gt;</span>{" "}
+                        <span className="text-blue">&gt;&lt;/script&gt;</span>
                       </div>
                     </div>
                   </div>

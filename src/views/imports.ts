@@ -5,7 +5,8 @@ import ResetPassword from "@/views/auth/ResetPassword";
 
 import Home from "@/views/Home";
 import Projects from "@/views/projects/index";
-import ProjectInfo from "./projects/info/info";
+import ProjectInfo from "@/views/projects/info/info";
+import ProjectMessages from "@/views/projects/messages/messages";
 
 export {
   Home,
@@ -15,4 +16,5 @@ export {
   ResetPassword,
   Projects,
   ProjectInfo,
+  ProjectMessages,
 };

@@ -6,7 +6,7 @@ import { CloseImage } from "@/assets/imports";
 
 function Sidebar() {
   const location = useLocation();
-  const showHiddenPaths = [RoutesPath.PROJECTINFO, "/projects/about"];
+  const showHiddenPaths = [RoutesPath.PROJECTINFO, RoutesPath.PROJECTMESSAGES];
   const shouldShowHiddenLinks = showHiddenPaths.includes(location.pathname);
   return (
     <aside className="left-[-300%] absolute md:relative md:left-0 w-full h-screen bg-white pl-4 pr-6 pt-6 pb-10 transition-all">
@@ -63,10 +63,10 @@ function Sidebar() {
                     </p>
                   </NavLink>
                   <NavLink
-                    to="/projects/messages"
+                    to={RoutesPath.PROJECTMESSAGES}
                     className={({ isActive }) =>
                       `${
-                        isActive ? "nav-active" : ""
+                        isActive ? "nav-active-additional" : ""
                       } flex items-center gap-3 px-4 py-3 rounded-md group hover:bg-blue transition-all`
                     }
                   >

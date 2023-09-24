@@ -8,5 +8,6 @@ export const RoutesPath = {
   // Other routess
   HOME: "/",
   PROJECTS: "/projects",
-  PROJECTINFO: "/projects/info"
+  PROJECTINFO: "/projects/info",
+  PROJECTMESSAGES: "/projects/messages",
 };

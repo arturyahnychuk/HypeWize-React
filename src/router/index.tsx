@@ -10,6 +10,7 @@ import {
   Home,
   Projects,
   ProjectInfo,
+  ProjectMessages,
 } from "@/views/imports";
 // Components
 import { DefaultLayout, AuthLayout } from "@/components/imports";
@@ -58,8 +59,12 @@ const routes = createBrowserRouter([
       },
       {
         path: RoutesPath.PROJECTINFO,
-        element: <ProjectInfo />
-      }
+        element: <ProjectInfo />,
+      },
+      {
+        path: RoutesPath.PROJECTMESSAGES,
+        element: <ProjectMessages />,
+      },
     ],
   },
 ]);

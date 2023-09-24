@@ -181,6 +181,16 @@ body {
 .submit-btn.text-black p {
   color: theme("colors.black");
 }
+.primary-btn.fill {
+  background: theme('colors.blue');
+}
+.primary-btn.fill .btn-icon svg {
+  fill: theme('colors.white');
+}
+.primary-btn.stroke .btn-icon svg {
+  fill: transparent;
+  stroke: theme('colors.white');
+}
 .primary-btn p {
   color: theme("colors.white");
 }

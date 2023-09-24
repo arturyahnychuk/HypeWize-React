@@ -14,6 +14,7 @@ import Textarea from "@/components/input/Textarea.tsx";
 import CheckBox from "@/components/checkbox/checkbox";
 import ProjectsCard from "@/components/projects-card/projectsCard";
 import Tooltip from "@/components/tooltip/tooltip";
+import Table from "@/components/table/table";
 export {
   DefaultLayout,
   AuthLayout,
@@ -30,5 +31,6 @@ export {
   CheckBox,
   ProjectsCard,
   Textarea,
-  Tooltip
+  Tooltip,
+  Table,
 };

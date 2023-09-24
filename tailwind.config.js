@@ -9,6 +9,7 @@ export default {
         black2: "#3A3B45",
         "black-50": "rgba(0, 0, 0, 0.5)",
         milk: "#F9F9FE",
+        milkLight: "#F7F7FD",
         blue: "#7A89FE",
         gray: {
           100: "#D6DFE8",
