@@ -10,4 +10,9 @@ export const RoutesPath = {
   PROJECTS: "/projects",
   PROJECTINFO: "/projects/info",
   PROJECTMESSAGES: "/projects/messages",
+  PROJECTMESSAGESSINGLE: "/projects/messages/:id",
+  PROJECTCONTENTS: "/projects/contents",
+  PROJECTCONTENTS_CREATE: "/projects/contents/create-content",
+  BILLINGS: "/billings",
+  USAGE: "/usage"
 };

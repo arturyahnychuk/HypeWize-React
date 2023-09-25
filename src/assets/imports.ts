@@ -23,6 +23,8 @@ import EyeShow from "@/assets/images/eye-show-icon.svg";
 
 import GoogleIcon from "@/assets/images/google-icon.svg";
 
+import DocsImage from "@/assets/images/docs.svg"
+
 export {
   AddImage,
   RobotImage,
@@ -43,4 +45,5 @@ export {
   EyeHide,
   EyeShow,
   GoogleIcon,
+  DocsImage,
 };

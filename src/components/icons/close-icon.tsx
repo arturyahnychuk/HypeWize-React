@@ -10,7 +10,6 @@ function CloseIcon() {
       <g filter="url(#filter0_d_51_158)">
         <path
           d="M5 1L12.5 8.5M12.5 8.5L20 16M12.5 8.5L20 1M12.5 8.5L5 16"
-          stroke="#F9F9FE"
           strokeWidth="2"
           strokeLinecap="round"
         />

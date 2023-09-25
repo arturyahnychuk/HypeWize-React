@@ -8,70 +8,70 @@ function ProjectMessages() {
   const data = [
     {
       id: "192.168.0.1",
-      detail: "is detail for this row and this is detail for this section.",
+      detail: "this detail for this row and this is detail for this section.",
       tags: ["first", "message"],
       date: "15 sept 2023",
       delete: "",
     },
     {
       id: "192.168.0.1",
-      detail: "is detail for this row and this is detail for this section.",
+      detail: "this detail for this row and this is detail for this section.",
       tags: ["Tag", "message"],
       date: "15 sept 2023",
       delete: "",
     },
     {
       id: "192.168.0.1",
-      detail: "is detail for this row and this is detail for this section.",
+      detail: "this detail for this row and this is detail for this section.",
       tags: ["Tag", "english"],
       date: "15 sept 2023",
       delete: "",
     },
     {
       id: "192.168.0.1",
-      detail: "is detail for this row and this is detail for this section.",
+      detail: "this detail for this row and this is detail for this section.",
       tags: ["Tag", "english"],
       date: "15 sept 2023",
       delete: "",
     },
     {
       id: "192.168.0.1",
-      detail: "is detail for this row and this is detail for this section.",
+      detail: "this detail for this row and this is detail for this section.",
       tags: ["First", "english"],
       date: "15 sept 2023",
       delete: "",
     },
     {
       id: "192.168.0.1",
-      detail: "is detail for this row and this is detail for this section.",
+      detail: "this detail for this row and this is detail for this section.",
       tags: ["first", "message"],
       date: "15 sept 2023",
       delete: "",
     },
     {
       id: "192.168.0.1",
-      detail: "is detail for this row and this is detail for this section.",
+      detail: "this detail for this row and this is detail for this section.",
       tags: ["Tag", "message"],
       date: "15 sept 2023",
       delete: "",
     },
     {
       id: "192.168.0.1",
-      detail: "is detail for this row and this is detail for this section.",
+      detail: "this detail for this row and this is detail for this section.",
       tags: ["Tag", "english"],
       date: "15 sept 2023",
       delete: "",
     },
     {
       id: "192.168.0.1",
-      detail: "is detail for this row and this is detail for this section.",
+      detail: "this detail for this row and this is detail for this section.",
       tags: ["Tag", "english"],
       date: "15 sept 2023",
       delete: "",
     },
     {
       id: "192.168.0.1",
-      detail: "is detail for this row and this is detail for this section.",
+      detail: "this detail for this row and this is detail for this section.",
       tags: ["First", "english"],
       date: "15 sept 2023",
       delete: "",
@@ -93,7 +93,7 @@ function ProjectMessages() {
   return (
     <PageLayout>
       <div className="flex items-center justify-between gap-4 mb-7">
-        <div className="flex items-center gap-4">
+        <div className="hidden sm:flex items-center gap-4">
           <h2 className="font-secondary-medium text-2xl text-black tracking-[-2%]">
             Project Name
           </h2>
@@ -109,6 +109,9 @@ function ProjectMessages() {
             />
           </Link>
         </div>
+        <h2 className="block sm:hidden font-secondary-medium text-xl text-black tracking-[-2%]">
+            Messages
+          </h2>
         <div
           className={`${
             filterActive ? "rounded-t-[10px]" : "rounded-[10px]"
@@ -141,7 +144,7 @@ function ProjectMessages() {
             ) : (
               <Btn
                 onClick={openFilter}
-                text="filter"
+                text="Filter"
                 icon={true}
                 name="add"
                 iconNext={true}

@@ -6,9 +6,10 @@ interface FilterProps {
   filterBtnConfig: filterBtnConfigTypes[];
   active: string;
   onFilter: (value: filterBtnConfigTypes["value"]) => void;
+  className?: string
 }
 
-function Filter({ filterBtnConfig, active, onFilter }: FilterProps) {
+function Filter({ filterBtnConfig, active, onFilter, className='' }: FilterProps) {
   const handleFilter = (value: filterBtnConfigTypes["value"]) => {
     setActiveFilter(value.toLowerCase());
     onFilter(value.toLowerCase());
@@ -18,7 +19,7 @@ function Filter({ filterBtnConfig, active, onFilter }: FilterProps) {
   return (
     <div className="flex items-center p-1 bg-white rounded-[5px] w-max">
       {filterBtnConfig.map((button, index) => (
-        <div onClick={() => handleFilter(button.value)} key={index}>
+        <div className={className} onClick={() => handleFilter(button.value)} key={index}>
           <Btn
             className={`filter-btn ${
               button.value.toLowerCase() === activeFilter.toLowerCase()

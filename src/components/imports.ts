@@ -15,6 +15,8 @@ import CheckBox from "@/components/checkbox/checkbox";
 import ProjectsCard from "@/components/projects-card/projectsCard";
 import Tooltip from "@/components/tooltip/tooltip";
 import Table from "@/components/table/table";
+import PricingCard from "@/components/pricing-card/pricingCard";
+import ProgressCard from "@/components/progress/progressCard";
 export {
   DefaultLayout,
   AuthLayout,
@@ -33,4 +35,6 @@ export {
   Textarea,
   Tooltip,
   Table,
+  PricingCard,
+  ProgressCard
 };

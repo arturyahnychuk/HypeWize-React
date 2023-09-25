@@ -3,9 +3,10 @@ import React, { InputHTMLAttributes, useState, useEffect } from "react";
 interface CheckBoxProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   onCheckChange?: (isChecked: boolean) => void; // Callback to handle state changes
+  className?: string;
 }
 
-function CheckBox({ checked, onCheckChange, ...props }: CheckBoxProps) {
+function CheckBox({ checked, className, onCheckChange, ...props }: CheckBoxProps) {
   const [internalChecked, setInternalChecked] = useState(checked || false);
 
   useEffect(() => {
@@ -26,7 +27,11 @@ function CheckBox({ checked, onCheckChange, ...props }: CheckBoxProps) {
   };
 
   return (
-    <label className="select-none checkbox cursor-pointer flex items-center gap-3">
+    <label
+      className={`${
+        className ? className : ""
+      } select-none checkbox cursor-pointer flex items-center gap-3`}
+    >
       <input
         className="sr-only peer"
         type="checkbox"

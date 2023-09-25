@@ -11,6 +11,11 @@ import {
   Projects,
   ProjectInfo,
   ProjectMessages,
+  MessagesSingle,
+  ContentsPage,
+  BillingsPage,
+  ContentCreatePage,
+  UsagePage,
 } from "@/views/imports";
 // Components
 import { DefaultLayout, AuthLayout } from "@/components/imports";
@@ -65,6 +70,26 @@ const routes = createBrowserRouter([
         path: RoutesPath.PROJECTMESSAGES,
         element: <ProjectMessages />,
       },
+      {
+        path: RoutesPath.PROJECTMESSAGESSINGLE,
+        element: <MessagesSingle />,
+      },
+      {
+        path: RoutesPath.PROJECTCONTENTS,
+        element: <ContentsPage />,
+      },
+      {
+        path: RoutesPath.PROJECTCONTENTS_CREATE,
+        element: <ContentCreatePage />,
+      },
+      {
+        path: RoutesPath.BILLINGS,
+        element: <BillingsPage />,
+      },
+      {
+        path: RoutesPath.USAGE,
+        element: <UsagePage />
+      }
     ],
   },
 ]);

@@ -6,8 +6,18 @@ import { CloseImage } from "@/assets/imports";
 
 function Sidebar() {
   const location = useLocation();
-  const showHiddenPaths = [RoutesPath.PROJECTINFO, RoutesPath.PROJECTMESSAGES];
-  const shouldShowHiddenLinks = showHiddenPaths.includes(location.pathname);
+  const showHiddenPaths = [
+    RoutesPath.PROJECTINFO,
+    RoutesPath.PROJECTMESSAGES,
+    RoutesPath.PROJECTCONTENTS,
+    RoutesPath.PROJECTCONTENTS_CREATE
+  ];
+  const matchesDynamicRoute = (path: string) => {
+    return path.match(/^\/projects\/messages\/\d+$/); // Matches paths like /projects/messages/4, /projects/messages/2, etc.
+  };
+  const shouldShowHiddenLinks =
+    showHiddenPaths.includes(location.pathname) ||
+    matchesDynamicRoute(location.pathname);
   return (
     <aside className="left-[-300%] absolute md:relative md:left-0 w-full h-screen bg-white pl-4 pr-6 pt-6 pb-10 transition-all">
       <div className="w-full h-full flex flex-col justify-between">
@@ -48,7 +58,7 @@ function Sidebar() {
                     to={RoutesPath.PROJECTINFO}
                     className={({ isActive }) =>
                       `${
-                        isActive ? "nav-active-additional" : ""
+                        isActive ? "nav-active-additional" : "nav-additional"
                       } flex items-center gap-3 px-4 py-3 rounded-md group hover:bg-blue transition-all`
                     }
                   >
@@ -66,7 +76,7 @@ function Sidebar() {
                     to={RoutesPath.PROJECTMESSAGES}
                     className={({ isActive }) =>
                       `${
-                        isActive ? "nav-active-additional" : ""
+                        isActive ? "nav-active-additional" : "nav-additional"
                       } flex items-center gap-3 px-4 py-3 rounded-md group hover:bg-blue transition-all`
                     }
                   >
@@ -80,12 +90,12 @@ function Sidebar() {
                       messages
                     </p>
                   </NavLink>
-                  <div className="border-b pb-3">
+                  <div className="relative border-b pb-3">
                     <NavLink
-                      to="/projects/contents"
+                      to={RoutesPath.PROJECTCONTENTS}
                       className={({ isActive }) =>
                         `${
-                          isActive ? "nav-active" : ""
+                          isActive ? "nav-active-additional" : "nav-additional"
                         } flex items-center gap-3 px-4 py-3 rounded-md group hover:bg-blue transition-all`
                       }
                     >
@@ -99,12 +109,25 @@ function Sidebar() {
                         Contents
                       </p>
                     </NavLink>
+                    {location.pathname === RoutesPath.PROJECTCONTENTS || location.pathname === RoutesPath.PROJECTCONTENTS_CREATE ? (
+                      <Link
+                        to={RoutesPath.PROJECTCONTENTS_CREATE}
+                        className="absolute top-[50%] translate-y-[-80%] right-3 hover:scale-[1.1] ml-auto transition-all w-[18px] h-[18px] rounded-full bg-blue flex items-center justify-center"
+                      >
+                        <Icon
+                          className="nav-icon additional text-white stroke transition-all"
+                          icon="add"
+                          width={10}
+                          height={10}
+                        />
+                      </Link>
+                    ): <></>}
                   </div>
                 </>
               )}
 
               <NavLink
-                to="/billings"
+                to={RoutesPath.BILLINGS}
                 className={({ isActive }) =>
                   `${
                     isActive ? "nav-active" : ""
@@ -122,7 +145,7 @@ function Sidebar() {
                 </p>
               </NavLink>
               <NavLink
-                to="/usage"
+                to={RoutesPath.USAGE}
                 className={({ isActive }) =>
                   `${
                     isActive ? "nav-active" : ""

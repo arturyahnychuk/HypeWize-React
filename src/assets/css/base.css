@@ -8,7 +8,22 @@ body {
   background: theme("colors.blue");
 }
 .nav-active-additional {
-  background: theme("colors.gray.200");
+  background: theme("colors.gray.200") !important;
+}
+.nav-additional:hover {
+  background: theme("colors.gray.200") !important;
+}
+.nav-additional:hover .nav-text,
+.nav-active-additional:hover .nav-text {
+  color: theme("colors.black") !important;
+}
+.nav-active-additional:hover .nav-icon svg,
+.nav-additional:hover .nav-icon svg {
+  stroke: theme("colors.black") !important;
+}
+.nav-active-additional:hover .nav-icon.additional.text-white.stroke svg,
+.nav-additional:hover .nav-icon.additional.text-white.stroke svg {
+  stroke: theme("colors.white") !important;
 }
 .nav-active .nav-icon svg {
   stroke: theme("colors.white") !important;
@@ -182,14 +197,14 @@ body {
   color: theme("colors.black");
 }
 .primary-btn.fill {
-  background: theme('colors.blue');
+  background: theme("colors.blue");
 }
 .primary-btn.fill .btn-icon svg {
-  fill: theme('colors.white');
+  fill: theme("colors.white");
 }
 .primary-btn.stroke .btn-icon svg {
   fill: transparent;
-  stroke: theme('colors.white');
+  stroke: theme("colors.white");
 }
 .primary-btn p {
   color: theme("colors.white");
@@ -221,6 +236,23 @@ body {
   color: theme("colors.green");
 }
 
+.checkbox-primary div {
+  background: transparent !important;
+  border: 1px solid theme("colors.gray.200") !important;
+}
+.checkbox-primary div {
+  width: 26px;
+  height: 26px;
+  border-radius: 5px;
+}
+.checkbox-primary div svg {
+  width: 16px;
+  height: 16px;
+}
+.checkbox-primary input:checked ~ div svg {
+  stroke: theme("colors.blue");
+}
+
 .text-black svg {
   fill: theme("colors.black");
 }
@@ -230,7 +262,22 @@ body {
   height: 100%;
   fill: theme("colors.black");
 }
+.icon-white.stroke svg {
+  fill: transparent;
+  stroke: theme("colors.white");
+}
+.icon-white svg {
+  stroke: transparent;
+  fill: theme("colors.white");
+}
 
+.primary-btn.stroke {
+  background: transparent;
+}
+.primary-btn.stroke .btn-text {
+  font-size: theme("fontSize.md");
+  color: theme("colors.blue");
+}
 .action-btn.danger .btn-text {
   color: theme("colors.red");
 }
@@ -240,8 +287,18 @@ body {
 .action-btn.success .btn-icon svg {
   fill: theme("colors.green");
 }
+.plan-btn .btn-text {
+  font-family: theme("fontFamily.secondary-medium");
+}
 .danger-icon svg {
-  fill: theme('colors.red');
+  fill: theme("colors.red");
+}
+.nav-icon.text-white.stroke svg {
+  stroke: theme("colors.white");
+}
+.danger-icon.stroke svg {
+  fill: transparent;
+  stroke: theme("colors.orange");
 }
 .action-btn.success.stroke .btn-icon svg {
   stroke: theme("colors.green");
@@ -263,10 +320,41 @@ body {
 .switch-btn .btn-icon svg {
   fill: theme("colors.blue");
 }
-.primary-icon svg{
-  fill: theme('colors.blue');
+.primary-icon svg {
+  fill: theme("colors.blue");
 }
 
 .stroke svg {
   fill: transparent !important;
+}
+
+@media screen and (max-width: theme("screens.sm")) {
+  .table .tags {
+    display: none;
+  }
+  .table .tags-body {
+    display: none;
+  }
+  .table .delete {
+    opacity: 0;
+  }
+}
+
+.CircularProgressbar-text {
+  fill: theme("colors.black") !important;
+  font-size: theme("fontSize.base") !important;
+  font-family: theme('fontFamily.secondary-regular');
+}
+
+.CircularProgressbar .CircularProgressbar-trail {
+  stroke: rgba(122, 137, 254, 0.4);
+  /* stroke-linecap: round; */
+}
+.CircularProgressbar {
+  width: 135px;
+  height: 135px;
+}
+.CircularProgressbar-path {
+  stroke: theme('colors.blue') !important;
+  stroke-linecap: butt !important;
 }
