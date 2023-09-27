@@ -12,8 +12,8 @@ function Projects() {
   };
 
   return (
-    <div className="w-full">
-      <div className="w-full flex items-center justify-end">
+    <div className="w-full ">
+      <div className="w-full flex items-center justify-end pt-4 pb-7 sticky top-0 bg-milk z-[9999]">
         <Filter
           filterBtnConfig={projectsFilterBtns}
           active={activeFilter}
@@ -22,7 +22,7 @@ function Projects() {
       </div>
 
       <div
-        className={`layout w-full my-[21px] gap-5 ${
+        className={`layout w-full mb-[21px] gap-5 ${
           gridSystem === "grid" ? "grid" : "list"
         }`}
       >

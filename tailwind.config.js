@@ -17,11 +17,13 @@ export default {
           300: "#8C8FA7",
           400: "#D6DFE8",
           500: "#EEF0F3",
+          600: "#B4B8D6",
         },
         redLight: "#FF7E7E",
         red: "#F56161",
         green: "#17B294",
         orange: "#FB8477",
+        "blue-10": "rgba(122, 137, 254, 0.1)"
       },
       fontSize: {
         xs: "12px",

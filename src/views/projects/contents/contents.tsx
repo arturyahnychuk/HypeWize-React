@@ -7,7 +7,7 @@ import {
   Textarea,
 } from "@/components/imports";
 import { RoutesPath } from "@/types/router";
-import { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 function ContentsPage() {
@@ -18,9 +18,17 @@ function ContentsPage() {
   const [dropdownActive, setDropdownActive] = useState(false);
   const [startRemovingDuplicates, setStartRemovingDuplicates] = useState(false);
   const [editVal, seteditVal] = useState(
-    "These are editable. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes.                  These are editable. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes."
+    `This is Page 1 These are editable. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes.                  
+
+These are editable. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes.`
+  );
+  const [editVal2, seteditVal2] = useState(
+    `This is Page 2 These are editable. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes.                  
+
+These are editable. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes.`
   );
   const [editContent, seteditContent] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const openEditContent = () => {
     seteditContent(true);
@@ -33,6 +41,9 @@ function ContentsPage() {
   };
   const handleEditVal = (e: ChangeEvent<HTMLTextAreaElement>) => {
     seteditVal(e.target.value);
+  };
+  const handleEditVal2 = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    seteditVal2(e.target.value);
   };
   const handleDropdown = () => {
     let toggleVal = !dropdownActive;
@@ -50,6 +61,45 @@ function ContentsPage() {
       setStartRemovingDuplicates(false);
     }, 2000);
   };
+  const scrollToPage2 = () => {
+    const cont = document.getElementById("scroll-container");
+    const target = document.getElementById("page2");
+    if (target && cont) {
+      cont?.scrollTo(0, target?.offsetTop);
+      setCurrentPage(2);
+    }
+  };
+  useEffect(() => {
+    const cont = document.getElementById("scroll-container");
+    const target = document.getElementById("page2");
+    if (cont && target) {
+      cont.addEventListener("scroll", () => {
+        // Calculate the distance between the top of the "scroll-container" and the top of the "page2" element
+        const distanceToTarget = target.offsetTop - cont.scrollTop;
+
+        // You can adjust the threshold value as needed
+        const threshold = 100; // Adjust this value to define how close you want to be to the target element
+
+        if (distanceToTarget < threshold) {
+          // The target element is within the threshold
+          setCurrentPage(2);
+        }
+        if (cont.scrollTop === 0) {
+          setCurrentPage(1);
+        }
+      });
+    }
+  }, []);
+  const [addContentModal, setAddContentModal] = useState(false);
+  const openAddContent = (e: React.MouseEvent) => {
+    if ((e.target as Element).closest('.delete')) {
+      return;
+    }
+    setAddContentModal(true);
+  };
+  const closeAddContentModal = () => {
+    setAddContentModal(false);
+  };
   const contentsArr = [
     "thesamplewebsite.com",
     "thesamplewebsite.com",
@@ -60,119 +110,125 @@ function ContentsPage() {
     "thesamplewebsite.com",
     "maxphilips.com",
     "maxphilips.com",
+    "thesamplewebsite.com",
+    "maxphilips.com",
+    "maxphilips.com",
   ];
   return (
     <PageLayout>
-      <div className="flex items-center justify-between gap-4 mb-7">
+      <div className="flex items-center justify-between gap-4 h-full">
         <div className="w-full grid md:grid-cols-2 gap-[10px]">
-          <div className="w-full">
-            <div className="hidden md:flex items-center gap-4">
-              <h2 className="font-secondary-medium text-2xl text-black tracking-[-2%]">
-                Project Name
-              </h2>
-              <Link to={RoutesPath.PROJECTS}>
-                <Btn
-                  text="switch"
-                  className="switch-btn"
-                  icon={true}
-                  iconNext={true}
-                  name="switch"
-                  width={14}
-                  height={14}
-                />
-              </Link>
-            </div>
-            <div className="flex md:hidden items-center gap-4">
-              <h2 className="font-secondary-medium text-2xl text-black tracking-[-2%]">
-                Content
-              </h2>
-              <div className="w-[18px] h-[18px] rounded-full bg-blue flex items-center justify-center">
-                <Icon
-                  className="icon-white stroke transition-all"
-                  icon="add"
-                  width={10}
-                  height={10}
-                />
+          <div className="w-full pb-4">
+            <div className="pt-7 pb-[20px] sm:pb-[34px] sticky top-0 bg-milk z-[9999]">
+              <div className="hidden md:flex items-center gap-4">
+                <h2 className="font-secondary-medium text-2xl text-black tracking-[-2%]">
+                  Project Name
+                </h2>
+                <Link to={RoutesPath.PROJECTS}>
+                  <Btn
+                    text="switch"
+                    className="switch-btn"
+                    icon={true}
+                    iconNext={true}
+                    name="switch"
+                    width={14}
+                    height={14}
+                  />
+                </Link>
               </div>
-            </div>
-            <div className="relative md:hidden flex mt-4">
-              <div
-                className={`${
-                  dropdownActive ? "rounded-t-[10px]" : " rounded-b-[10px]"
-                } w-full flex pl-5 pr-4 items-center gap-0 justify-between bg-white rounded-t-[10px]`}
-              >
+              <div className="flex md:hidden items-center gap-4">
+                <h2 className="font-secondary-medium text-2xl text-black tracking-[-2%]">
+                  Content
+                </h2>
+                <div className="cursor-pointer w-[18px] h-[18px] rounded-full bg-blue flex items-center justify-center">
+                  <Icon
+                    className="icon-white stroke transition-all"
+                    icon="add"
+                    width={10}
+                    height={10}
+                  />
+                </div>
+              </div>
+              <div className="relative md:hidden flex mt-4">
                 <div
-                  onClick={handleDropdown}
-                  className="flex items-center cursor-pointer"
+                  className={`${
+                    dropdownActive ? "rounded-t-[10px]" : " rounded-b-[10px]"
+                  } w-full flex pl-5 pr-4 items-center gap-0 justify-between bg-white rounded-t-[10px]`}
                 >
-                  <svg
-                    width="7"
-                    height="12"
-                    viewBox="0 0 7 12"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    onClick={handleDropdown}
+                    className="flex items-center cursor-pointer"
                   >
-                    <path
-                      d="M1 1L6.25 6L1 11"
-                      stroke="#8C8FA7"
-                      strokeWidth="1.4"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+                    <svg
+                      width="7"
+                      height="12"
+                      viewBox="0 0 7 12"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M1 1L6.25 6L1 11"
+                        stroke="#8C8FA7"
+                        strokeWidth="1.4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <Input
+                    type="text"
+                    placeholder="Search Content"
+                    onChange={handleContentVal}
+                    value={contentVal}
+                    className="!py-3 border-none !px-4"
+                  />
+                  <div className="flex items-center gap-3">
+                    <CheckBox
+                      onCheckChange={() => handleCheckboxes}
+                      className="checkbox-primary !gap-2"
+                      name="sites"
+                      label="<p class='text-black text-xs'>Sites</p>"
                     />
-                  </svg>
-                </div>
-                <Input
-                  type="text"
-                  placeholder="Search Content"
-                  onChange={handleContentVal}
-                  value={contentVal}
-                  className="!py-3 border-none !px-4"
-                />
-                <div className="flex items-center gap-3">
-                  <CheckBox
-                    onCheckChange={() => handleCheckboxes}
-                    className="checkbox-primary !gap-2"
-                    name="sites"
-                    label="<p class='text-black text-xs'>Sites</p>"
-                  />
-                  <CheckBox
-                    onCheckChange={() => handleCheckboxes}
-                    className="checkbox-primary !gap-2"
-                    name="docs"
-                    label="<p class='text-black text-xs'>Docs</p>"
-                  />
-                </div>
-              </div>
-              {dropdownActive && (
-                <div className="w-full absolute top-full z-[999] bg-white pt-2 px-5 border-b">
-                  <div className="w-full flex justify-center py-6 border-t border-dashed">
-                    {!startRemovingDuplicates ? (
-                      <p
-                        onClick={handleDuplicateResult}
-                        className="cursor-pointer text-sm font-secondary-medium text-orange"
-                      >
-                        Remove duplicate text from 14 results
-                      </p>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <div
-                          className="animate-spin inline-block w-3 h-3 border-[2px] border-orange border-current border-t-transparent rounded-full"
-                          role="status"
-                          aria-label="loading"
-                        ></div>
-                        <p className="text-sm font-secondary-medium text-orange">
-                          1 of 14 removing
-                        </p>
-                      </div>
-                    )}
+                    <CheckBox
+                      onCheckChange={() => handleCheckboxes}
+                      className="checkbox-primary !gap-2"
+                      name="docs"
+                      label="<p class='text-black text-xs'>Docs</p>"
+                    />
                   </div>
                 </div>
-              )}
+                {dropdownActive && (
+                  <div className="w-full absolute top-full z-[999] bg-white pt-2 px-5 border-b">
+                    <div className="w-full flex justify-center py-6 border-t border-dashed">
+                      {!startRemovingDuplicates ? (
+                        <p
+                          onClick={handleDuplicateResult}
+                          className="cursor-pointer text-sm font-secondary-medium text-orange"
+                        >
+                          Remove duplicate text from 14 results
+                        </p>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="animate-spin inline-block w-3 h-3 border-[2px] border-orange border-current border-t-transparent rounded-full"
+                            role="status"
+                            aria-label="loading"
+                          ></div>
+                          <p className="text-sm font-secondary-medium text-orange">
+                            1 of 14 removing
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-            <div className="w-full bg-white rounded-[10px] px-5 mt-4 md:mt-7">
+            <div className="w-full bg-white rounded-[10px] px-5">
               {contentsArr.map((item, index) => (
                 <div
                   key={index}
+                  onClick={openAddContent}
                   className="w-full flex items-center justify-between py-6 border-b border-b-gray-200"
                 >
                   <p className="font-secondary-regular text-sm text-black">
@@ -180,7 +236,7 @@ function ContentsPage() {
                   </p>
                   <div
                     onClick={() => deleteItem(index)}
-                    className="cursor-pointer mr-4"
+                    className="delete cursor-pointer mr-4"
                   >
                     <Icon
                       icon="delete"
@@ -193,8 +249,8 @@ function ContentsPage() {
               ))}
             </div>
           </div>
-          <div className="relative w-full">
-            <div className="relative md:flex hidden">
+          <div className="relative w-full bg-milk z-[9999]">
+            <div className="relative md:flex hidden sticky top-[28px]">
               <div
                 className={`${
                   dropdownActive ? "rounded-t-[10px]" : " rounded-b-[10px]"
@@ -268,15 +324,20 @@ function ContentsPage() {
                 </div>
               )}
             </div>
-            <div className="bg-white rounded-[10px] mt-[23px]">
+
+            <div
+              className={`${
+                addContentModal ? "active" : ""
+              } addContent-modal md:block sticky top-[102px] bg-white rounded-[10px] mb-6 md:mb-0`}
+            >
               <div className="w-full h-full flex justify-between items-center">
                 <div className="w-full h-full flex items-center px-5 pt-2">
-                  <div className="w-full h-full  md:border-b flex pb-3 items-center justify-between">
-                    <p className="text-md text-black hidden md:flex">Notes</p>
+                  <div className="w-full h-full border-b flex pb-3 items-center justify-between">
+                    <p className="text-md text-black flex">Content</p>
                     {!editContent ? (
                       <Btn
                         onClick={openEditContent}
-                        className="border border-gray-100"
+                        className="border border-gray-100 ml-auto mr-4"
                         text="Edit"
                       />
                     ) : (
@@ -289,32 +350,135 @@ function ContentsPage() {
                           />
                           <Btn
                             onClick={handleEditContent}
-                            text="Add"
+                            text="Save"
                             className="action-btn border border-green px-3 !py-1 hover:bg-green success transition-all"
                           />
                         </div>
                       </>
                     )}
+                    <div
+                      onClick={closeAddContentModal}
+                      className="flex sm:hidden cursor-pointer"
+                    >
+                      <svg
+                        width="22"
+                        height="22"
+                        viewBox="0 0 22 22"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <g filter="url(#filter0_d_253_474)">
+                          <path
+                            d="M5 1L11 7M11 7L17 13M11 7L17 1M11 7L5 13"
+                            stroke="#8C8FA7"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                          />
+                        </g>
+                        <defs>
+                          <filter
+                            id="filter0_d_253_474"
+                            x="0"
+                            y="0"
+                            width="22"
+                            height="22"
+                            filterUnits="userSpaceOnUse"
+                            color-interpolation-filters="sRGB"
+                          >
+                            <feFlood
+                              flood-opacity="0"
+                              result="BackgroundImageFix"
+                            />
+                            <feColorMatrix
+                              in="SourceAlpha"
+                              type="matrix"
+                              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                              result="hardAlpha"
+                            />
+                            <feOffset dy="4" />
+                            <feGaussianBlur stdDeviation="2" />
+                            <feComposite in2="hardAlpha" operator="out" />
+                            <feColorMatrix
+                              type="matrix"
+                              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0"
+                            />
+                            <feBlend
+                              mode="normal"
+                              in2="BackgroundImageFix"
+                              result="effect1_dropShadow_253_474"
+                            />
+                            <feBlend
+                              mode="normal"
+                              in="SourceGraphic"
+                              in2="effect1_dropShadow_253_474"
+                              result="shape"
+                            />
+                          </filter>
+                        </defs>
+                      </svg>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="py-5 px-5 h-[calc(65vh)]">
+              <div
+                className="pt-5 px-5 h-[calc(65vh)] overflow-auto smooth"
+                id="scroll-container"
+              >
                 {!editContent ? (
-                  <p className="text-sm leading-[24px]">{editVal}</p>
+                  <>
+                    <div className="h-full border-b pt-4">
+                      <p
+                        className="text-sm leading-[24px]"
+                        style={{ whiteSpace: "pre-wrap" }}
+                      >
+                        {editVal}
+                      </p>
+                    </div>
+                    <div className="h-full pt-4" id="page2">
+                      <p
+                        className="text-sm leading-[24px]"
+                        style={{ whiteSpace: "pre-wrap" }}
+                      >
+                        {editVal2}
+                      </p>
+                    </div>
+                  </>
                 ) : (
-                  <div className="flex h-full flex-col items-start gap-2 h-full">
-                    <Textarea
-                      onChange={handleEditVal}
-                      value={editVal}
-                      placeholder=""
-                      classNameForParent="h-full"
-                      className="resize-none h-full border-dashed !p-2"
-                    />
+                  <div className="flex h-full flex-col items-start gap-2 h-max">
+                    <div className="w-full h-[62vh]">
+                      <Textarea
+                        onChange={handleEditVal}
+                        value={editVal}
+                        placeholder=""
+                        classNameForParent="h-full"
+                        className="resize-none h-full border-dashed !p-2"
+                        style={{ whiteSpace: "pre-wrap" }}
+                      />
+                    </div>
+
+                    <div className="w-full h-[62vh]" id="page2">
+                      <Textarea
+                        onChange={handleEditVal2}
+                        value={editVal2}
+                        placeholder=""
+                        classNameForParent="h-full"
+                        className="resize-none h-full border-dashed !p-2"
+                        style={{ whiteSpace: "pre-wrap" }}
+                      />
+                    </div>
                   </div>
                 )}
               </div>
-              <div className="pb-4 px-5 pt-3 flex justify-center">
-                <Btn text="Page 01" className="primary-btn stroke"></Btn>
+              <div className="relative bg-white pb-4 px-5 pt-3 flex justify-center">
+                {currentPage === 1 ? (
+                  <Btn
+                    onClick={scrollToPage2}
+                    text="Page 01"
+                    className="primary-btn stroke"
+                  ></Btn>
+                ) : (
+                  <Btn text="Page 02" className="primary-btn stroke"></Btn>
+                )}
               </div>
             </div>
           </div>

@@ -16,6 +16,8 @@ import {
   BillingsPage,
   ContentCreatePage,
   UsagePage,
+  
+  SettingsPage,
 } from "@/views/imports";
 // Components
 import { DefaultLayout, AuthLayout } from "@/components/imports";
@@ -88,8 +90,12 @@ const routes = createBrowserRouter([
       },
       {
         path: RoutesPath.USAGE,
-        element: <UsagePage />
-      }
+        element: <UsagePage />,
+      },
+      {
+        path: RoutesPath.SETTINGS,
+        element: <SettingsPage />,
+      },
     ],
   },
 ]);

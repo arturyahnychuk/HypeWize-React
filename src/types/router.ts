@@ -14,5 +14,7 @@ export const RoutesPath = {
   PROJECTCONTENTS: "/projects/contents",
   PROJECTCONTENTS_CREATE: "/projects/contents/create-content",
   BILLINGS: "/billings",
-  USAGE: "/usage"
+  USAGE: "/usage",
+
+  SETTINGS: "/settings"
 };

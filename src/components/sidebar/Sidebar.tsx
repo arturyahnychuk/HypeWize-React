@@ -19,7 +19,7 @@ function Sidebar() {
     showHiddenPaths.includes(location.pathname) ||
     matchesDynamicRoute(location.pathname);
   return (
-    <aside className="left-[-300%] absolute md:relative md:left-0 w-full h-screen bg-white pl-4 pr-6 pt-6 pb-10 transition-all">
+    <aside className="left-[-300%] absolute md:relative md:left-0 w-full h-screen bg-white pl-4 pr-6 pt-6 pb-10 transition-all z-[999999]">
       <div className="w-full h-full flex flex-col justify-between">
         <div className="w-full flex flex-col gap-6">
           <div className="flex justify-between md:justify-center w-full pb-6 border-b border-gray-100">
@@ -190,7 +190,7 @@ function Sidebar() {
           </div>
           <div>
             <NavLink
-              to="/settings"
+              to={RoutesPath.SETTINGS}
               className={({ isActive }) =>
                 `${
                   isActive ? "nav-active" : ""

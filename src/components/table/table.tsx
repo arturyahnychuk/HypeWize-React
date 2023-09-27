@@ -16,7 +16,7 @@ function Table({ data }: TableProps) {
   const headCells = Object.keys(data[0]);
 
   return (
-    <div className="table w-full sm:p-8 p-4 bg-white rounded-[10px]">
+    <div className="table w-full sm:p-8 p-4 bg-white rounded-[10px] mb-8">
       <div className="relative w-full overflow-auto">
         <div className="w-full">
           <div

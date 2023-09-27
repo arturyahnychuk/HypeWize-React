@@ -22,8 +22,10 @@ import EyeHide from "@/assets/images/eye-hide-icon.svg";
 import EyeShow from "@/assets/images/eye-show-icon.svg";
 
 import GoogleIcon from "@/assets/images/google-icon.svg";
+import GoogleImage from "@/assets/images/GoogleImage.svg";
+import HubspotImage from "@/assets/images/HubspotImage.svg";
 
-import DocsImage from "@/assets/images/docs.svg"
+import DocsImage from "@/assets/images/docs.svg";
 
 export {
   AddImage,
@@ -46,4 +48,6 @@ export {
   EyeShow,
   GoogleIcon,
   DocsImage,
+  GoogleImage,
+  HubspotImage,
 };

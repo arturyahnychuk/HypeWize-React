@@ -1,5 +1,5 @@
 import { RobotImage, OptionImage, DeleteIcon } from "@/assets/imports";
-import { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { Btn, Input, Textarea } from "../imports";
 import { Link } from "react-router-dom";
 import { RoutesPath } from "@/types/router";
@@ -12,13 +12,21 @@ function ProjectsCard({ title, text }: ProjectsCardTypes) {
   const [editMode, setEditMode] = useState(false);
   const [titleVal, setTitleVal] = useState(title);
   const [textVal, setTextVal] = useState(text);
+  const [editTabIsOpen, setEditTabIsOpen] = useState(false);
+  const openEditTab = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    let currentVal = !editTabIsOpen;
+    setEditTabIsOpen(currentVal);
+  };
   const handleEditMode = (e: any) => {
-    e.preventDefault()
+    e.preventDefault();
+    setEditTabIsOpen(false);
     setEditMode(true);
   };
   const handleDelete = (e: any) => {
-    e.preventDefault()
+    e.preventDefault();
     alert("Delete");
+    setEditTabIsOpen(false);
   };
   const handleTextInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setTextVal(e.target.value);
@@ -27,34 +35,49 @@ function ProjectsCard({ title, text }: ProjectsCardTypes) {
     setTitleVal(e.target.value);
   };
   const cancel = (e: any) => {
-    e.preventDefault()
+    e.preventDefault();
     setEditMode(false);
   };
   const save = (e: any) => {
-    e.preventDefault()
+    e.preventDefault();
     alert("save");
   };
   return (
-    <Link to={RoutesPath.PROJECTINFO} className="parent rounded-[10px] w-full h-[240px] bg-white flex flex-col">
+    <Link
+      to={RoutesPath.PROJECTINFO}
+      onClick={(e) => {
+        if (editMode) {
+          e.preventDefault(); // Prevent the link's default behavior if editMode is true
+        }
+      }}
+      className={`${
+        editMode ? "cursor-default" : ""
+      } parent rounded-[10px] w-full h-[240px] bg-white flex flex-col`}
+    >
       {!editMode ? (
         <div className="settings-grid group w-max h-[20px] flex justify-end delay-100 relative w-full ml-auto p-3">
-          <div className="cursor-pointer w-full h-[15px] flex justify-end absolute top-3">
+          <div
+            onClick={openEditTab}
+            className="h-[25px] right-0 cursor-pointer w-[30px] flex justify-center absolute top-3"
+          >
             <img width={2} src={OptionImage} alt="Option Image" />
           </div>
-          <div className="group-hover:visible bg-white invisible absolute top-7 right-3 flex flex-col p-[3px] border border-gray-100 rounded-[5px] transition-all">
-            <div
-              onClick={handleEditMode}
-              className="text-xs font-secondary-regular tracking-[-2%] text-gray-300 px-4 py-2 bg-gray-200 cursor-pointer hover:opacity-80"
-            >
-              Edit
+          {editTabIsOpen && (
+            <div className="bg-white absolute top-7 right-3 flex flex-col p-[3px] border border-gray-100 rounded-[5px] transition-all">
+              <div
+                onClick={handleEditMode}
+                className="text-xs font-secondary-regular tracking-[-2%] text-gray-300 px-4 py-2 bg-gray-200 cursor-pointer hover:opacity-80"
+              >
+                Edit
+              </div>
+              <div
+                onClick={handleDelete}
+                className="w-full flex items-center justify-center p-2 cursor-pointer opacity-80 hover:opacity-100"
+              >
+                <img width={12} src={DeleteIcon} alt="Delete Icon" />
+              </div>
             </div>
-            <div
-              onClick={handleDelete}
-              className="w-full flex items-center justify-center p-2 cursor-pointer opacity-80 hover:opacity-100"
-            >
-              <img width={12} src={DeleteIcon} alt="Delete Icon" />
-            </div>
-          </div>
+          )}
         </div>
       ) : (
         <div className="actions-grid justify-between flex px-4 py-2 items-center">
@@ -110,23 +133,28 @@ function ProjectsCard({ title, text }: ProjectsCardTypes) {
         </div>
         {!editMode ? (
           <div className="settings-list bg-white group h-[20px] flex justify-end delay-100 relative ml-auto p-3">
-            <div className="icon cursor-pointer w-full h-[15px] flex justify-end absolute top-3">
+            <div
+              onClick={openEditTab}
+              className="icon cursor-pointer w-[35px] h-[35px] flex justify-center absolute top-3"
+            >
               <img width={2} src={OptionImage} alt="Option Image" />
             </div>
-            <div className="options bg-white group-hover:visible invisible absolute top-7 right-3 flex flex-col p-[3px] border border-gray-100 rounded-[5px] transition-all">
-              <div
-                onClick={handleEditMode}
-                className="text-xs font-secondary-regular tracking-[-2%] text-gray-300 px-4 py-2 bg-gray-200 cursor-pointer hover:opacity-80"
-              >
-                Edit
+            {editTabIsOpen && (
+              <div className="options z-[99] bg-white absolute top-7 right-3 flex flex-col p-[3px] border border-gray-100 rounded-[5px] transition-all">
+                <div
+                  onClick={handleEditMode}
+                  className="text-xs font-secondary-regular tracking-[-2%] text-gray-300 px-4 py-2 bg-gray-200 cursor-pointer hover:opacity-80"
+                >
+                  Edit
+                </div>
+                <div
+                  onClick={handleDelete}
+                  className="w-full flex items-center justify-center p-2 cursor-pointer opacity-80 hover:opacity-100"
+                >
+                  <img width={12} src={DeleteIcon} alt="Delete Icon" />
+                </div>
               </div>
-              <div
-                onClick={handleDelete}
-                className="w-full flex items-center justify-center p-2 cursor-pointer opacity-80 hover:opacity-100"
-              >
-                <img width={12} src={DeleteIcon} alt="Delete Icon" />
-              </div>
-            </div>
+            )}
           </div>
         ) : (
           <div className="actions-list ml-auto flex items-center">

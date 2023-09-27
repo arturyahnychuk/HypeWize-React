@@ -10,7 +10,7 @@ const Icon = React.memo(
     );
 
     return (
-      <Suspense fallback={<h1>...</h1>}>
+      <Suspense fallback={null}>
         <div
           className={`icon ${className}`}
           style={{ width: width, height: height }}

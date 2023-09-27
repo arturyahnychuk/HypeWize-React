@@ -24,12 +24,12 @@ function BillingsPage() {
     ]
   return (
     <PageLayout>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 pt-7 pb-7 sticky top-0 bg-milk z-[9999]">
         <h2 className="font-secondary-medium text-2xl text-black tracking-[-2%]">
           Billings
         </h2>
       </div>
-      <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-[10px] mt-6">
+      <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-[10px]">
         <PricingCard title="You are currently subscribe to this package." planTitle="Professional Plan" offers={proPlanOffers}/>
       </div>
     </PageLayout>

@@ -15,7 +15,7 @@ function ProgressCard({ title, tooltipText, text, progress }: ProgressCardProps)
             >
               {title}
             </label>
-            <Tooltip type="info" text={tooltipText} />
+            <Tooltip className="sm:left-[-100px]" type="info" text={tooltipText} />
           </div>
           <div className="flex justify-center md:mt-9 md:mb-4">
             <CircularProgressbar

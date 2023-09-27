@@ -3,7 +3,12 @@ body {
   background: theme("colors.milk");
   color: theme("colors.black");
 }
-
+.smooth {
+  scroll-behavior: smooth;
+}
+.break-word {
+  word-break: break-word;
+}
 .nav-active {
   background: theme("colors.blue");
 }
@@ -284,6 +289,12 @@ body {
 .action-btn.success .btn-text {
   color: theme("colors.green");
 }
+.primary-btn.stroke-icon svg {
+  stroke: theme('colors.white');
+}
+.icon.text-white.stroke svg {
+  stroke: white;
+}
 .action-btn.success .btn-icon svg {
   fill: theme("colors.green");
 }
@@ -357,4 +368,22 @@ body {
 .CircularProgressbar-path {
   stroke: theme('colors.blue') !important;
   stroke-linecap: butt !important;
+}
+
+@media screen and (max-width: theme('screens.md')) {
+  .addContent-modal {
+    position: fixed;
+    width: 100%;
+    left: -200%;
+    top: 84px;
+    border-radius: 0px;
+    transition: all 0.3s ease;
+  }
+  .addContent-modal.active {
+    left: 0;
+    transition: all 0.3s ease;
+  }
+  .addContent-modal #scroll-container {
+    height: 70vh;
+  }
 }

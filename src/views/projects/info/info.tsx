@@ -8,7 +8,7 @@ function ProjectInfo() {
   const [agentName, setAgentName] = useState("");
   const [themeColor, setThemeColor] = useState("#000000");
   const [message, setMessage] = useState("");
-  const [emailAdded, setEmailAdded] = useState(false);
+  const [inputFields, setInputFields] = useState([""]);
   const [chatActive, setChatActive] = useState(false);
   const [embedActive, setEmbedActive] = useState(false);
   const [formData, setFormData] = useState({
@@ -35,10 +35,17 @@ function ProjectInfo() {
     setEmbedActive(true);
   };
   const handleAddField = () => {
-    setEmailAdded(true);
+    setInputFields([...inputFields, ""]);
   };
-  const handleEmailDelete = () => {
-    setEmailAdded(false);
+  const handleRemoveField = (index: number) => {
+    const newInputFields = [...inputFields];
+    newInputFields.splice(index, 1);
+    setInputFields(newInputFields);
+  };
+  const handleDynamicFormsDataChange = (index: number, value: string) => {
+    const newInputFields = [...inputFields];
+    newInputFields[index] = value;
+    setInputFields(newInputFields);
   };
   const handleFormsDataChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -66,7 +73,7 @@ function ProjectInfo() {
   };
   return (
     <PageLayout>
-      <div className="flex items-center gap-4 mb-7">
+      <div className="flex items-center gap-4 pt-7 pb-7 sticky top-0 bg-milk z-[9999]">
         <h2 className="font-secondary-medium text-2xl text-black tracking-[-2%]">
           Project Name
         </h2>
@@ -138,7 +145,7 @@ function ProjectInfo() {
               />
               <Btn
                 onClick={handleAddField}
-                className="ml-auto action-btn success stroke hover-green"
+                className="ml-auto action-btn success stroke hover-green !pr-0"
                 text="Add Field"
                 icon={true}
                 name="add"
@@ -155,17 +162,21 @@ function ProjectInfo() {
                 placeholder="Name"
               />
             </div>
-            {emailAdded && (
-              <div className="relative ">
+            {inputFields.map((value, index) => (
+              <div
+                key={index}
+                className="relative"
+                style={{ marginBottom: "10px" }}
+              >
                 <Input
-                  onInput={handleFormsDataChange}
                   type="text"
-                  name="email"
-                  value={formsData.email}
-                  placeholder="Email"
+                  value={value}
+                  onChange={(e) =>
+                    handleDynamicFormsDataChange(index, e.target.value)
+                  }
                 />
                 <div
-                  onClick={handleEmailDelete}
+                  onClick={() => handleRemoveField(index)}
                   className="absolute top-[50%] translate-y-[-50%] right-5 cursor-pointer"
                 >
                   <Icon
@@ -176,7 +187,7 @@ function ProjectInfo() {
                   />
                 </div>
               </div>
-            )}
+            ))}
           </div>
           <div className="w-full flex flex-col gap-5 bg-white px-5 py-4 rounded-[10px]">
             <div className="flex items-center justify-between w-full">
@@ -225,7 +236,11 @@ function ProjectInfo() {
             />
           </div>
         </div>
-        <div className="w-full flex h-[81vh] pb-10 md:pb-0 bg-white rounded-[10px]">
+        <div
+          className={`${
+            chatActive ? "h-[calc(100vh-131px)]" : "h-[calc(100vh-171px)]"
+          } sticky top-[95px] w-full hidden sm:flex pb-10 md:pb-0 bg-white rounded-[10px]`}
+        >
           {chatActive ? (
             <div className="w-full h-full rounded-[10px]">
               <div className="grid grid-rows-[1fr,auto] h-full flex flex-col mt-4">
@@ -233,9 +248,10 @@ function ProjectInfo() {
                   <div className="flex items-start gap-4">
                     <img src={RobotImage} alt="Robot" width={46} />
                     <div className="flex flex-col gap-2 max-w-[75%]">
-                      <div className="p-4 pr-6 bg-gray-500 rounded-[12px] w-full">
+                      <div className="p-4 pr-6 bg-gray-500 rounded-[12px] break-word w-full">
                         <p className="text-black2 leading-[20px]">
-                          Hello, This is welcome message!
+                          {agentName && "Hi, my name is " + agentName + "!"}{" "}
+                          {welcomeMessage ? welcomeMessage : ""}
                         </p>
                       </div>
                       <p className="text-black2 text-[10px]">Bot 10:40PM</p>
@@ -326,7 +342,7 @@ function ProjectInfo() {
               </div>
               <div className="grid grid-rows-[1fr,auto] h-full flex flex-col mt-4">
                 <div className="flex flex-col gap-4 px-6 w-full items-center">
-                  <p className="text-md font-secondaty-medium text-white tracking-[-2%] w-full  max-w-[356px]">
+                  <p className="text-md font-secondaty-medium text-white text-center tracking-[-2%] w-full  max-w-[356px]">
                     Please fill out the form below to start chatting with the
                     next agent available.
                   </p>

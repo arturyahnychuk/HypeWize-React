@@ -12,7 +12,7 @@ import ContentsPage from "@/views/projects/contents/contents";
 import BillingsPage from "@/views/billings/index";
 import ContentCreatePage from "@/views/projects/contents/contentCreate";
 import UsagePage from "@/views/usage";
-
+import SettingsPage from "@/views/settings";
 
 export {
   Home,
@@ -27,5 +27,6 @@ export {
   ContentsPage,
   BillingsPage,
   ContentCreatePage,
-  UsagePage
+  UsagePage,
+  SettingsPage,
 };

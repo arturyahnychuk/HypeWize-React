@@ -43,7 +43,7 @@ function PricingCard({ title, planTitle, offers }: PricingCardsProps) {
         <div className="w-full flex justify-center mt-6">
           <div className="flex flex-col gap-[22px]">
             {offers.map((item, index) => (
-              <div className="flex items-center gap-3">
+              <div key={index} className="flex items-center gap-3">
                 <svg
                   width="10"
                   height="8"

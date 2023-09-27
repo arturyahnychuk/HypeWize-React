@@ -29,7 +29,7 @@ function MessagesSingle() {
     "These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes."
   );
   const [isTabletSize, setTabletSize] = useState(false);
-  const [filterVal, setFilterVal] = useState("messages")
+  const [filterVal, setFilterVal] = useState("messages");
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 768) {
@@ -91,16 +91,16 @@ function MessagesSingle() {
     },
   ] as filterBtnConfigTypes[];
   const handleFilter = (value: filterBtnConfigTypes["value"]) => {
-    setFilterVal(value)
+    setFilterVal(value);
   };
   return (
     <PageLayout>
-      <div className="flex items-center justify-between gap-4 mb-7">
+      <div className="flex items-center justify-between gap-4 flex items-center gap-4 pt-7 pb-7 sticky top-0 bg-milk z-[9999]">
         <div className="flex items-center gap-4">
           <Link to={RoutesPath.PROJECTMESSAGES}>
             <Btn
               text="Back"
-              className="primary-btn fill stroke"
+              className="primary-btn fill stroke-icon"
               icon={true}
               name="arrow-left"
               width={14}
@@ -109,23 +109,28 @@ function MessagesSingle() {
           </Link>
         </div>
       </div>
-
-      <div className="w-full grid md:grid-cols-2 md:gap-5 ">
-        <div className="w-full bg-white rounded-[10px] md:rounded-[0px]">
+      <div className="w-full grid md:grid-cols-2 md:gap-5">
+        <div className="sticky top-[97px] w-full h-max rounded-[10px] md:rounded-[0px]">
           {isTabletSize && (
             <Filter
-            className="pt-2"
+              className="pt-2"
               filterBtnConfig={filter}
               active="messages"
               onFilter={handleFilter}
             />
           )}
-          <div className={`${isTabletSize && filterVal !== 'messages' ? 'hidden opacity-0 invisible' : '' } h-full bg-white rounded-[10px]`}>
-            <div className="w-full h-full">
+          <div
+            className={`${
+              isTabletSize && filterVal !== "messages"
+                ? "hidden opacity-0 invisible"
+                : ""
+            } rounded-[10px]`}
+          >
+            <div className="w-full h-full h-[calc(100vh-270px)] md:h-[calc(100vh-110px)] bg-white rounded-[10px]">
               <div className="w-full px-5 pt-4 hidden md:flex">
-                <p className="border-b pb-4 text-md text-black">Messages</p>
+                <p className="border-b w-full pb-4 text-md text-black">Messages</p>
               </div>
-              <div className="h-[calc(100vh-290px)] md:h-[calc(100vh-181px)] overflow-auto">
+              <div className="h-[calc(100vh-260px)] md:h-[calc(100vh-170px)] overflow-auto">
                 <div className="flex flex-col mt-4 rounded-[10px] py-4">
                   <div className="flex flex-col gap-4 px-6 h-full w-full">
                     <div className="flex items-start gap-4 h-full">
@@ -203,8 +208,14 @@ function MessagesSingle() {
             </div>
           </div>
         </div>
-        <div className="w-full grid grid-cols-1 gap-[10px]">
-          <div className={`${isTabletSize && filterVal !== 'tags' ? 'hidden opacity-0 invisible' : '' } bg-white rounded-b-[10px] md:rounded-[10px]`}>
+        <div className="w-full grid grid-cols-1 gap-[10px] pb-7">
+          <div
+            className={`${
+              isTabletSize && filterVal !== "tags"
+                ? "hidden opacity-0 invisible"
+                : ""
+            } bg-white rounded-b-[10px] md:rounded-[10px]`}
+          >
             <div className="w-full flex justify-between items-center">
               <div className="w-full flex items-center px-5 pt-2">
                 <div className="w-full  border-b flex pb-3 items-center justify-between">
@@ -221,7 +232,7 @@ function MessagesSingle() {
                     />
                   ) : (
                     <>
-                      <div className="flex gap-4 px-4 py-2 items-center">
+                      <div className="flex gap-4 py-2 items-center">
                         <Btn
                           onClick={closeAddTag}
                           text="Cancel"
@@ -274,7 +285,13 @@ function MessagesSingle() {
             </div>
           </div>
 
-          <div className={`${isTabletSize && filterVal !== 'forms' ? 'hidden opacity-0 invisible' : '' } bg-white rounded-[10px]`}>
+          <div
+            className={`${
+              isTabletSize && filterVal !== "forms"
+                ? "hidden opacity-0 invisible"
+                : ""
+            } bg-white rounded-[10px]`}
+          >
             <div className="w-full flex justify-between items-center">
               <div className="w-full flex items-center px-5 pt-2">
                 <div className="w-full border-b hidden md:flex pb-3 items-center justify-between">
@@ -312,7 +329,13 @@ function MessagesSingle() {
             </div>
           </div>
 
-          <div className={`${isTabletSize && filterVal !== 'notes' ? 'hidden opacity-0 invisible' : '' } bg-white rounded-[10px]`}>
+          <div
+            className={`${
+              isTabletSize && filterVal !== "notes"
+                ? "hidden opacity-0 invisible"
+                : ""
+            } bg-white rounded-[10px]`}
+          >
             <div className="w-full flex justify-between items-center">
               <div className="w-full flex items-center px-5 pt-2">
                 <div className="w-full  md:border-b flex pb-3 items-center justify-between">
@@ -325,7 +348,7 @@ function MessagesSingle() {
                     />
                   ) : (
                     <>
-                      <div className="flex gap-4 px-4 py-2 items-center ml-auto">
+                      <div className="flex gap-4  py-2 items-center ml-auto">
                         <Btn
                           onClick={closeEditNote}
                           text="Cancel"
@@ -357,6 +380,9 @@ function MessagesSingle() {
               )}
             </div>
           </div>
+          
+          
+
         </div>
       </div>
     </PageLayout>
