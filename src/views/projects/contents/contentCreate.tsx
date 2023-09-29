@@ -7,7 +7,7 @@ import {
 } from "@/components/imports";
 import { RoutesPath } from "@/types/router";
 import { Link } from "react-router-dom";
-import { useState, ChangeEvent, useEffect } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import { DocsImage } from "@/assets/imports";
 
 function ContentCreatePage() {
@@ -19,6 +19,31 @@ function ContentCreatePage() {
     console.log(checked);
   };
   const [isDrag, setIsDrag] = useState(false);
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDrag(false);
+
+    // Access the dropped files from the event
+    const files = e.dataTransfer.files;
+
+    // Handle the dropped files (e.g., display the image)
+    if (files.length > 0) {
+      const file = files[0];
+      const reader = new FileReader();
+
+      reader.onload = (event: ProgressEvent<FileReader>) => {
+        if (event.target && event.target.result) {
+          // Display the dropped image
+          const imageSrc = event.target.result as string;
+          console.log("Dropped image source:", imageSrc);
+
+          // You can update the UI to show the dropped image here
+        }
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
   return (
     <PageLayout>
       {isDrag && (
@@ -30,7 +55,7 @@ function ContentCreatePage() {
         <div className="w-full flex items-center gap-4 pt-7 pb-7 sticky top-0 bg-milk z-[9999]">
           <Link to={RoutesPath.PROJECTCONTENTS}>
             <Btn
-              text="Back"
+              text="Contents"
               className="primary-btn fill stroke-icon"
               icon={true}
               name="arrow-left"
@@ -90,7 +115,9 @@ function ContentCreatePage() {
             <div className="relative overflow-hidden w-full mx-auto mt-10 max-w-[350px] bg-white rounded-[10px] flex flex-col items-center gap-10 p-6">
               <div
                 onDragEnter={() => setIsDrag(true)}
-                onDragLeave={()=> setIsDrag(false)}
+                onDragLeave={() => setIsDrag(false)}
+                onDrop={handleDrop}
+                onDragOver={(e) => e.preventDefault()}
                 className="absolute z-[9999999] top-0 left-0 w-full h-full"
               ></div>
               <h4 className="text-2xl font-main-medium tracking-[-2%] text-blue">
@@ -105,7 +132,7 @@ function ContentCreatePage() {
                   <div
                     draggable // Make this element draggable
                     onDragStart={(e) => e.preventDefault()} // Prevent drag start, if needed
-                    className=" relative text-blue overflow-hidden w-max"
+                    className="z-[9999999] relative text-blue overflow-hidden w-max"
                   >
                     <Input
                       type="file"

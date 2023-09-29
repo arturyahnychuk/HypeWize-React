@@ -3,6 +3,7 @@ import Register from "@/views/auth/Register";
 import ForgotPassword from "@/views/auth/ForgotPassword";
 import ResetPassword from "@/views/auth/ResetPassword";
 
+import StarterPage from "@/views/starter/starter";
 import Home from "@/views/Home";
 import Projects from "@/views/projects/index";
 import ProjectInfo from "@/views/projects/info/info";
@@ -15,6 +16,7 @@ import UsagePage from "@/views/usage";
 import SettingsPage from "@/views/settings";
 
 export {
+  StarterPage,
   Home,
   Login,
   Register,

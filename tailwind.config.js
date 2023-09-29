@@ -11,6 +11,7 @@ export default {
         milk: "#F9F9FE",
         milkLight: "#F7F7FD",
         blue: "#7A89FE",
+        blueLight: "#C6CCFE",
         gray: {
           100: "#D6DFE8",
           200: "#F2F2F2",

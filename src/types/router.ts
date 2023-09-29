@@ -6,6 +6,7 @@ export const RoutesPath = {
   RESET_PASSWORD: "/auth/reset-password",
 
   // Other routess
+  STARTER_GUIDE:"/starter-guide",
   HOME: "/",
   PROJECTS: "/projects",
   PROJECTINFO: "/projects/info",

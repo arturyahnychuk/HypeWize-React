@@ -15,35 +15,39 @@ function ProjectMessages() {
   };
 
   const toggleFilter = () => {
-    let currentVal = !filterActive
+    let currentVal = !filterActive;
     setFilterActive(currentVal);
   };
   const clearFilter = () => {
-    setSelectedTags([]);;
+    setSelectedTags([]);
     setFilterActive(false);
   };
+  console.log(selectedTags);
   const customFilterIndicator = () => (
     <>
-    <div
-      className={`${selectedTags.length > 0 ? '' : 'hidden' } min-w-[41px] min-h-[41px] ml-auto rounded-[10px] bg-redLight flex items-center pt-1 justify-center cursor-pointer`}
-      onClick={clearFilter}
-    >
-      <Icon
-        icon="close"
-        className="icon text-white stroke"
-        width={14}
-        height={14}
-      />
-    </div>
-    <Btn
-      text="Filter"
-      icon={true}
-      name="add"
-      iconNext={true}
-      width={14}
-      height={14}
-      className={`${selectedTags.length > 0 ? 'hidden' : ''} primary-btn fill stroke-icon`}
-    />
+      {selectedTags.length !== 0 ? (
+        <div
+          className="min-w-[41px] min-h-[41px] ml-auto rounded-[10px] bg-redLight flex items-center pt-1 justify-center cursor-pointer"
+          onClick={clearFilter}
+        >
+          <Icon
+            icon="close"
+            className="icon text-white stroke"
+            width={14}
+            height={14}
+          />
+        </div>
+      ) : (
+        <Btn
+          text="Filter"
+          icon={true}
+          name="add"
+          iconNext={true}
+          width={14}
+          height={14}
+          className="primary-btn fill stroke-icon"
+        />
+      )}
     </>
   );
   const customStyles = {
@@ -53,7 +57,7 @@ function ProjectMessages() {
       border: "1px solid transparent",
       borderRadius: filterActive ? "10px 10px 0 0" : "10px",
     }),
-    multiValue: (provided: any) => ({
+    singleValue: (provided: any) => ({
       ...provided,
       border: "1px solid #7189FE",
       backgroundColor: "#F7F7FD",
@@ -66,10 +70,10 @@ function ProjectMessages() {
     multiValueRemove: (provided: any) => ({
       ...provided,
       backgroundColor: "transparent",
-      ':hover': {
-        background: 'transparent',
-        color: 'red'
-      }
+      ":hover": {
+        background: "transparent",
+        color: "red",
+      },
     }),
     control: (provided: any) => ({
       ...provided,
@@ -98,7 +102,7 @@ function ProjectMessages() {
       flexWrap: "wrap",
       gap: "10px",
       alignItems: "center",
-      padding: "5px 10px",
+      padding: "15px 10px",
     }),
     indicatorSeparator: () => null,
     downChevron: () => null,
@@ -195,9 +199,7 @@ function ProjectMessages() {
     <PageLayout>
       <div
         className={`${
-          selectedTags.length > 0
-            ? "items-start"
-            : "items-center"
+          selectedTags.length > 0 ? "items-start" : "items-center"
         } flex justify-between gap-4 flex  gap-4 pt-7 pb-7 sticky top-0 bg-milk z-[9999]`}
       >
         <div className="hidden sm:flex items-center gap-4 ">
@@ -221,7 +223,6 @@ function ProjectMessages() {
         </h2>
         <div className="relative w-max">
           <Select
-            isMulti
             options={tags.map((tag) => ({ value: tag, label: tag }))}
             value={selectedTags}
             onChange={handleFilter}
@@ -230,7 +231,7 @@ function ProjectMessages() {
             onFocus={toggleFilter}
             onBlur={toggleFilter}
             components={{
-              ClearIndicator: ()=> (""),
+              ClearIndicator: () => "",
               DropdownIndicator: customFilterIndicator,
             }}
           />

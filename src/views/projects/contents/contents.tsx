@@ -92,7 +92,7 @@ These are editable. These are editable notes. These are editable notes. These ar
   }, []);
   const [addContentModal, setAddContentModal] = useState(false);
   const openAddContent = (e: React.MouseEvent) => {
-    if ((e.target as Element).closest('.delete')) {
+    if ((e.target as Element).closest(".delete")) {
       return;
     }
     setAddContentModal(true);
@@ -141,25 +141,31 @@ These are editable. These are editable notes. These are editable notes. These ar
                   Content
                 </h2>
                 <div className="cursor-pointer w-[18px] h-[18px] rounded-full bg-blue flex items-center justify-center">
-                  <Icon
-                    className="icon-white stroke transition-all"
-                    icon="add"
-                    width={10}
-                    height={10}
-                  />
+                  <Link
+                    to={RoutesPath.PROJECTCONTENTS_CREATE}
+                    className="hover:scale-[1.1] ml-auto transition-all w-[18px] h-[18px] rounded-full bg-blue flex items-center justify-center"
+                  >
+                    <Icon
+                      className="nav-icon additional text-white stroke transition-all"
+                      icon="add"
+                      width={10}
+                      height={10}
+                    />
+                  </Link>
                 </div>
               </div>
               <div className="relative md:hidden flex mt-4">
                 <div
                   className={`${
-                    dropdownActive ? "rounded-t-[10px]" : " rounded-b-[10px]"
-                  } w-full flex pl-5 pr-4 items-center gap-0 justify-between bg-white rounded-t-[10px]`}
+                    dropdownActive ? "active rounded-t-[10px] pb-[0px]" : " rounded-t-[10px] rounded-b-[10px]"
+                  } w-full flex p-[1px] overflow-hidden border-gradient items-center gap-0 justify-between bg-white rounded-t-[10px]`}
                 >
+                  <div className={`${dropdownActive ? "rounded-t-[10px]" : " rounded-t-[10px] rounded-b-[10px]"} w-full bg-white w-full h-full flex pl-5 pr-4`}>
                   <div
                     onClick={handleDropdown}
                     className="flex items-center cursor-pointer"
                   >
-                    <svg
+                    <svg className={dropdownActive ? 'rotate-[90deg]' : ''}
                       width="7"
                       height="12"
                       viewBox="0 0 7 12"
@@ -196,10 +202,12 @@ These are editable. These are editable notes. These are editable notes. These ar
                       label="<p class='text-black text-xs'>Docs</p>"
                     />
                   </div>
+                  </div>
                 </div>
                 {dropdownActive && (
-                  <div className="w-full absolute top-full z-[999] bg-white pt-2 px-5 border-b">
-                    <div className="w-full flex justify-center py-6 border-t border-dashed">
+                  <div className="border-gradient w-full absolute top-full z-[999] bg-white  pt-0 p-[1px] border-b rounded-b-[10px] overflow-hidden">
+                    <div className="bg-white w-full flex justify-center  px-5 rounded-b-[10px]">
+                      <div className="w-full flex items-center justify-center py-6 border-t-2 border-dashed">
                       {!startRemovingDuplicates ? (
                         <p
                           onClick={handleDuplicateResult}
@@ -219,6 +227,7 @@ These are editable. These are editable notes. These are editable notes. These ar
                           </p>
                         </div>
                       )}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -251,114 +260,103 @@ These are editable. These are editable notes. These are editable notes. These ar
           </div>
           <div className="relative w-full bg-milk z-[9999]">
             <div className="relative md:flex hidden sticky top-[28px]">
-              <div
-                className={`${
-                  dropdownActive ? "rounded-t-[10px]" : " rounded-b-[10px]"
-                } w-full flex pl-5 pr-4 items-center gap-0 justify-between bg-white rounded-t-[10px]`}
-              >
-                <div
-                  onClick={handleDropdown}
-                  className="flex items-center cursor-pointer"
+            <div
+                  className={`${
+                    dropdownActive ? "active rounded-t-[10px] pb-[0px]" : " rounded-t-[10px] rounded-b-[10px]"
+                  } w-full flex p-[1px] overflow-hidden border-gradient items-center gap-0 justify-between bg-white rounded-t-[10px]`}
                 >
-                  <svg
-                    width="7"
-                    height="12"
-                    viewBox="0 0 7 12"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div className={`${dropdownActive ? "rounded-t-[10px]" : " rounded-t-[10px] rounded-b-[10px]"} w-full bg-white w-full h-full flex pl-5 pr-4`}>
+                  <div
+                    onClick={handleDropdown}
+                    className="flex items-center cursor-pointer"
                   >
-                    <path
-                      d="M1 1L6.25 6L1 11"
-                      stroke="#8C8FA7"
-                      strokeWidth="1.4"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+                    <svg className={dropdownActive ? 'rotate-[90deg]' : ''}
+                      width="7"
+                      height="12"
+                      viewBox="0 0 7 12"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M1 1L6.25 6L1 11"
+                        stroke="#8C8FA7"
+                        strokeWidth="1.4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <Input
+                    type="text"
+                    placeholder="Search Content"
+                    onChange={handleContentVal}
+                    value={contentVal}
+                    className="!py-3 border-none !px-4"
+                  />
+                  <div className="flex items-center gap-3">
+                    <CheckBox
+                      onCheckChange={() => handleCheckboxes}
+                      className="checkbox-primary !gap-2"
+                      name="sites"
+                      label="<p class='text-black text-xs'>Sites</p>"
                     />
-                  </svg>
-                </div>
-                <Input
-                  type="text"
-                  placeholder="Search Content"
-                  onChange={handleContentVal}
-                  value={contentVal}
-                  className="!py-3 border-none !px-4"
-                />
-                <div className="flex items-center gap-3">
-                  <CheckBox
-                    onCheckChange={() => handleCheckboxes}
-                    className="checkbox-primary !gap-2"
-                    name="sites"
-                    label="<p class='text-black text-xs'>Sites</p>"
-                  />
-                  <CheckBox
-                    onCheckChange={() => handleCheckboxes}
-                    className="checkbox-primary !gap-2"
-                    name="docs"
-                    label="<p class='text-black text-xs'>Docs</p>"
-                  />
-                </div>
-              </div>
-              {dropdownActive && (
-                <div className="w-full absolute z-[999] top-full bg-white pt-2 px-5 border-b">
-                  <div className="w-full flex justify-center py-6 border-t border-dashed">
-                    {!startRemovingDuplicates ? (
-                      <p
-                        onClick={handleDuplicateResult}
-                        className="cursor-pointer text-sm font-secondary-medium text-orange"
-                      >
-                        Remove duplicate text from 14 results
-                      </p>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <div
-                          className="animate-spin inline-block w-3 h-3 border-[2px] border-orange border-current border-t-transparent rounded-full"
-                          role="status"
-                          aria-label="loading"
-                        ></div>
-                        <p className="text-sm font-secondary-medium text-orange">
-                          1 of 14 removing
-                        </p>
-                      </div>
-                    )}
+                    <CheckBox
+                      onCheckChange={() => handleCheckboxes}
+                      className="checkbox-primary !gap-2"
+                      name="docs"
+                      label="<p class='text-black text-xs'>Docs</p>"
+                    />
+                  </div>
                   </div>
                 </div>
-              )}
+                {dropdownActive && (
+                  <div className="border-gradient w-full absolute top-full z-[999] bg-white  pt-0 p-[1px] border-b rounded-b-[10px] overflow-hidden">
+                    <div className="bg-white w-full flex justify-center  px-5 rounded-b-[10px]">
+                      <div className="w-full flex items-center justify-center py-6 border-t-2 border-dashed">
+                      {!startRemovingDuplicates ? (
+                        <p
+                          onClick={handleDuplicateResult}
+                          className="cursor-pointer text-sm font-secondary-medium text-orange"
+                        >
+                          Remove duplicate text from 14 results
+                        </p>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="animate-spin inline-block w-3 h-3 border-[2px] border-orange border-current border-t-transparent rounded-full"
+                            role="status"
+                            aria-label="loading"
+                          ></div>
+                          <p className="text-sm font-secondary-medium text-orange">
+                            1 of 14 removing
+                          </p>
+                        </div>
+                      )}
+                      </div>
+                    </div>
+                  </div>
+                )}
             </div>
 
             <div
               className={`${
                 addContentModal ? "active" : ""
-              } addContent-modal md:block sticky top-[102px] bg-white rounded-[10px] mb-6 md:mb-0`}
+              } addContent-modal z-[-1] md:block sticky top-[102px] bg-white rounded-[10px] mb-6 md:mb-0`}
             >
               <div className="w-full h-full flex justify-between items-center">
                 <div className="w-full h-full flex items-center px-5 pt-2">
                   <div className="w-full h-full border-b flex pb-3 items-center justify-between">
                     <p className="text-md text-black flex">Content</p>
                     {!editContent ? (
+                      <>
                       <Btn
                         onClick={openEditContent}
                         className="border border-gray-100 ml-auto mr-4"
                         text="Edit"
                       />
-                    ) : (
-                      <>
-                        <div className="flex gap-4 px-4 py-2 items-center ml-auto">
-                          <Btn
-                            onClick={closEeditContent}
-                            text="Cancel"
-                            className="action-btn danger !p-0"
-                          />
-                          <Btn
-                            onClick={handleEditContent}
-                            text="Save"
-                            className="action-btn border border-green px-3 !py-1 hover:bg-green success transition-all"
-                          />
-                        </div>
-                      </>
-                    )}
-                    <div
+                      <div
                       onClick={closeAddContentModal}
-                      className="flex sm:hidden cursor-pointer"
+                      className="flex md:hidden cursor-pointer pt-2"
                     >
                       <svg
                         width="22"
@@ -417,6 +415,24 @@ These are editable. These are editable notes. These are editable notes. These ar
                         </defs>
                       </svg>
                     </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex gap-4 px-4 py-2 items-center ml-auto">
+                          <Btn
+                            onClick={closEeditContent}
+                            text="Cancel"
+                            className="action-btn danger !p-0"
+                          />
+                          <Btn
+                            onClick={handleEditContent}
+                            text="Save"
+                            className="action-btn border border-green px-3 !py-1 hover:bg-green success transition-all"
+                          />
+                        </div>
+                      </>
+                    )}
+                   
                   </div>
                 </div>
               </div>

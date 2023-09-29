@@ -7,9 +7,11 @@ interface FilterProps {
   active: string;
   onFilter: (value: filterBtnConfigTypes["value"]) => void;
   className?: string
+  classNameParent? : string
+  
 }
 
-function Filter({ filterBtnConfig, active, onFilter, className='' }: FilterProps) {
+function Filter({ filterBtnConfig, active, onFilter, className='', classNameParent='' }: FilterProps) {
   const handleFilter = (value: filterBtnConfigTypes["value"]) => {
     setActiveFilter(value.toLowerCase());
     onFilter(value.toLowerCase());
@@ -17,7 +19,7 @@ function Filter({ filterBtnConfig, active, onFilter, className='' }: FilterProps
   const [activeFilter, setActiveFilter] = useState(active);
 
   return (
-    <div className="flex items-center p-1 bg-white rounded-[5px] w-max">
+    <div className={`${classNameParent} flex items-center p-1 bg-white rounded-[5px] w-max`}>
       {filterBtnConfig.map((button, index) => (
         <div className={className} onClick={() => handleFilter(button.value)} key={index}>
           <Btn

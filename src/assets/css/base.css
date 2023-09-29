@@ -290,7 +290,7 @@ body {
   color: theme("colors.green");
 }
 .primary-btn.stroke-icon svg {
-  stroke: theme('colors.white');
+  stroke: theme("colors.white");
 }
 .icon.text-white.stroke svg {
   stroke: white;
@@ -354,7 +354,7 @@ body {
 .CircularProgressbar-text {
   fill: theme("colors.black") !important;
   font-size: theme("fontSize.base") !important;
-  font-family: theme('fontFamily.secondary-regular');
+  font-family: theme("fontFamily.secondary-regular");
 }
 
 .CircularProgressbar .CircularProgressbar-trail {
@@ -366,11 +366,11 @@ body {
   height: 135px;
 }
 .CircularProgressbar-path {
-  stroke: theme('colors.blue') !important;
+  stroke: theme("colors.blue") !important;
   stroke-linecap: butt !important;
 }
 
-@media screen and (max-width: theme('screens.md')) {
+@media screen and (max-width: theme("screens.md")) {
   .addContent-modal {
     position: fixed;
     width: 100%;
@@ -386,4 +386,78 @@ body {
   .addContent-modal #scroll-container {
     height: 70vh;
   }
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  border-radius: 240px;
+}
+
+/* Track */
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 240px;
+}
+
+/* Handle */
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #d6dfe8;
+  border-radius: 240px;
+}
+
+/* Handle on hover */
+/* .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #d7d7d7;
+} */
+
+.border-gradient {
+  background: linear-gradient(
+    rgba(122, 137, 254, 1),
+    rgba(192, 184, 247, 1),
+    rgba(203, 45, 128, 1),
+    rgba(242, 164, 81, 1)
+  );
+}
+
+.step {
+  border-color: theme('colors.blue');
+}
+.step .btn {
+  width: 90px;
+  justify-content: center;
+  border-radius: 9px;
+  background: theme('colors.blue');
+}
+.step .btn .btn-text {
+  color: theme('colors.white');
+}
+.step.disabled {
+  border-color: theme('colors.gray.100');
+}
+.step.disabled .text {
+  color: theme('colors.gray.100');
+}
+.step.disabled .btn {
+  background: theme('colors.gray.100');
+  cursor: not-allowed;
+}
+.step.success {
+  background: rgba(122, 137, 254, 0.05);
+}
+.step.success .text {
+  text-decoration: line-through;
+}
+.step.success .btn  {
+  background: theme('colors.green');
+}
+
+.filter-messages {
+  width: 100%;
+  padding: 0px !important;
+}
+
+.filter-messages button.active {
+  background: #F2F2F2;
+}
+.filter-messages button.active .btn-text {
+  color: theme('colors.black')
 }

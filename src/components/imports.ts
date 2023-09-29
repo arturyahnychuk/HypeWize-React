@@ -17,6 +17,7 @@ import Tooltip from "@/components/tooltip/tooltip";
 import Table from "@/components/table/table";
 import PricingCard from "@/components/pricing-card/pricingCard";
 import ProgressCard from "@/components/progress/progressCard";
+import ProgressBar from "@/components/progress/progressBar";
 export {
   DefaultLayout,
   AuthLayout,
@@ -36,5 +37,6 @@ export {
   Tooltip,
   Table,
   PricingCard,
-  ProgressCard
+  ProgressCard,
+  ProgressBar
 };

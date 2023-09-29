@@ -27,17 +27,20 @@ function SettingsPage() {
   const [googleConntected, setGoogleConntected] = useState(true);
   const [hubspotConntected, setHubspotConntected] = useState(false);
   const [isCopied, setIsCopied] = useState(Array(apisArr.length).fill(false));
-  const [apiValues, setApiValues] = useState(apisArr.map(api => api.val));
+  const [apiValues, setApiValues] = useState(apisArr.map((api) => api.val));
 
-  const handleApiInputValues = (e: ChangeEvent<HTMLInputElement>, index: number) => {
+  const handleApiInputValues = (
+    e: ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
     const { value } = e.target;
-  
+
     // Create a copy of the current API values array
     const updatedApiValues = [...apiValues];
-  
+
     // Update the value at the specified index
     updatedApiValues[index] = value;
-  
+
     // Set the updated API values array in the state
     setApiValues(updatedApiValues);
   };
@@ -218,86 +221,94 @@ function SettingsPage() {
               </div>
               <Btn
                 className="ml-auto action-btn success stroke hover-green"
-                text="Add Field"
+                text="Create API"
                 icon={true}
                 name="add"
                 width={16}
                 height={16}
               />{" "}
             </div>
-            {apisArr.map((api, index) => (
-              <div className="w-full flex border-2 border-dashed border-gray-100 p-5 rounded-[10px]">
-                <div className="w-full flex flex-col items-start">
-                  <div className={`${editModes[index] ? 'flex-col-reverse' : 'flex-row'} md:flex-row w-full flex gap-4 items-center justify-between`}>
-                    <div className="flex w-full items-center gap-3">
-                      {!editModes[index] ? (
-                        <p className="text-sm text-black font-secondary-medium tracking-[-2%]">
-                          {api.val}
-                        </p>
-                      ) : (
-                        <Input
-                          type="text"
-                          className="w-full"
-                          placeholder=""
-                          value={apiValues[index]}
-                          onChange={(e)=> handleApiInputValues(e, index)}
-                        />
-                      )}
-                      {!editModes[index] && (
+            <div className="w-full">
+              <div className="flex flex-col gap-4 max-h-[calc(100vh-220px)] pr-3 overflow-auto custom-scrollbar">
+                {apisArr.map((api, index) => (
+                  <div className="w-full flex border-2 border-dashed border-gray-100 p-5 rounded-[10px]">
+                    <div className="w-full flex flex-col items-start">
+                      <div
+                        className={`${
+                          editModes[index] ? "flex-col-reverse" : "flex-row"
+                        } md:flex-row w-full flex gap-4 items-center justify-between`}
+                      >
+                        <div className="flex w-full items-center gap-3">
+                          {!editModes[index] ? (
+                            <p className="text-sm text-black font-secondary-medium tracking-[-2%]">
+                              {api.val}
+                            </p>
+                          ) : (
+                            <Input
+                              type="text"
+                              className="w-full"
+                              placeholder=""
+                              value={apiValues[index]}
+                              onChange={(e) => handleApiInputValues(e, index)}
+                            />
+                          )}
+                          {!editModes[index] && (
+                            <Btn
+                              onClick={() => handleEditClick(index)}
+                              className="border border-gray-100 !px-3 !py-1"
+                              text="Edit"
+                            />
+                          )}
+                        </div>
+                        {!editModes[index] ? (
+                          <div className="flex items-center">
+                            <div
+                              onClick={() => handleDelete(index)}
+                              className="cursor-pointer"
+                            >
+                              <Icon
+                                icon="delete"
+                                width={18}
+                                height={18}
+                                className="danger-icon"
+                              />
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex gap-4 pl-4 py-2 items-center ml-auto">
+                            <Btn
+                              onClick={() => handleCancel(index)}
+                              text="Cancel"
+                              className="action-btn danger !p-0"
+                            />
+                            <Btn
+                              onClick={() => handleAdd(index)}
+                              text="Save"
+                              className="action-btn border border-green px-3 !py-1 hover:bg-green success transition-all"
+                            />
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-black font-secondary-regular text-xs tracking-[-2%] my-5">
+                        Created at {api.created_at}
+                      </p>
+                      {isCopied[index] ? (
                         <Btn
-                          onClick={() => handleEditClick(index)}
-                          className="border border-gray-100 !px-3 !py-1"
-                          text="Edit"
+                          text="Copied"
+                          className="primary-btn fill w-full text-center !py-4 justify-center"
+                        />
+                      ) : (
+                        <Btn
+                          onClick={() => handleCopy(index)}
+                          text="Copy Key"
+                          className="primary-btn fill w-full text-center !py-4 justify-center"
                         />
                       )}
                     </div>
-                    {!editModes[index] ? (
-                      <div className="flex items-center">
-                        <div
-                          onClick={() => handleDelete(index)}
-                          className="cursor-pointer"
-                        >
-                          <Icon
-                            icon="delete"
-                            width={18}
-                            height={18}
-                            className="danger-icon"
-                          />
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex gap-4 px-4 py-2 items-center ml-auto">
-                        <Btn
-                          onClick={() => handleCancel(index)}
-                          text="Cancel"
-                          className="action-btn danger !p-0"
-                        />
-                        <Btn
-                          onClick={() => handleAdd(index)}
-                          text="Add"
-                          className="action-btn border border-green px-3 !py-1 hover:bg-green success transition-all"
-                        />
-                      </div>
-                    )}
                   </div>
-                  <p className="text-black font-secondary-regular text-xs tracking-[-2%] my-5">
-                    Created at {api.created_at}
-                  </p>
-                  {isCopied[index] ? (
-                    <Btn
-                      text="Copied"
-                      className="primary-btn fill w-full text-center !py-4 justify-center"
-                    />
-                  ) : (
-                    <Btn
-                      onClick={() => handleCopy(index)}
-                      text="Copy Key"
-                      className="primary-btn fill w-full text-center !py-4 justify-center"
-                    />
-                  )}
-                </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>

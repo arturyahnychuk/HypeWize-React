@@ -128,8 +128,8 @@ function ProjectInfo() {
               placeholder=""
             />
           </div>
-          <div className="w-full flex flex-col gap-5 bg-white px-5 py-4 rounded-[10px]">
-            <div className="flex items-center gap-4">
+          <div className="w-full flex flex-col gap-5 bg-white pr-2 py-4 rounded-[10px]">
+            <div className="flex items-center gap-4 px-5">
               <label htmlFor="welcome_message">Forms</label>
               <Tooltip
                 type="info"
@@ -153,41 +153,34 @@ function ProjectInfo() {
                 height={16}
               />
             </div>
-            <div className="relative">
-              <Input
-                onInput={handleFormsDataChange}
-                type="text"
-                name="name"
-                value={formsData.name}
-                placeholder="Name"
-              />
-            </div>
-            {inputFields.map((value, index) => (
-              <div
-                key={index}
-                className="relative"
-                style={{ marginBottom: "10px" }}
-              >
-                <Input
-                  type="text"
-                  value={value}
-                  onChange={(e) =>
-                    handleDynamicFormsDataChange(index, e.target.value)
-                  }
-                />
+            <div className="h-full max-h-[130px] overflow-auto custom-scrollbar pl-5 pr-2 ">
+              {inputFields.map((value, index) => (
                 <div
-                  onClick={() => handleRemoveField(index)}
-                  className="absolute top-[50%] translate-y-[-50%] right-5 cursor-pointer"
+                  key={index}
+                  className="relative"
+                  style={{ marginBottom: "10px" }}
                 >
-                  <Icon
-                    icon="delete"
-                    className="danger-icon"
-                    width={18}
-                    height={18}
+                  <Input
+                    type="text"
+                    value={value}
+                    onChange={(e) =>
+                      handleDynamicFormsDataChange(index, e.target.value)
+                    }
                   />
+                  <div
+                    onClick={() => handleRemoveField(index)}
+                    className="absolute top-[50%] translate-y-[-50%] right-5 cursor-pointer"
+                  >
+                    <Icon
+                      icon="delete"
+                      className="danger-icon"
+                      width={18}
+                      height={18}
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
           <div className="w-full flex flex-col gap-5 bg-white px-5 py-4 rounded-[10px]">
             <div className="flex items-center justify-between w-full">
@@ -250,8 +243,11 @@ function ProjectInfo() {
                     <div className="flex flex-col gap-2 max-w-[75%]">
                       <div className="p-4 pr-6 bg-gray-500 rounded-[12px] break-word w-full">
                         <p className="text-black2 leading-[20px]">
-                          {agentName && "Hi, my name is " + agentName + "!"}{" "}
-                          {welcomeMessage ? welcomeMessage : ""}
+                          {agentName
+                            ? "Hi, my name is " + agentName + "!"
+                            : welcomeMessage
+                            ? welcomeMessage
+                            : ""}
                         </p>
                       </div>
                       <p className="text-black2 text-[10px]">Bot 10:40PM</p>
