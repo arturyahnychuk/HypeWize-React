@@ -11,12 +11,12 @@ import {
   Projects,
   ProjectInfo,
   ProjectMessages,
+  Chatbot,
   MessagesSingle,
   ContentsPage,
   BillingsPage,
   ContentCreatePage,
   UsagePage,
-  
   SettingsPage,
   StarterPage,
 } from "@/views/imports";
@@ -26,6 +26,10 @@ import { DefaultLayout, AuthLayout } from "@/components/imports";
 import { RoutesPath } from "@/types/imports";
 
 const routes = createBrowserRouter([
+  {
+    path: RoutesPath.CHATBOT,
+    element: <Chatbot />,
+  },
   {
     path: "/auth",
     element: <AuthLayout />,
@@ -99,8 +103,8 @@ const routes = createBrowserRouter([
       },
       {
         path: RoutesPath.STARTER_GUIDE,
-        element: <StarterPage />
-      }
+        element: <StarterPage />,
+      },
     ],
   },
 ]);

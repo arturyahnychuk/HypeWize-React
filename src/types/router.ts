@@ -14,6 +14,7 @@ export const RoutesPath = {
   PROJECTMESSAGESSINGLE: "/projects/messages/:id",
   PROJECTCONTENTS: "/projects/contents",
   PROJECTCONTENTS_CREATE: "/projects/contents/create-content",
+  CHATBOT: "/projects/chatbot",
   BILLINGS: "/billings",
   USAGE: "/usage",
 

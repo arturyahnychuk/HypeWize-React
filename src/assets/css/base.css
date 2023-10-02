@@ -271,6 +271,10 @@ body {
   fill: transparent;
   stroke: theme("colors.white");
 }
+.icon-primary.stroke svg {
+  fill: transparent;
+  stroke: theme("colors.blue");
+}
 .icon-white svg {
   stroke: transparent;
   fill: theme("colors.white");

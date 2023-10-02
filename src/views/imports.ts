@@ -14,6 +14,7 @@ import BillingsPage from "@/views/billings/index";
 import ContentCreatePage from "@/views/projects/contents/contentCreate";
 import UsagePage from "@/views/usage";
 import SettingsPage from "@/views/settings";
+import Chatbot from "@/views/projects/chatbot/chatbot";
 
 export {
   StarterPage,
@@ -31,4 +32,5 @@ export {
   ContentCreatePage,
   UsagePage,
   SettingsPage,
+  Chatbot,
 };
