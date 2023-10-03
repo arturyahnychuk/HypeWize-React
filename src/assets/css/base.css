@@ -423,25 +423,25 @@ body {
 }
 
 .step {
-  border-color: theme('colors.blue');
+  border-color: theme("colors.blue");
 }
 .step .btn {
   width: 90px;
   justify-content: center;
   border-radius: 9px;
-  background: theme('colors.blue');
+  background: theme("colors.blue");
 }
 .step .btn .btn-text {
-  color: theme('colors.white');
+  color: theme("colors.white");
 }
 .step.disabled {
-  border-color: theme('colors.gray.100');
+  border-color: theme("colors.gray.100");
 }
 .step.disabled .text {
-  color: theme('colors.gray.100');
+  color: theme("colors.gray.100");
 }
 .step.disabled .btn {
-  background: theme('colors.gray.100');
+  background: theme("colors.gray.100");
   cursor: not-allowed;
 }
 .step.success {
@@ -450,8 +450,8 @@ body {
 .step.success .text {
   text-decoration: line-through;
 }
-.step.success .btn  {
-  background: theme('colors.green');
+.step.success .btn {
+  background: theme("colors.green");
 }
 
 .filter-messages {
@@ -460,8 +460,65 @@ body {
 }
 
 .filter-messages button.active {
-  background: #F2F2F2;
+  background: #f2f2f2;
 }
 .filter-messages button.active .btn-text {
-  color: theme('colors.black')
+  color: theme("colors.black");
+}
+
+.pagination li a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  border: 1px solid theme("colors.gray.300");
+  font-size: theme("fontSize.xs");
+  color: theme("colors.gray.300");
+  transition: all 0.2s ease;
+}
+.pagination li.break a {
+  width: 15px;
+  border: transparent !important;
+  background: transparent !important;
+}
+.pagination li a:hover {
+  background: rgba(122, 137, 254, 0.2);
+  border-color: theme("colors.blue");
+  transition: all 0.2s ease;
+}
+.pagination li.active a {
+  background: rgba(122, 137, 254, 0.2);
+  border-color: theme("colors.blue");
+  color: theme("colors.blue");
+  transition: all 0.2s ease;
+}
+.pagination li a svg path {
+  stroke: theme("colors.gray.300");
+}
+
+.pagination li.disabled a svg path {
+  stroke: theme("colors.gray.400");
+}
+
+.pagination li.disabled a {
+  border-color: theme("colors.gray.400") !important;
+  background: transparent !important;
+  cursor: not-allowed !important;
+}
+.pagination li.next.disabled a {
+  border-color: theme("colors.gray.400") !important;
+  background: transparent !important;
+  cursor: not-allowed !important;
+}
+
+.pagination li.next svg path,
+.pagination li.previous svg path {
+  stroke: theme("colors.white");
+}
+.pagination li.next a,
+.pagination li.previous a {
+  border-color: transparent;
+  background: theme("colors.blue");
 }

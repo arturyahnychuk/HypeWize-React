@@ -18,6 +18,7 @@ import Table from "@/components/table/table";
 import PricingCard from "@/components/pricing-card/pricingCard";
 import ProgressCard from "@/components/progress/progressCard";
 import ProgressBar from "@/components/progress/progressBar";
+import PaginationComponent from "@/components/pagination/pagination";
 export {
   DefaultLayout,
   AuthLayout,
@@ -38,5 +39,6 @@ export {
   Table,
   PricingCard,
   ProgressCard,
-  ProgressBar
+  ProgressBar,
+  PaginationComponent
 };

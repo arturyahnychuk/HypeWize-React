@@ -1,5 +1,5 @@
 import React from "react";
-import { Icon } from "../imports";
+import { Icon, PaginationComponent } from "../imports";
 import { Link } from "react-router-dom";
 import { RoutesPath } from "@/types/router";
 
@@ -109,6 +109,9 @@ function Table({ data }: TableProps) {
             </Link>
           ))}
         </div>
+      </div>
+      <div className="mt-8 w-full flex justify-center">
+      <PaginationComponent pageCount={10} />
       </div>
     </div>
   );

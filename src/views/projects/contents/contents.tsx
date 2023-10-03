@@ -4,6 +4,7 @@ import {
   Icon,
   Input,
   PageLayout,
+  PaginationComponent,
   Textarea,
 } from "@/components/imports";
 import { RoutesPath } from "@/types/router";
@@ -256,6 +257,9 @@ These are editable. These are editable notes. These are editable notes. These ar
                   </div>
                 </div>
               ))}
+              <div className="py-5 flex w-full justify-center">
+              <PaginationComponent pageCount={10} />
+              </div>
             </div>
           </div>
           <div className="relative w-full bg-milk z-[9999]">

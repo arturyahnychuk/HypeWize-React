@@ -106,8 +106,8 @@ function ContentCreatePage() {
             </div>
           </div>
 
-          <div className="w-full max-w-[80%] mx-auto">
-            <div className="flex items-center gap-4 mt-[60px]">
+          <div className="w-full max-w-[80%] mx-auto pb-[116px]">
+            <div className="flex items-center gap-4 mt-[60px] mb-[60px]">
               <div className="w-full h-[1px] bg-gray-100"></div>
               <p className="text-md text-gray-100">or</p>
               <div className="w-full h-[1px] bg-gray-100"></div>
