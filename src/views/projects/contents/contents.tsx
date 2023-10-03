@@ -117,10 +117,10 @@ These are editable. These are editable notes. These are editable notes. These ar
   return (
     <PageLayout>
       <div className="flex items-center justify-between gap-4 h-full">
-        <div className="w-full grid md:grid-cols-2 gap-[10px]">
+        <div className="w-full grid lg:grid-cols-2 gap-[10px]">
           <div className="w-full pb-4">
-            <div className="pt-7 pb-[20px] sm:pb-[34px] sticky top-0 bg-milk z-[9999]">
-              <div className="hidden md:flex items-center gap-4">
+            <div className="pt-7 pb-[20px] lg:pb-[34px] sticky top-0 bg-milk z-[9999]">
+              <div className="hidden lg:flex items-center gap-4">
                 <h2 className="font-secondary-medium text-2xl text-black tracking-[-2%]">
                   Project Name
                 </h2>
@@ -136,7 +136,7 @@ These are editable. These are editable notes. These are editable notes. These ar
                   />
                 </Link>
               </div>
-              <div className="flex md:hidden items-center gap-4">
+              <div className="flex lg:hidden items-center gap-4">
                 <h2 className="font-secondary-medium text-2xl text-black tracking-[-2%]">
                   Content
                 </h2>
@@ -154,7 +154,7 @@ These are editable. These are editable notes. These are editable notes. These ar
                   </Link>
                 </div>
               </div>
-              <div className="relative md:hidden flex mt-4">
+              <div className="relative lg:hidden flex mt-4">
                 <div
                   className={`${
                     dropdownActive ? "active rounded-t-[10px] pb-[0px]" : " rounded-t-[10px] rounded-b-[10px]"
@@ -259,7 +259,7 @@ These are editable. These are editable notes. These are editable notes. These ar
             </div>
           </div>
           <div className="relative w-full bg-milk z-[9999]">
-            <div className="relative md:flex hidden sticky top-[28px]">
+            <div className="relative lg:flex hidden sticky top-[28px]">
             <div
                   className={`${
                     dropdownActive ? "active rounded-t-[10px] pb-[0px]" : " rounded-t-[10px] rounded-b-[10px]"
@@ -341,7 +341,7 @@ These are editable. These are editable notes. These are editable notes. These ar
             <div
               className={`${
                 addContentModal ? "active" : ""
-              } addContent-modal z-[-1] md:block sticky top-[102px] bg-white rounded-[10px] mb-6 md:mb-0`}
+              } addContent-modal z-[-1] lg:block sticky top-[102px] bg-white rounded-[10px] mb-6 lg:mb-0`}
             >
               <div className="w-full h-full flex justify-between items-center">
                 <div className="w-full h-full flex items-center px-5 pt-2">
@@ -356,7 +356,7 @@ These are editable. These are editable notes. These are editable notes. These ar
                       />
                       <div
                       onClick={closeAddContentModal}
-                      className="flex md:hidden cursor-pointer pt-2"
+                      className="flex lg:hidden cursor-pointer pt-2"
                     >
                       <svg
                         width="22"

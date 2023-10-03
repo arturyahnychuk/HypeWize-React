@@ -29,7 +29,7 @@ function BillingsPage() {
           Billings
         </h2>
       </div>
-      <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-[10px]">
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[10px]">
         <PricingCard title="You are currently subscribe to this package." planTitle="Professional Plan" offers={proPlanOffers}/>
       </div>
     </PageLayout>

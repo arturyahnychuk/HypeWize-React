@@ -28,12 +28,12 @@ function Sidebar({ navbarActive, onNavClose }: SidebarProps) {
     <aside
       className={`${
         navbarActive ? "left-0" : "left-[-300%]"
-      } absolute md:relative md:left-0 w-full h-screen bg-white pt-6 pb-10 transition-all z-[999999]`}
+      } absolute lg:relative lg:left-0 w-full h-screen bg-white pt-6 pb-10 transition-all z-[999999]`}
     >
       <div className="w-full h-full flex flex-col justify-between ">
         <div className="w-full flex flex-col gap-6">
           <div className="pl-4 pr-6 w-full flex items-center">
-            <div className="w-full flex justify-between md:justify-center pb-6 border-b border-gray-100">
+            <div className="w-full flex justify-between lg:justify-center pb-6 border-b border-gray-100">
               <Link onClick={handleNavClose} to={RoutesPath.HOME}>
                 <h1 className="text-blue text-2xl font-main-semibold tracking-[-2%]">
                   HypeWize
@@ -41,7 +41,7 @@ function Sidebar({ navbarActive, onNavClose }: SidebarProps) {
               </Link>
               <div
                 onClick={handleNavClose}
-                className="md:hidden mt-2 flex cursor-pointer opacity-80 hover:opacity-100"
+                className="lg:hidden mt-2 flex cursor-pointer opacity-80 hover:opacity-100"
               >
                 <img width={20} src={CloseImage} alt="" />
               </div>

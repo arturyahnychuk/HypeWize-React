@@ -11,7 +11,7 @@ function Header({ onClick }: HeaderProps) {
     onClick() 
   ]
   return (
-    <div className="flex md:hidden w-full bg-white shadow-sm flex items-center justify-between py-[22px] px-6">
+    <div className="flex lg:hidden w-full bg-white shadow-sm flex items-center justify-between py-[22px] px-6">
       <Link to={RoutesPath.HOME}>
         <h1 className="text-blue text-2xl font-main-semibold tracking-[-2%]">
           HypeWize

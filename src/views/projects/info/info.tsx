@@ -90,7 +90,7 @@ function ProjectInfo() {
         </Link>
       </div>
 
-      <div className="w-full grid md:grid-cols-2 gap-5">
+      <div className="w-full grid lg:grid-cols-2 gap-5">
         <div className="w-full flex flex-col gap-5">
           <div
             onClick={openChat}
@@ -232,7 +232,7 @@ function ProjectInfo() {
         <div
           className={`${
             chatActive ? "h-[calc(100vh-131px)]" : "h-[calc(100vh-171px)]"
-          } sticky top-[95px] w-full hidden sm:flex pb-10 md:pb-0 bg-white rounded-[10px]`}
+          } sticky top-[95px] w-full hidden lg:flex pb-10 md:pb-0 bg-white rounded-[10px]`}
         >
           {chatActive ? (
             <div className="w-full h-full rounded-[10px]">

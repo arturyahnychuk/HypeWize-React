@@ -106,7 +106,7 @@ function SettingsPage() {
         </h2>
       </div>
 
-      <div className="w-full grid md:grid-cols-2 gap-[10px] mb-6">
+      <div className="w-full grid lg:grid-cols-2 gap-[10px] mb-6">
         <div className="w-full flex flex-col gap-5">
           <div className="w-full flex gap-5 bg-white px-5 py-4 rounded-[10px]">
             <div className="w-full flex flex-col gap-4 items-start gap-4">

@@ -85,14 +85,14 @@ body {
   display: flex;
   gap: 15px;
 }
-@media screen and (min-width: theme("screens.xl")) {
+@media screen and (min-width: theme("screens.lg")) {
   .layout.grid {
     grid-template-columns: 1fr 1fr 1fr 1fr !important;
   }
 }
 @media screen and (min-width: theme("screens.md")) {
   .layout.grid {
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
   }
   .layout.list .main {
     gap: 30px;
@@ -374,7 +374,7 @@ body {
   stroke-linecap: butt !important;
 }
 
-@media screen and (max-width: theme("screens.md")) {
+@media screen and (max-width: theme("screens.lg")) {
   .addContent-modal {
     position: fixed;
     width: 100%;

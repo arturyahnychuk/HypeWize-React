@@ -127,11 +127,11 @@ function Chatbot() {
       ) : (
         <>
         <div className="w-full h-full">
-          <div className="w-full h-full grid grid grid-rows-[auto,1fr] bg-white pt-[29px] px-[19px] pr-[9px] sm:pr-[19px]">
+          <div className="w-full h-full grid grid grid-rows-[auto,1fr] bg-white px-[19px] pr-[9px] sm:pr-[19px]">
             {/* */}
             <div className="w-full h-full">
-              <div className="w-full h-full grid grid-rows-[1fr,auto] gap-5">
-                <div className="w-full h-[calc(100vh-167px)] sm:h-[calc(100vh-184px)] pr-3 custom-scrollbar overflow-auto">
+              <div className="w-full h-full grid grid-rows-[1fr,auto] gap-1">
+                <div className="w-full h-[calc(100vh-138px)] sm:h-[calc(100vh-138px)] pr-3 custom-scrollbar overflow-auto pt-4">
                   <div className="w-full h-full flex flex-col gap-[11px]">
                     <div className="flex items-start gap-4">
                       <img
