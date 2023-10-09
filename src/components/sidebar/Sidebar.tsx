@@ -48,7 +48,7 @@ function Sidebar({ navbarActive, onNavClose }: SidebarProps) {
             </div>
           </div>
           <div className="pr-2">
-            <nav className="pl-4 pr-2  relative w-full h-[calc(100vh-300px)] overflow-auto custom-scrollbar">
+            <nav className="pl-4 pr-2  relative w-full h-[calc(100vh-320px)] overflow-auto custom-scrollbar">
               <ul className="w-full flex flex-col gap-3">
                 <NavLink
                   onClick={handleNavClose}
@@ -226,14 +226,14 @@ function Sidebar({ navbarActive, onNavClose }: SidebarProps) {
               </NavLink>
             )}
           </div>
-          <div>
+          <div className="flex items-start w-full gap-3 flex-col">
             <NavLink
               onClick={handleNavClose}
               to={RoutesPath.SETTINGS}
               className={({ isActive }) =>
                 `${
                   isActive ? "nav-active" : ""
-                } flex items-center gap-3 px-4 py-3 rounded-md group hover:bg-blue transition-all`
+                } flex w-full items-center gap-3 px-4 py-3 rounded-md group hover:bg-blue transition-all`
               }
             >
               <Icon
@@ -252,7 +252,7 @@ function Sidebar({ navbarActive, onNavClose }: SidebarProps) {
               className={({ isActive }) =>
                 `${
                   isActive ? "nav-active" : ""
-                } flex items-center gap-3 px-4 py-3 rounded-md group hover:bg-blue transition-all`
+                } flex w-full items-center gap-3 px-4 py-3 rounded-md group hover:bg-blue transition-all`
               }
             >
               <Icon
