@@ -1,6 +1,10 @@
 import { GoogleImage, HubspotImage } from "@/assets/imports";
 import { Btn, Icon, Input, PageLayout, Tooltip } from "@/components/imports";
-import { ChangeEvent, useState } from "react";
+import useAuthStore from "@/store/auth";
+import { APIType } from "@/store/types";
+import axios from "axios";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 function SettingsPage() {
   const [settingsData, setSettingsData] = useState({
@@ -9,65 +13,75 @@ function SettingsPage() {
     email: "",
   });
   const [isVerified, setIsVerified] = useState(false);
-  const apisArr = [
-    {
-      val: "Sample API",
-      created_at: "2023-07-21 3:00pm",
-    },
-    {
-      val: "Sample API2",
-      created_at: "2023-07-21 3:00pm",
-    },
-    {
-      val: "Sample API3",
-      created_at: "2023-07-21 3:00pm",
-    },
-  ];
-  const [editModes, setEditModes] = useState(Array(apisArr.length).fill(false));
-  const [googleConntected, setGoogleConntected] = useState(true);
+
+  const { profileInfo } = useAuthStore();
+  const [googleConntected, setGoogleConntected] = useState(false);
   const [hubspotConntected, setHubspotConntected] = useState(false);
-  const [isCopied, setIsCopied] = useState(Array(apisArr.length).fill(false));
-  const [apiValues, setApiValues] = useState(apisArr.map((api) => api.val));
+  const [apis, setApis] = useState<APIType[]>([]);
+  const [isCopied, setIsCopied] = useState<string>("");
+  const [selectedApi, setSelectedApi] = useState<APIType | null>(null);
 
-  const handleApiInputValues = (
-    e: ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    const { value } = e.target;
+  const accessToken = localStorage.getItem("access_token");
 
-    // Create a copy of the current API values array
-    const updatedApiValues = [...apiValues];
-
-    // Update the value at the specified index
-    updatedApiValues[index] = value;
-
-    // Set the updated API values array in the state
-    setApiValues(updatedApiValues);
+  const handleHubspotConnect = () => {
+    // setHubspotConntected(true);
+    location.replace(`${import.meta.env.VITE_API_ENDPOINT}/auth/hubspot`)
   };
 
-  const handleCopy = (index: number) => {
-    // Create a new array with the updated value at the specified index
-    const newIsCopied = [...isCopied];
-    newIsCopied[index] = true; // Set it to true when copying
-
-    setIsCopied(newIsCopied);
-
-    setTimeout(() => {
-      // Reset the value to false after 1000 milliseconds
-      setIsCopied((prevState) => {
-        const updatedIsCopied = [...prevState];
-        updatedIsCopied[index] = false;
-        return updatedIsCopied;
-      });
-    }, 1000);
+  const handleGoogleConnect = () => {
+    // setGoogleConntected(true);
+    location.replace(`${import.meta.env.VITE_API_ENDPOINT}/auth/google`)
   };
 
-  const handleHubspotConntect = () => {
-    setHubspotConntected(true);
+  const handleKeyDown = async (keyBoard: any, fieldType: string) => {
+
+    if (keyBoard.code == "Enter" || keyBoard.code == "NumpadEnter") handleUpdateUserName(fieldType);
+
   };
-  const handleSentVerify = () => {
-    setIsVerified(true);
-  };
+
+  const handleUpdateUserName = useCallback(async (fieldType: string) => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+
+    const data = fieldType == "firstname" ? {
+      firstname: settingsData.first_name
+    } : {
+      lastname: settingsData.last_name
+    }
+
+    await axios.patch(
+      `${import.meta.env.VITE_API_ENDPOINT}/users/${profileInfo?.id}` || "",
+      data,
+      config
+    ).then(() => {
+      console.log("Verification Email Sent!");
+    }).catch((err) => {
+      console.log(err);
+    });
+  }, [settingsData])
+
+  const handleSentVerify = useCallback(async () => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+
+    await axios.post(
+      `${import.meta.env.VITE_API_ENDPOINT}/auth/send-verification-email` || "",
+      { email: settingsData.email },
+      config
+    ).then(() => {
+      console.log("Verification Email Sent!");
+    }).catch((err) => {
+      console.log(err);
+    });
+
+  }, [settingsData]);
+
   const handleFormsDataChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setSettingsData({
@@ -75,28 +89,110 @@ function SettingsPage() {
       [name]: value,
     });
   };
-  const handleDelete = (index: number) => {
-    alert(`Delete ${index}`);
-  };
-  const handleEditClick = (index: number) => {
-    const newEditModes = [...editModes];
-    newEditModes[index] = !newEditModes[index];
-    setEditModes(newEditModes);
-  };
-  const handleCancel = (index: number) => {
-    const newEditModes = [...editModes];
-    newEditModes[index] = false;
-    setEditModes(newEditModes);
 
-    const updatedApiValues = [...apiValues];
-    updatedApiValues[index] = apisArr[index].val;
-    setApiValues(updatedApiValues);
+  const handleDelete = async (api: APIType) => {
+    try {
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+
+      const res = await axios.delete(
+        `${import.meta.env.VITE_API_ENDPOINT}/apis/${api.id}`, config
+      );
+
+      console.log("res:", res);
+      getApis();
+    } catch (error) {
+      console.log(error);
+    }
   };
-  const handleAdd = (index: number) => {
-    const newEditModes = [...editModes];
-    newEditModes[index] = false;
-    setEditModes(newEditModes);
+
+  const handleEditClick = (api: APIType) => {
+    setSelectedApi(api);
   };
+
+  const handleCancel = () => {
+    setSelectedApi(null);
+  };
+
+  const handleUpdateAPI = async (api: APIType) => {
+    try {
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+
+      const res = await axios.patch(
+        `${import.meta.env.VITE_API_ENDPOINT}/apis/${api.id}`,
+        {
+          name: api.name
+        },
+        config
+      );
+
+      console.log("res:", res);
+      getApis();
+      setSelectedApi(null);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCreateNewAPI = async () => {
+    try {
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_ENDPOINT}/apis`, {}, config
+      );
+
+      console.log("res:", res);
+      getApis();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const getApis = async () => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_ENDPOINT}/apis`,
+        config
+      );
+
+      setApis(response.data.results);
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    if (!profileInfo) return;
+    getApis();
+    setSettingsData({
+      email: profileInfo.email,
+      first_name: profileInfo.firstname || "",
+      last_name: profileInfo.lastname || "",
+    });
+    setGoogleConntected(profileInfo.google.activated);
+    setHubspotConntected(profileInfo.hubspot.activated);
+    setIsVerified(profileInfo.isEmailVerified);
+  }, [profileInfo]);
 
   return (
     <PageLayout>
@@ -109,7 +205,7 @@ function SettingsPage() {
       <div className="w-full grid lg:grid-cols-2 gap-[10px] mb-6">
         <div className="w-full flex flex-col gap-5">
           <div className="w-full flex gap-5 bg-white px-5 py-4 rounded-[10px]">
-            <div className="w-full flex flex-col gap-4 items-start gap-4">
+            <div className="w-full flex flex-col gap-4 items-start">
               <label htmlFor="first_name">First Name</label>
               <Input
                 type="text"
@@ -119,9 +215,10 @@ function SettingsPage() {
                 placeholder=""
                 value={settingsData.first_name}
                 onChange={handleFormsDataChange}
+                onKeyDown={(e) => handleKeyDown(e, "firstname")}
               />
             </div>
-            <div className="w-full flex flex-col gap-4 items-start gap-4">
+            <div className="w-full flex flex-col gap-4 items-start">
               <label htmlFor="last_name">Last Name</label>
               <Input
                 type="text"
@@ -131,12 +228,13 @@ function SettingsPage() {
                 placeholder=""
                 value={settingsData.last_name}
                 onChange={handleFormsDataChange}
+                onKeyDown={(e) => handleKeyDown(e, "lastname")}
               />
             </div>
           </div>
 
           <div className="w-full flex gap-5 bg-white px-5 py-4 rounded-[10px]">
-            <div className="w-full flex flex-col gap-4 items-start gap-4">
+            <div className="w-full flex flex-col gap-4 items-start">
               <div className="w-full flex items-center justify-between">
                 <label htmlFor="email">Email</label>
                 {isVerified ? (
@@ -158,8 +256,8 @@ function SettingsPage() {
                 id="email"
                 className="w-full"
                 placeholder=""
+                disabled
                 value={settingsData.email}
-                onChange={handleFormsDataChange}
               />
             </div>
           </div>
@@ -183,7 +281,9 @@ function SettingsPage() {
                   Conntected
                 </p>
               ) : (
-                <p className="text-sm text-gray-600 hover:text-black2 transition-all font-secondary-regular tracking-[-2%] cursor-pointer">
+                <p
+                  onClick={handleGoogleConnect}
+                  className="text-sm text-gray-600 hover:text-black2 transition-all font-secondary-regular tracking-[-2%] cursor-pointer">
                   Conntect
                 </p>
               )}
@@ -200,7 +300,7 @@ function SettingsPage() {
                 </p>
               ) : (
                 <p
-                  onClick={handleHubspotConntect}
+                  onClick={handleHubspotConnect}
                   className="text-sm text-gray-600 hover:text-black2 transition-all font-secondary-regular tracking-[-2%] cursor-pointer"
                 >
                   Conntect
@@ -209,7 +309,7 @@ function SettingsPage() {
             </div>
           </div>
         </div>
-        <div className="w-full w-full">
+        <div className="w-full">
           <div className="w-full flex flex-col gap-5 bg-white px-5 py-4 rounded-[10px]">
             <div className="w-full justify-between flex items-center">
               <div className="flex items-center gap-4">
@@ -221,6 +321,7 @@ function SettingsPage() {
               </div>
               <Btn
                 className="ml-auto action-btn success stroke hover-green"
+                onClick={handleCreateNewAPI}
                 text="Create API"
                 icon={true}
                 name="add"
@@ -230,40 +331,39 @@ function SettingsPage() {
             </div>
             <div className="w-full">
               <div className="flex flex-col gap-4 max-h-[calc(100vh-220px)] pr-3 overflow-auto custom-scrollbar">
-                {apisArr.map((api, index) => (
-                  <div className="w-full flex border-2 border-dashed border-gray-100 p-5 rounded-[10px]">
+                {apis.map((api: APIType, index) => (
+                  <div className="w-full flex border-2 border-dashed border-gray-100 p-5 rounded-[10px]" key={index}>
                     <div className="w-full flex flex-col items-start">
                       <div
-                        className={`${
-                          editModes[index] ? "flex-col-reverse" : "flex-row"
-                        } md:flex-row w-full flex gap-4 items-center justify-between`}
+                        className={`${selectedApi?.id == api.id ? "flex-col-reverse" : "flex-row"
+                          } md:flex-row w-full flex gap-4 items-center justify-between`}
                       >
                         <div className="flex w-full items-center gap-3">
-                          {!editModes[index] ? (
+                          {selectedApi?.id != api.id ? (
                             <p className="text-sm text-black font-secondary-medium tracking-[-2%]">
-                              {api.val}
+                              {api.name}
                             </p>
                           ) : (
                             <Input
                               type="text"
                               className="w-full"
                               placeholder=""
-                              value={apiValues[index]}
-                              onChange={(e) => handleApiInputValues(e, index)}
+                              value={selectedApi.name}
+                              onChange={(e) => setSelectedApi({ ...selectedApi, name: e.target.value })}
                             />
                           )}
-                          {!editModes[index] && (
+                          {selectedApi?.id != api.id && (
                             <Btn
-                              onClick={() => handleEditClick(index)}
+                              onClick={() => handleEditClick(api)}
                               className="border border-gray-100 !px-3 !py-1"
                               text="Edit"
                             />
                           )}
                         </div>
-                        {!editModes[index] ? (
+                        {selectedApi?.id != api.id ? (
                           <div className="flex items-center">
                             <div
-                              onClick={() => handleDelete(index)}
+                              onClick={() => handleDelete(api)}
                               className="cursor-pointer"
                             >
                               <Icon
@@ -277,12 +377,12 @@ function SettingsPage() {
                         ) : (
                           <div className="flex gap-4 pl-4 py-2 items-center ml-auto">
                             <Btn
-                              onClick={() => handleCancel(index)}
+                              onClick={handleCancel}
                               text="Cancel"
                               className="action-btn danger !p-0"
                             />
                             <Btn
-                              onClick={() => handleAdd(index)}
+                              onClick={() => handleUpdateAPI(selectedApi)}
                               text="Save"
                               className="action-btn border border-green px-3 !py-1 hover:bg-green success transition-all"
                             />
@@ -290,19 +390,21 @@ function SettingsPage() {
                         )}
                       </div>
                       <p className="text-black font-secondary-regular text-xs tracking-[-2%] my-5">
-                        Created at {api.created_at}
+                        Created at {api.createdAt}
                       </p>
-                      {isCopied[index] ? (
+                      {isCopied == api.key ? (
                         <Btn
                           text="Copied"
                           className="primary-btn fill w-full text-center !py-4 justify-center"
                         />
                       ) : (
-                        <Btn
-                          onClick={() => handleCopy(index)}
-                          text="Copy Key"
-                          className="primary-btn fill w-full text-center !py-4 justify-center"
-                        />
+                        <CopyToClipboard text={api.key}>
+                          <Btn
+                            onClick={() => setIsCopied(api.key)}
+                            text="Copy Key"
+                            className="primary-btn fill w-full text-center !py-4 justify-center"
+                          />
+                        </CopyToClipboard>
                       )}
                     </div>
                   </div>

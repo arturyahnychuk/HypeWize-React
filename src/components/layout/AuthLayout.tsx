@@ -1,10 +1,12 @@
-import { useState } from "react";
-import { Outlet } from "react-router-dom"; // Import necessary components
+import { useEffect, useState } from "react";
+import { Outlet, useNavigate } from "react-router-dom"; // Import necessary components
 import { Slider } from "../imports";
 import { Screen } from "@/components/imports";
 import { screenConfig } from "@/config/imports";
 
 function AuthLayout() {
+
+  const navigate = useNavigate();
   const [cssColorIndex, setCssColorIndex] = useState(0);
   const handleSlideChange = (swiper: any) => {
     setCssColorIndex(swiper.activeIndex)
@@ -15,6 +17,13 @@ function AuthLayout() {
     //   }
     // });
   };
+
+  const access_token = localStorage.getItem("access_token");
+
+  useEffect(() => {
+    if (access_token) navigate("/projects");
+  }, [access_token]);
+
   return (
     <div className="authLayout w-full h-screen grid sm:grid-cols-2">
       <div className="hidden sm:block opacity-0 sm:opacity-100 invisiblee sm:visible w-full h-full">

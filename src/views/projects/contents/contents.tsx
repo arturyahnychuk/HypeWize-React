@@ -7,54 +7,129 @@ import {
   PaginationComponent,
   Textarea,
 } from "@/components/imports";
+import { ContentType, ProjectTpye } from "@/store/types";
 import { RoutesPath } from "@/types/router";
-import React, { ChangeEvent, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 
 function ContentsPage() {
-  const deleteItem = (index: number) => {
-    alert(`delete item, index is ${index}`);
-  };
-  const [contentVal, setContentVal] = useState("");
+
+
+  const [contentCurrentPage, setContentCurrentPage] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(1);
+
+  const [contentSearchValue, setContentSearchValue] = useState("");
   const [dropdownActive, setDropdownActive] = useState(false);
   const [startRemovingDuplicates, setStartRemovingDuplicates] = useState(false);
-  const [editVal, seteditVal] = useState(
-    `This is Page 1 These are editable. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes.                  
+  const { id } = useParams();
+  const [isContentEdit, setIsContentEdit] = useState(false);
+  const [projectInfo, setProjectInfo] = useState<ProjectTpye | null>(null);
+  const [contents, setContents] = useState<ContentType[]>([]);
+  const [selectedContent, setSelectedContent] = useState<ContentType[]>([]);
+  const [contentValues, setContentValues] = useState<ContentType[]>([]);
+  const [searchType, setSearchType] = useState<string>("");
+  const [totalResults, setTotalResults] = useState<number>(0);
 
-These are editable. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes.`
-  );
-  const [editVal2, seteditVal2] = useState(
-    `This is Page 2 These are editable. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes.                  
+  const accessToken = localStorage.getItem("access_token");
 
-These are editable. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes. These are editable notes.`
-  );
-  const [editContent, seteditContent] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
+  const deleteItem = useCallback(async (content: ContentType) => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      await axios.delete(
+        `${import.meta.env.VITE_API_ENDPOINT}/contents/${content.contentType.includes("document") ? "documents/" : ""}${content.documentId || content._id}`,
+        config
+      );
 
-  const openEditContent = () => {
-    seteditContent(true);
-  };
-  const closEeditContent = () => {
-    seteditContent(false);
-  };
-  const handleEditContent = () => {
-    seteditContent(false);
-  };
-  const handleEditVal = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    seteditVal(e.target.value);
-  };
-  const handleEditVal2 = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    seteditVal2(e.target.value);
+      const _contents = content.contentType.includes("document") ? contents.filter((item) => item.documentId != content.documentId) : contents.filter((item) => item._id != content._id);
+
+      setContents(_contents);
+      setTotalResults(p => p - 1);
+      if (_contents.length) setSelectedContent([_contents[0]]);
+      else setSelectedContent([]);
+
+    } catch (error: any) {
+      console.log(error);
+    }
+
+  }, [contents]);
+
+  const openEditContent = useCallback(() => {
+    setIsContentEdit(true);
+    setContentValues(selectedContent);
+  }, [selectedContent]);
+
+  const closeEditContent = useCallback(() => {
+    setIsContentEdit(false);
+    setContentValues(selectedContent);
+  }, [selectedContent]);
+
+  const handleEditContentValue = useCallback((value: string, index: number) => {
+
+    const _contentValues = contentValues.slice(0);
+
+    _contentValues[index].content = value;
+
+    setContentValues(_contentValues);
+
+  }, [contentValues]);
+
+  useEffect(() => {
+    if (!isContentEdit) return;
+    contentValues.map((item, index) => {
+      const _element = document.getElementById(`textarea-${index}`);
+      if (_element) {
+        _element.style.height = '0px';
+        _element.style.height = `${_element.scrollHeight}px`;
+      }
+    });
+  }, [isContentEdit, contentValues]);
+
+  const handleSaveEditedContentValues = () => {
+    setIsContentEdit(false);
   };
   const handleDropdown = () => {
     let toggleVal = !dropdownActive;
     setDropdownActive(toggleVal);
   };
-  const handleContentVal = (e: ChangeEvent<HTMLInputElement>) => {
-    setContentVal(e.target.value);
+  const handleContentSearchValue = (e: ChangeEvent<HTMLInputElement>) => {
+    setContentSearchValue(e.target.value);
   };
-  const handleCheckboxes = (checked: boolean) => {
-    console.log(checked);
+
+  const handleSearchContents = useCallback(async () => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_ENDPOINT}/contents/?project=${id}&search=${contentSearchValue}&contentType=${searchType}&page=${currentPage + 1}&limit=25&sortBy=createdAt:desc`,
+        config
+      );
+
+      setContents(response.data.results);
+      if (response.data.results.length) setSelectedContent(response.data.results[0]);
+      else setSelectedContent([]);
+      setTotalResults(response.data.totalResults);
+      openAddContent(response.data.results[0]);
+      setTotalPages(response.data.totalPages);
+    } catch (error: any) {
+      console.log(error);
+    }
+  }, [searchType, contentSearchValue, id, currentPage])
+
+  const handleKeyDown = async (keyBoard: any) => {
+    if (keyBoard.code == "Enter" || keyBoard.code == "NumpadEnter") handleSearchContents();
+  };
+
+  const handleCheckboxes = (value: string) => {
+    setSearchType(value);
   };
   const handleDuplicateResult = () => {
     setStartRemovingDuplicates(true);
@@ -62,59 +137,121 @@ These are editable. These are editable notes. These are editable notes. These ar
       setStartRemovingDuplicates(false);
     }, 2000);
   };
-  const scrollToPage2 = () => {
-    const cont = document.getElementById("scroll-container");
-    const target = document.getElementById("page2");
-    if (target && cont) {
-      cont?.scrollTo(0, target?.offsetTop);
-      setCurrentPage(2);
+
+  const getContents = async (projectId: string, page: number) => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_ENDPOINT}/contents/?project=${projectId}&page=${page + 1}&limit=25&sortBy=createdAt:desc`,
+        config
+      );
+
+      setContents(response.data.results);
+      setTotalResults(response.data.totalResults);
+      openAddContent(response.data.results[0]);
+      setTotalPages(response.data.totalPages);
+    } catch (error: any) {
+      console.log(error);
     }
-  };
+  }
+
+  const getProjectInfo = async (projectId: string) => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_ENDPOINT}/projects/${projectId}`,
+        config
+      );
+
+      setProjectInfo(response.data);
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
+    if (id) {
+      getProjectInfo(id);
+      getContents(id, currentPage);
+    }
+  }, [id, currentPage]);
+
+  useEffect(() => {
+
+    const threshold = 230;
     const cont = document.getElementById("scroll-container");
-    const target = document.getElementById("page2");
-    if (cont && target) {
+    let _previousOffset = 0;
+    let _nextOffset = 0;
+    let _currentPage = 1;
+
+    if (cont) {
+
       cont.addEventListener("scroll", () => {
-        // Calculate the distance between the top of the "scroll-container" and the top of the "page2" element
-        const distanceToTarget = target.offsetTop - cont.scrollTop;
 
-        // You can adjust the threshold value as needed
-        const threshold = 100; // Adjust this value to define how close you want to be to the target element
+        const _next = document.getElementById(`page${_currentPage + 1}`);
+        const _previous = document.getElementById(`page${_currentPage - 1}`);
 
-        if (distanceToTarget < threshold) {
-          // The target element is within the threshold
-          setCurrentPage(2);
+        if (!!_next) {
+
+          console.log("_next.offsetHeight:", _next.offsetHeight, _next);
+          _nextOffset = _next.offsetTop;
+
+          if (cont.scrollTop + (_next.offsetHeight / 2 < threshold ? _next.offsetHeight / 2 : threshold) >= _nextOffset) {
+            setContentCurrentPage(++_currentPage);
+          }
+
         }
-        if (cont.scrollTop === 0) {
-          setCurrentPage(1);
+
+        if (!!_previous) {
+
+          _previousOffset = _previous.offsetTop + _previous.offsetHeight;
+
+          if (cont.scrollTop + (_previous.offsetHeight / 2 < threshold ? _previous.offsetHeight / 2 : threshold) <= _previousOffset) {
+            setContentCurrentPage(--_currentPage);
+          }
+
         }
       });
     }
   }, []);
+
   const [addContentModal, setAddContentModal] = useState(false);
-  const openAddContent = (e: React.MouseEvent) => {
-    if ((e.target as Element).closest(".delete")) {
-      return;
+  const openAddContent = async (item: ContentType) => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+
+    if (item.documentId) {
+
+      const docContentsRes = await axios.get(
+        `${import.meta.env.VITE_API_ENDPOINT}/contents?documentId=${item.documentId}&project=${item.project}`,
+        config
+      );
+
+      setSelectedContent(docContentsRes.data.results);
+      setContentCurrentPage(1);
+    } else {
+      setSelectedContent([item]);
     }
+
     setAddContentModal(true);
+    setIsContentEdit(false);
+
   };
   const closeAddContentModal = () => {
     setAddContentModal(false);
   };
-  const contentsArr = [
-    "thesamplewebsite.com",
-    "thesamplewebsite.com",
-    "thesamplewebsite.com",
-    "thesamplewebsite.com",
-    "maxphilips.com",
-    "maxphilips.com",
-    "thesamplewebsite.com",
-    "maxphilips.com",
-    "maxphilips.com",
-    "thesamplewebsite.com",
-    "maxphilips.com",
-    "maxphilips.com",
-  ];
+
   return (
     <PageLayout>
       <div className="flex items-center justify-between gap-4 h-full">
@@ -123,7 +260,7 @@ These are editable. These are editable notes. These are editable notes. These ar
             <div className="pt-7 pb-[20px] lg:pb-[34px] sticky top-0 bg-milk z-[9999]">
               <div className="hidden lg:flex items-center gap-4">
                 <h2 className="font-secondary-medium text-2xl text-black tracking-[-2%]">
-                  Project Name
+                  {projectInfo?.name}
                 </h2>
                 <Link to={RoutesPath.PROJECTS}>
                   <Btn
@@ -157,77 +294,77 @@ These are editable. These are editable notes. These are editable notes. These ar
               </div>
               <div className="relative lg:hidden flex mt-4">
                 <div
-                  className={`${
-                    dropdownActive ? "active rounded-t-[10px] pb-[0px]" : " rounded-t-[10px] rounded-b-[10px]"
-                  } w-full flex p-[1px] overflow-hidden border-gradient items-center gap-0 justify-between bg-white rounded-t-[10px]`}
+                  className={`${dropdownActive ? "active rounded-t-[10px] pb-[0px]" : " rounded-t-[10px] rounded-b-[10px]"
+                    } w-full flex p-[1px] overflow-hidden border-gradient items-center gap-0 justify-between bg-white rounded-t-[10px]`}
                 >
-                  <div className={`${dropdownActive ? "rounded-t-[10px]" : " rounded-t-[10px] rounded-b-[10px]"} w-full bg-white w-full h-full flex pl-5 pr-4`}>
-                  <div
-                    onClick={handleDropdown}
-                    className="flex items-center cursor-pointer"
-                  >
-                    <svg className={dropdownActive ? 'rotate-[90deg]' : ''}
-                      width="7"
-                      height="12"
-                      viewBox="0 0 7 12"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
+                  <div className={`${dropdownActive ? "rounded-t-[10px]" : " rounded-t-[10px] rounded-b-[10px]"} bg-white w-full h-full flex pl-5 pr-4`}>
+                    <div
+                      onClick={handleDropdown}
+                      className="flex items-center cursor-pointer"
                     >
-                      <path
-                        d="M1 1L6.25 6L1 11"
-                        stroke="#8C8FA7"
-                        strokeWidth="1.4"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
+                      <svg className={dropdownActive ? 'rotate-[90deg]' : ''}
+                        width="7"
+                        height="12"
+                        viewBox="0 0 7 12"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M1 1L6.25 6L1 11"
+                          stroke="#8C8FA7"
+                          strokeWidth="1.4"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <Input
+                      type="text"
+                      placeholder="Search Content"
+                      onChange={handleContentSearchValue}
+                      value={contentSearchValue}
+                      className="!py-3 border-none !px-4"
+                      onKeyDown={handleKeyDown}
+                    />
+                    <div className="flex items-center gap-3">
+                      <CheckBox
+                        onCheckChange={() => handleCheckboxes("website")}
+                        className="checkbox-primary !gap-2"
+                        name="website"
+                        label="<p class='text-black text-xs'>Sites</p>"
                       />
-                    </svg>
-                  </div>
-                  <Input
-                    type="text"
-                    placeholder="Search Content"
-                    onChange={handleContentVal}
-                    value={contentVal}
-                    className="!py-3 border-none !px-4"
-                  />
-                  <div className="flex items-center gap-3">
-                    <CheckBox
-                      onCheckChange={() => handleCheckboxes}
-                      className="checkbox-primary !gap-2"
-                      name="sites"
-                      label="<p class='text-black text-xs'>Sites</p>"
-                    />
-                    <CheckBox
-                      onCheckChange={() => handleCheckboxes}
-                      className="checkbox-primary !gap-2"
-                      name="docs"
-                      label="<p class='text-black text-xs'>Docs</p>"
-                    />
-                  </div>
+                      <CheckBox
+                        onCheckChange={() => handleCheckboxes("document/text")}
+                        className="checkbox-primary !gap-2"
+                        name="document/text"
+                        label="<p class='text-black text-xs'>Docs</p>"
+                      />
+                    </div>
                   </div>
                 </div>
                 {dropdownActive && (
                   <div className="border-gradient w-full absolute top-full z-[999] bg-white  pt-0 p-[1px] border-b rounded-b-[10px] overflow-hidden">
                     <div className="bg-white w-full flex justify-center  px-5 rounded-b-[10px]">
                       <div className="w-full flex items-center justify-center py-6 border-t-2 border-dashed">
-                      {!startRemovingDuplicates ? (
-                        <p
-                          onClick={handleDuplicateResult}
-                          className="cursor-pointer text-sm font-secondary-medium text-orange"
-                        >
-                          Remove duplicate text from 14 results
-                        </p>
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          <div
-                            className="animate-spin inline-block w-3 h-3 border-[2px] border-orange border-current border-t-transparent rounded-full"
-                            role="status"
-                            aria-label="loading"
-                          ></div>
-                          <p className="text-sm font-secondary-medium text-orange">
-                            1 of 14 removing
+                        {!startRemovingDuplicates ? (
+                          <p
+                            onClick={handleDuplicateResult}
+                            className="cursor-pointer text-sm font-secondary-medium text-orange"
+                          >
+                            Remove duplicate text from {totalResults} results
                           </p>
-                        </div>
-                      )}
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="animate-spin inline-block w-3 h-3 border-[2px] border-orange border-current border-t-transparent rounded-full"
+                              role="status"
+                              aria-label="loading"
+                            ></div>
+                            <p className="text-sm font-secondary-medium text-orange">
+                              1 of {totalResults} removing
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -235,17 +372,22 @@ These are editable. These are editable notes. These are editable notes. These ar
               </div>
             </div>
             <div className="w-full bg-white rounded-[10px] px-5">
-              {contentsArr.map((item, index) => (
+              {contents.map((item: ContentType, index: number) => (
                 <div
                   key={index}
-                  onClick={openAddContent}
-                  className="w-full flex items-center justify-between py-6 border-b border-b-gray-200"
+                  onClick={(e) => {
+                    if ((e.target as Element).closest(".delete")) {
+                      return;
+                    }
+                    openAddContent(item)
+                  }}
+                  className="w-full flex items-center justify-between text-ellipsis py-6 border-b border-b-gray-200 cursor-pointer"
                 >
-                  <p className="font-secondary-regular text-sm text-black">
-                    {item}
+                  <p className="font-secondary-regular text-sm text-black truncate overflow-hidden">
+                    {item.contentType?.includes("document/text") ? item.name : item.url}
                   </p>
                   <div
-                    onClick={() => deleteItem(index)}
+                    onClick={() => deleteItem(item)}
                     className="delete cursor-pointer mr-4"
                   >
                     <Icon
@@ -258,18 +400,17 @@ These are editable. These are editable notes. These are editable notes. These ar
                 </div>
               ))}
               <div className="py-5 flex w-full justify-center">
-              <PaginationComponent pageCount={10} />
+                {totalPages > 1 ? <PaginationComponent pageCount={totalPages} onPageChange={(value: number) => setCurrentPage(value)} /> : <></>}
               </div>
             </div>
           </div>
           <div className="relative w-full bg-milk z-[9999]">
-            <div className="relative lg:flex hidden sticky top-[28px]">
-            <div
-                  className={`${
-                    dropdownActive ? "active rounded-t-[10px] pb-[0px]" : " rounded-t-[10px] rounded-b-[10px]"
+            <div className="lg:flex hidden sticky top-[28px]">
+              <div
+                className={`${dropdownActive ? "active rounded-t-[10px] pb-[0px]" : " rounded-t-[10px] rounded-b-[10px]"
                   } w-full flex p-[1px] overflow-hidden border-gradient items-center gap-0 justify-between bg-white rounded-t-[10px]`}
-                >
-                  <div className={`${dropdownActive ? "rounded-t-[10px]" : " rounded-t-[10px] rounded-b-[10px]"} w-full bg-white w-full h-full flex pl-5 pr-4`}>
+              >
+                <div className={`${dropdownActive ? "rounded-t-[10px]" : " rounded-t-[10px] rounded-b-[10px]"} bg-white w-full h-full flex pl-5 pr-4`}>
                   <div
                     onClick={handleDropdown}
                     className="flex items-center cursor-pointer"
@@ -293,36 +434,39 @@ These are editable. These are editable notes. These are editable notes. These ar
                   <Input
                     type="text"
                     placeholder="Search Content"
-                    onChange={handleContentVal}
-                    value={contentVal}
+                    onChange={handleContentSearchValue}
+                    value={contentSearchValue}
                     className="!py-3 border-none !px-4"
+                    onKeyDown={handleKeyDown}
                   />
                   <div className="flex items-center gap-3">
                     <CheckBox
-                      onCheckChange={() => handleCheckboxes}
+                      onCheckChange={() => handleCheckboxes("website")}
+                      checked={searchType == "website"}
                       className="checkbox-primary !gap-2"
-                      name="sites"
+                      name="searchType"
                       label="<p class='text-black text-xs'>Sites</p>"
                     />
                     <CheckBox
-                      onCheckChange={() => handleCheckboxes}
+                      onCheckChange={() => handleCheckboxes("document/text")}
+                      checked={searchType == "document/text"}
                       className="checkbox-primary !gap-2"
-                      name="docs"
+                      name="searchType"
                       label="<p class='text-black text-xs'>Docs</p>"
                     />
                   </div>
-                  </div>
                 </div>
-                {dropdownActive && (
-                  <div className="border-gradient w-full absolute top-full z-[999] bg-white  pt-0 p-[1px] border-b rounded-b-[10px] overflow-hidden">
-                    <div className="bg-white w-full flex justify-center  px-5 rounded-b-[10px]">
-                      <div className="w-full flex items-center justify-center py-6 border-t-2 border-dashed">
+              </div>
+              {dropdownActive && (
+                <div className="border-gradient w-full absolute top-full z-[999] bg-white  pt-0 p-[1px] border-b rounded-b-[10px] overflow-hidden">
+                  <div className="bg-white w-full flex justify-center  px-5 rounded-b-[10px]">
+                    <div className="w-full flex items-center justify-center py-6 border-t-2 border-dashed">
                       {!startRemovingDuplicates ? (
                         <p
                           onClick={handleDuplicateResult}
                           className="cursor-pointer text-sm font-secondary-medium text-orange"
                         >
-                          Remove duplicate text from 14 results
+                          Remove duplicate text from {totalResults} results
                         </p>
                       ) : (
                         <div className="flex items-center gap-2">
@@ -332,173 +476,146 @@ These are editable. These are editable notes. These are editable notes. These ar
                             aria-label="loading"
                           ></div>
                           <p className="text-sm font-secondary-medium text-orange">
-                            1 of 14 removing
+                            1 of {totalResults} removing
                           </p>
                         </div>
                       )}
-                      </div>
                     </div>
                   </div>
-                )}
+                </div>
+              )}
             </div>
 
             <div
-              className={`${
-                addContentModal ? "active" : ""
-              } addContent-modal z-[-1] lg:block sticky top-[102px] bg-white rounded-[10px] mb-6 lg:mb-0`}
+              className={`${addContentModal ? "active" : ""
+                } addContent-modal z-[-1] lg:block sticky top-[102px] bg-white rounded-[10px] mb-6 lg:mb-0`}
             >
               <div className="w-full h-full flex justify-between items-center">
                 <div className="w-full h-full flex items-center px-5 pt-2">
                   <div className="w-full h-full border-b flex pb-3 items-center justify-between">
                     <p className="text-md text-black flex">Content</p>
-                    {!editContent ? (
+                    {!isContentEdit ? (
                       <>
-                      <Btn
-                        onClick={openEditContent}
-                        className="border border-gray-100 ml-auto mr-4"
-                        text="Edit"
-                      />
-                      <div
-                      onClick={closeAddContentModal}
-                      className="flex lg:hidden cursor-pointer pt-2"
-                    >
-                      <svg
-                        width="22"
-                        height="22"
-                        viewBox="0 0 22 22"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <g filter="url(#filter0_d_253_474)">
-                          <path
-                            d="M5 1L11 7M11 7L17 13M11 7L17 1M11 7L5 13"
-                            stroke="#8C8FA7"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                          />
-                        </g>
-                        <defs>
-                          <filter
-                            id="filter0_d_253_474"
-                            x="0"
-                            y="0"
+                        <Btn
+                          onClick={openEditContent}
+                          className="border border-gray-100 ml-auto mr-4"
+                          text="Edit"
+                        />
+                        <div
+                          onClick={closeAddContentModal}
+                          className="flex lg:hidden cursor-pointer pt-2"
+                        >
+                          <svg
                             width="22"
                             height="22"
-                            filterUnits="userSpaceOnUse"
-                            color-interpolation-filters="sRGB"
+                            viewBox="0 0 22 22"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
                           >
-                            <feFlood
-                              flood-opacity="0"
-                              result="BackgroundImageFix"
-                            />
-                            <feColorMatrix
-                              in="SourceAlpha"
-                              type="matrix"
-                              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                              result="hardAlpha"
-                            />
-                            <feOffset dy="4" />
-                            <feGaussianBlur stdDeviation="2" />
-                            <feComposite in2="hardAlpha" operator="out" />
-                            <feColorMatrix
-                              type="matrix"
-                              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0"
-                            />
-                            <feBlend
-                              mode="normal"
-                              in2="BackgroundImageFix"
-                              result="effect1_dropShadow_253_474"
-                            />
-                            <feBlend
-                              mode="normal"
-                              in="SourceGraphic"
-                              in2="effect1_dropShadow_253_474"
-                              result="shape"
-                            />
-                          </filter>
-                        </defs>
-                      </svg>
-                    </div>
+                            <g filter="url(#filter0_d_253_474)">
+                              <path
+                                d="M5 1L11 7M11 7L17 13M11 7L17 1M11 7L5 13"
+                                stroke="#8C8FA7"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                              />
+                            </g>
+                            <defs>
+                              <filter
+                                id="filter0_d_253_474"
+                                x="0"
+                                y="0"
+                                width="22"
+                                height="22"
+                                filterUnits="userSpaceOnUse"
+                                color-interpolation-filters="sRGB"
+                              >
+                                <feFlood
+                                  flood-opacity="0"
+                                  result="BackgroundImageFix"
+                                />
+                                <feColorMatrix
+                                  in="SourceAlpha"
+                                  type="matrix"
+                                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                                  result="hardAlpha"
+                                />
+                                <feOffset dy="4" />
+                                <feGaussianBlur stdDeviation="2" />
+                                <feComposite in2="hardAlpha" operator="out" />
+                                <feColorMatrix
+                                  type="matrix"
+                                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0"
+                                />
+                                <feBlend
+                                  mode="normal"
+                                  in2="BackgroundImageFix"
+                                  result="effect1_dropShadow_253_474"
+                                />
+                                <feBlend
+                                  mode="normal"
+                                  in="SourceGraphic"
+                                  in2="effect1_dropShadow_253_474"
+                                  result="shape"
+                                />
+                              </filter>
+                            </defs>
+                          </svg>
+                        </div>
                       </>
                     ) : (
                       <>
                         <div className="flex gap-4 px-4 py-2 items-center ml-auto">
                           <Btn
-                            onClick={closEeditContent}
+                            onClick={closeEditContent}
                             text="Cancel"
                             className="action-btn danger !p-0"
                           />
                           <Btn
-                            onClick={handleEditContent}
+                            onClick={handleSaveEditedContentValues}
                             text="Save"
                             className="action-btn border border-green px-3 !py-1 hover:bg-green success transition-all"
                           />
                         </div>
                       </>
                     )}
-                   
+
                   </div>
                 </div>
               </div>
               <div
-                className="pt-5 px-5 h-[calc(65vh)] overflow-auto smooth"
+                className="pt-5 px-5 h-[calc(67vh)] overflow-auto smooth"
                 id="scroll-container"
               >
-                {!editContent ? (
+                {!isContentEdit ? (
                   <>
-                    <div className="h-full border-b pt-4">
+                    {selectedContent?.map((item: ContentType, index: number) => <div className="h-max border-b pt-4" id={`page${index + 1}`} key={index}>
                       <p
                         className="text-sm leading-[24px]"
                         style={{ whiteSpace: "pre-wrap" }}
                       >
-                        {editVal}
+                        {item.content}
                       </p>
-                    </div>
-                    <div className="h-full pt-4" id="page2">
-                      <p
-                        className="text-sm leading-[24px]"
-                        style={{ whiteSpace: "pre-wrap" }}
-                      >
-                        {editVal2}
-                      </p>
-                    </div>
+                    </div>)}
                   </>
                 ) : (
-                  <div className="flex h-full flex-col items-start gap-2 h-max">
-                    <div className="w-full h-[62vh]">
+                  <>
+                    {contentValues.map((item: ContentType, index: number) => <div className="w-full h-max" key={index} id={`page${index + 1}`}>
                       <Textarea
-                        onChange={handleEditVal}
-                        value={editVal}
+                        onChange={(e) => handleEditContentValue(e.target.value, index)}
+                        value={item.content}
+                        id={`textarea-${index}`}
                         placeholder=""
-                        classNameForParent="h-full"
-                        className="resize-none h-full border-dashed !p-2"
+                        className="resize-none h-auto border-dashed !p-2 overflow-hidden text-[13px] leading-[23px]"
                         style={{ whiteSpace: "pre-wrap" }}
                       />
                     </div>
-
-                    <div className="w-full h-[62vh]" id="page2">
-                      <Textarea
-                        onChange={handleEditVal2}
-                        value={editVal2}
-                        placeholder=""
-                        classNameForParent="h-full"
-                        className="resize-none h-full border-dashed !p-2"
-                        style={{ whiteSpace: "pre-wrap" }}
-                      />
-                    </div>
-                  </div>
+                    )}
+                  </>
                 )}
               </div>
               <div className="relative bg-white pb-4 px-5 pt-3 flex justify-center">
-                {currentPage === 1 ? (
-                  <Btn
-                    onClick={scrollToPage2}
-                    text="Page 01"
-                    className="primary-btn stroke"
-                  ></Btn>
-                ) : (
-                  <Btn text="Page 02" className="primary-btn stroke"></Btn>
-                )}
+                <Btn text={"Page " + contentCurrentPage} className="primary-btn stroke"></Btn>
               </div>
             </div>
           </div>

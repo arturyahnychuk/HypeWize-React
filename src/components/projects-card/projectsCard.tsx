@@ -1,17 +1,19 @@
 import { RobotImage, OptionImage, DeleteIcon } from "@/assets/imports";
 import React, { ChangeEvent, useState } from "react";
 import { Btn, Input, Textarea } from "../imports";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RoutesPath } from "@/types/router";
+import { ProjectTpye } from "@/store/types";
+import axios from "axios";
 
 interface ProjectsCardTypes {
-  title: string;
-  text: string;
+  info: ProjectTpye,
+  handleDelete: () => void;
 }
-function ProjectsCard({ title, text }: ProjectsCardTypes) {
+function ProjectsCard({ info, handleDelete }: ProjectsCardTypes) {
   const [editMode, setEditMode] = useState(false);
-  const [titleVal, setTitleVal] = useState(title);
-  const [textVal, setTextVal] = useState(text);
+  const [titleVal, setTitleVal] = useState(info.name);
+  const [textVal, setTextVal] = useState(info.description);
   const [editTabIsOpen, setEditTabIsOpen] = useState(false);
   const openEditTab = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -23,11 +25,9 @@ function ProjectsCard({ title, text }: ProjectsCardTypes) {
     setEditTabIsOpen(false);
     setEditMode(true);
   };
-  const handleDelete = (e: any) => {
-    e.preventDefault();
-    alert("Delete");
-    setEditTabIsOpen(false);
-  };
+
+  const navigate = useNavigate();
+
   const handleTextInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setTextVal(e.target.value);
   };
@@ -38,27 +38,56 @@ function ProjectsCard({ title, text }: ProjectsCardTypes) {
     e.preventDefault();
     setEditMode(false);
   };
-  const save = (e: any) => {
+
+  const accessToken = localStorage.getItem('access_token');
+
+
+
+  const save = async (e: any) => {
     e.preventDefault();
-    alert("save");
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+
+      const response = await axios.patch(
+        `${import.meta.env.VITE_API_ENDPOINT}/projects/${info.id}`,
+        {
+          description: textVal,
+          name: titleVal,
+        },
+        config
+      );
+
+      if (response.data) {
+        console.log("Updated Successfully!");
+      }
+      setEditMode(false);
+    } catch (error: any) {
+      console.log(error);
+    }
   };
+
   return (
-    <Link
-      to={RoutesPath.PROJECTINFO}
+    <div
       onClick={(e) => {
-        if (editMode) {
-          e.preventDefault(); // Prevent the link's default behavior if editMode is true
+        if (editMode || (e.target as Element).closest(".delete") || (e.target as Element).closest(".editMode") || (e.target as Element).closest(".edit")) {
+          return;
         }
+        navigate(`${RoutesPath.PROJECTINFO}/${info.id}`);
       }}
-      className={`${
-        editMode ? "cursor-default" : ""
-      } parent rounded-[10px] w-full h-[240px] bg-white flex flex-col`}
+      className={`${editMode ? "cursor-default" : ""
+        } parent rounded-[10px] w-full h-[240px] bg-white flex flex-col cursor-pointer`
+      }
+      id={info.id}
     >
       {!editMode ? (
-        <div className="settings-grid group w-max h-[20px] flex justify-end delay-100 relative w-full ml-auto p-3">
+        <div className="settings-grid group h-[20px] flex justify-end delay-100 relative w-full ml-auto p-3 ">
           <div
             onClick={openEditTab}
-            className="h-[25px] right-0 cursor-pointer w-[30px] flex justify-center absolute top-3"
+            className="h-[25px] right-0 cursor-pointer w-[30px] flex justify-center absolute top-3 editMode"
           >
             <img width={2} src={OptionImage} alt="Option Image" />
           </div>
@@ -66,13 +95,13 @@ function ProjectsCard({ title, text }: ProjectsCardTypes) {
             <div className="bg-white absolute top-7 right-3 flex flex-col p-[3px] border border-gray-100 rounded-[5px] transition-all">
               <div
                 onClick={handleEditMode}
-                className="text-xs font-secondary-regular tracking-[-2%] text-gray-300 px-4 py-2 bg-gray-200 cursor-pointer hover:opacity-80"
+                className="text-xs font-secondary-regular tracking-[-2%] text-gray-300 px-4 py-2 bg-gray-200 cursor-pointer hover:opacity-80 edit"
               >
                 Edit
               </div>
               <div
                 onClick={handleDelete}
-                className="w-full flex items-center justify-center p-2 cursor-pointer opacity-80 hover:opacity-100"
+                className="w-full flex items-center justify-center p-2 cursor-pointer opacity-80 hover:opacity-100 delete"
               >
                 <img width={12} src={DeleteIcon} alt="Delete Icon" />
               </div>
@@ -80,7 +109,7 @@ function ProjectsCard({ title, text }: ProjectsCardTypes) {
           )}
         </div>
       ) : (
-        <div className="actions-grid justify-between flex px-4 py-2 items-center">
+        <div className="actions-grid justify-between flex px-4 py-2 items-center editMode">
           <Btn
             onClick={cancel}
             text="cancel"
@@ -95,16 +124,15 @@ function ProjectsCard({ title, text }: ProjectsCardTypes) {
       )}
 
       <div
-        className={`${
-          editMode ? "edit-mode" : ""
-        } main body w-full flex flex-col my-auto gap-6 items-center justify-center`}
+        className={`${editMode ? "edit-mode" : ""
+          } main body w-full flex flex-col my-auto gap-6 items-center justify-center`}
       >
         <div className="head items-center">
           <img className="image" width={55} src={RobotImage} alt="Add Image" />
           <div className="main w-full flex flex-col items-center gap-2 px-4">
             {!editMode ? (
               <p className="text-base min-w-max md:text-md font-secondary-medium text-blue">
-                {title}
+                {titleVal}
               </p>
             ) : (
               <div className="list-input w-full">
@@ -118,7 +146,7 @@ function ProjectsCard({ title, text }: ProjectsCardTypes) {
             )}
             {!editMode ? (
               <p className="text-xs px-4 text-center font-secondary-regular text-gray-300">
-                This is the description for this project
+                {textVal}
               </p>
             ) : (
               <div className="w-full">
@@ -148,8 +176,11 @@ function ProjectsCard({ title, text }: ProjectsCardTypes) {
                   Edit
                 </div>
                 <div
-                  onClick={handleDelete}
-                  className="w-full flex items-center justify-center p-2 cursor-pointer opacity-80 hover:opacity-100"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleDelete();
+                  }}
+                  className="w-full flex items-center justify-center p-2 cursor-pointer opacity-80 hover:opacity-100 delete"
                 >
                   <img width={12} src={DeleteIcon} alt="Delete Icon" />
                 </div>
@@ -167,7 +198,7 @@ function ProjectsCard({ title, text }: ProjectsCardTypes) {
           </div>
         )}
       </div>
-    </Link>
+    </div>
   );
 }
 export default ProjectsCard;

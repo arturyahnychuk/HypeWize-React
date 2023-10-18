@@ -1,4 +1,5 @@
-import { createBrowserRouter, redirect } from "react-router-dom";
+import { Navigate, createBrowserRouter, redirect, useNavigate } from "react-router-dom";
+import { useJwt } from "react-jwt";
 // Views
 import {
   // auth pages
@@ -6,6 +7,7 @@ import {
   Register,
   ForgotPassword,
   ResetPassword,
+  VerifyEmail,
   // other pages
   Home,
   Projects,
@@ -24,12 +26,67 @@ import {
 import { DefaultLayout, AuthLayout } from "@/components/imports";
 // Routes Path Enums
 import { RoutesPath } from "@/types/imports";
+import axios from "axios";
+import useAuthStore from "@/store/auth";
+import { useEffect } from "react";
+import HubSpot from "@/views/auth/HubSpot";
+import Google from "@/views/auth/Google";
+
+
+const ProtectedRoute: React.FC<any> = ({ component }) => {
+
+  const accessToken = localStorage.getItem('access_token') || '';
+  const { decodedToken, isExpired } = useJwt(accessToken);
+  const { setProfileInfo } = useAuthStore();
+  const navigate = useNavigate();
+
+  const getUserInfo = async (token: string, id: string) => {
+
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_ENDPOINT}/users/${id}`,
+        config
+      );
+
+      setProfileInfo(response.data);
+
+    } catch (error: any) {
+      console.log("error:", error);
+    }
+
+  }
+
+  useEffect(() => {
+    // @ts-ignore
+    if (decodedToken?.sub && !isExpired) { getUserInfo(accessToken, decodedToken?.sub); }
+  }, [decodedToken]);
+
+  if (accessToken && !isExpired) {
+    return <>{component}</>;
+  } else {
+    return <Navigate to="/auth/login" replace />;
+  }
+};
 
 const routes = createBrowserRouter([
   {
-    path: RoutesPath.CHATBOT,
+    path: RoutesPath.CHATBOT + "/" + ":id",
     element: <Chatbot />,
   },
+  {
+    path: RoutesPath.HubSpotConnectConfirm,
+    element: <HubSpot />,
+  },
+  {
+    path: RoutesPath.GoogleConnectConfirm,
+    element: <Google />,
+  },
+
   {
     path: "/auth",
     element: <AuthLayout />,
@@ -55,11 +112,16 @@ const routes = createBrowserRouter([
         path: RoutesPath.RESET_PASSWORD,
         element: <ResetPassword />,
       },
+      {
+        path: RoutesPath.VERIFYEMAIL,
+        element: <VerifyEmail />,
+      },
+
     ],
   },
   {
     path: RoutesPath.HOME,
-    element: <DefaultLayout />,
+    element: <ProtectedRoute component={<DefaultLayout />} />,
     children: [
       {
         path: RoutesPath.HOME,
@@ -70,23 +132,23 @@ const routes = createBrowserRouter([
         element: <Projects />,
       },
       {
-        path: RoutesPath.PROJECTINFO,
+        path: RoutesPath.PROJECTINFO + "/:id",
         element: <ProjectInfo />,
       },
       {
-        path: RoutesPath.PROJECTMESSAGES,
+        path: RoutesPath.PROJECTMESSAGES + "/:id",
         element: <ProjectMessages />,
       },
       {
-        path: RoutesPath.PROJECTMESSAGESSINGLE,
+        path: RoutesPath.PROJECTMESSAGESSINGLE + "/:id",
         element: <MessagesSingle />,
       },
       {
-        path: RoutesPath.PROJECTCONTENTS,
+        path: RoutesPath.PROJECTCONTENTS + "/:id",
         element: <ContentsPage />,
       },
       {
-        path: RoutesPath.PROJECTCONTENTS_CREATE,
+        path: RoutesPath.PROJECTCONTENTS_CREATE + "/:id",
         element: <ContentCreatePage />,
       },
       {

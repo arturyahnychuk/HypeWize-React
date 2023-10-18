@@ -1,27 +1,40 @@
 import { PageLayout, PricingCard } from "@/components/imports";
+import { BillingType } from "@/store/types";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 function BillingsPage() {
-    const proPlanOffers = [
-        {
-            text: "Active chatbots Unlimited"
+
+  const [billing, setBilling] = useState<BillingType | null>(null);
+
+  const accessToken = localStorage.getItem("access_token");
+
+  const getBillingInfo = async () => {
+
+
+
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
-        {
-            text: "Questions limit:",
-            main: "100"
-        },
-        {
-            text: "Projects Limit:",
-            main: "50"
-        },
-        {
-            text: "Documents Limit:",
-            main: "100"
-        },
-        {
-            text: "Words Limit:",
-            main: "unlimited"
-        }
-    ]
+      };
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_ENDPOINT}/billing`,
+        config
+      );
+
+      setBilling(response.data);
+
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getBillingInfo();
+  }, []);
+
   return (
     <PageLayout>
       <div className="flex items-center gap-4 pt-7 pb-7 sticky top-0 bg-milk z-[9999]">
@@ -30,7 +43,7 @@ function BillingsPage() {
         </h2>
       </div>
       <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[10px]">
-        <PricingCard title="You are currently subscribe to this package." planTitle="Professional Plan" offers={proPlanOffers}/>
+        {billing ? <PricingCard info={billing} /> : <></>}
       </div>
     </PageLayout>
   );

@@ -2,6 +2,7 @@ import Login from "@/views/auth/Login";
 import Register from "@/views/auth/Register";
 import ForgotPassword from "@/views/auth/ForgotPassword";
 import ResetPassword from "@/views/auth/ResetPassword";
+import VerifyEmail from "@/views/auth/VerifyEmail";
 
 import StarterPage from "@/views/starter/starter";
 import Home from "@/views/Home";
@@ -21,6 +22,7 @@ export {
   Home,
   Login,
   Register,
+  VerifyEmail,
   ForgotPassword,
   ResetPassword,
   Projects,

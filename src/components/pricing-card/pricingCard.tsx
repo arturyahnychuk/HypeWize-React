@@ -1,6 +1,7 @@
-import { PricingCardsProps } from "@/types/imports";
+import { BillingType } from "@/store/types";
 import { Btn } from "../imports";
-function PricingCard({ title, planTitle, offers }: PricingCardsProps) {
+import { Link } from "react-router-dom";
+function PricingCard({ info }: { info: BillingType }) {
   return (
     <div className="w-full rounded-[10px] bg-white">
       <div className="relative w-full h-[214px] bg-blue pt-6 rounded-[10px]">
@@ -30,19 +31,19 @@ function PricingCard({ title, planTitle, offers }: PricingCardsProps) {
             />
           </svg>
           <p className="text-sm md:text-md font-secondary-medium text-white tracking-[-2%] text-center">
-            {title}
+            You are currently subscribe to this package.
           </p>
         </div>
         <div className="absolute w-[80%] left-[50%] translate-x-[-50%] bottom-[-25px] py-8 rounded-[12px] bg-white border border-dashed border-gray-100">
           <p className="text-sm font-secondary-medium text-black text-center">
-            {planTitle}
+            {info.currentPlan} Plan
           </p>
         </div>
       </div>
       <div className="w-full py-5">
         <div className="w-full flex justify-center mt-6">
           <div className="flex flex-col gap-[22px]">
-            {offers.map((item, index) => (
+            {Object.entries(info.features).map((item, index) => (
               <div key={index} className="flex items-center gap-3">
                 <svg
                   width="10"
@@ -59,14 +60,16 @@ function PricingCard({ title, planTitle, offers }: PricingCardsProps) {
                     strokeLinejoin="round"
                   />
                 </svg>
-                <p className="text-sm text-black2 trakcing-[-2%]">
-                  {item.text} {item.main ? (<span className="font-secondary-medium text-black">{item.main}</span>) : ''}
+                <p className="text-sm text-black2 trakcing-[-2%] capitalize">
+                  {item[0]} : {item[1] ? (<span className="font-secondary-medium text-black">{item[1]}</span>) : ''}
                 </p>
               </div>
             ))}
           </div>
         </div>
-        <Btn text="Manage Plan" className="primary-btn plan-btn fill w-[88%] mt-[52px] py-[18px] mx-auto flex justify-center"/>
+        <Link to={info.managePlanUrl}>
+          <Btn text="Manage Plan" className="primary-btn plan-btn fill w-[88%] mt-[52px] py-[18px] mx-auto flex justify-center" />
+        </Link>
       </div>
     </div>
   );

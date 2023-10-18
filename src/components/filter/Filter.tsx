@@ -7,8 +7,7 @@ interface FilterProps {
   active: string;
   onFilter: (value: filterBtnConfigTypes["value"]) => void;
   className?: string
-  classNameParent? : string
-  
+  classNameParent? : string  
 }
 
 function Filter({ filterBtnConfig, active, onFilter, className='', classNameParent='' }: FilterProps) {
@@ -40,13 +39,3 @@ function Filter({ filterBtnConfig, active, onFilter, className='', classNamePare
   );
 }
 export default Filter;
-
-{
-  /* <Btn
-className="filter-btn"
-text="Grid"
-icon={true}
-name="Category"
-size={12}
-/> */
-}

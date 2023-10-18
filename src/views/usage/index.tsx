@@ -1,6 +1,59 @@
 import { PageLayout, ProgressCard } from "@/components/imports";
+import { BillingType, UsageType } from "@/store/types";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 function UsagePage() {
+
+  const accessToken = localStorage.getItem("access_token");
+
+  const [usageInfo, setUsageInfo] = useState<UsageType | null>(null);
+  const [billing, setBilling] = useState<BillingType | null>(null);
+
+  const getUsageInfo = async () => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_ENDPOINT}/stats`,
+        config
+      );
+
+
+      setUsageInfo(response.data);
+
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
+
+  const getBillingInfo = async () => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_ENDPOINT}/billing`,
+        config
+      );
+
+      setBilling(response.data);
+
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getUsageInfo();
+    getBillingInfo();
+  }, []);
+
   return (
     <PageLayout>
       <div className="flex items-center gap-4 pt-7 pb-7 sticky top-0 bg-milk z-[9999]">
@@ -8,26 +61,26 @@ function UsagePage() {
           Remaining usage
         </h2>
       </div>
-      <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <ProgressCard
+      {usageInfo && billing ? <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {usageInfo.messages ? <ProgressCard
           title="Questions"
           tooltipText="This is info section to elcome message, here! Detail goes here. This is info section to welcome message, here! Detail goes here."
-          progress={78}
-          text="You have used 78 questions out of 100."
-        />
-        <ProgressCard
+          progress={usageInfo.messages.currentMonth ? Number((usageInfo.messages.currentMonth * 100 / billing.features.questionLimit).toFixed(2)) : 0}
+          text={`You have used ${usageInfo.messages.currentMonth} questions out of ${billing.features.questionLimit}.`}
+        /> : <></>}
+        {usageInfo.projects ? <ProgressCard
           title="Projects"
           tooltipText="Projects This is section to elcome message, here! Detail goes here. This is info section to welcome message, here! Detail goes here."
-          progress={51}
-          text="You have used 26 projects out of 50."
-        />
-         <ProgressCard
+          progress={usageInfo.projects.all ? Number((usageInfo.projects.all * 100 / billing.features.projectLimit).toFixed(2)) : 0}
+          text={`You have used ${usageInfo.projects.all || 0} projects out of ${billing.features.projectLimit}.`}
+        /> : <></>}
+        {usageInfo.documentPages ? <ProgressCard
           title="Documents"
           tooltipText="Projects This is section to elcome message, here! Detail goes here. This is info section to welcome message, here! Detail goes here."
-          progress={41}
+          progress={usageInfo.documentPages.all ? Number((usageInfo.documentPages.all * 100 / billing.features.documentPageLimit).toFixed(2)) : 0}
           text="You have uploaded 41 documents out of 100."
-        />
-      </div>
+        /> : <></>}
+      </div> : <></>}
     </PageLayout>
   );
 }

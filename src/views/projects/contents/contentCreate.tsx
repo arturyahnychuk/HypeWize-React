@@ -6,44 +6,144 @@ import {
   Tooltip,
 } from "@/components/imports";
 import { RoutesPath } from "@/types/router";
-import { Link } from "react-router-dom";
-import React, { useState, ChangeEvent, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
+import React, { useState, ChangeEvent, useEffect, useCallback } from "react";
 import { DocsImage } from "@/assets/imports";
+import axios from "axios";
+import { ProjectTpye } from "@/store/types";
 
 function ContentCreatePage() {
+
+  const { id } = useParams();
+
+  const [projectInfo, setProjectInfo] = useState<ProjectTpye | null>(null);
   const [websiteVal, setWebsteVal] = useState("");
+  const [linkType, setLinkType] = useState<"crawl" | "single">("crawl");
   const handleAddWebsite = (e: ChangeEvent<HTMLInputElement>) => {
     setWebsteVal(e.target.value);
   };
-  const handleCheckboxes = (checked: boolean) => {
-    console.log(checked);
+  const handleCheckboxes = (linkType: "crawl" | "single") => {
+    setLinkType(linkType);
   };
   const [isDrag, setIsDrag] = useState(false);
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+
+  const accessToken = localStorage.getItem("access_token");
+
+  const updateProjectInfo = async (data: any) => {
+    console.log("data:", data);
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+
+      const response = await axios.patch(
+        `${import.meta.env.VITE_API_ENDPOINT}/projects/${id}`,
+        {
+          ...data
+        },
+        config
+      );
+
+      if (response.data) {
+        console.log("Updated Successfully!");
+      }
+
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
+
+  const uploadDocument = async (data: any) => {
+
+    const files = new FormData();
+    files.append('files', data);
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_ENDPOINT}/projects/${id}/upload`,
+        files,
+        config
+      );
+
+      if (response.data) {
+        console.log("Updated Successfully!");
+      }
+
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
+
+  const handleKeyDown = useCallback(async (keyBoard: any) => {
+
+    if (keyBoard.code == "Enter" || keyBoard.code == "NumpadEnter") {
+
+      let _projectInfo: ProjectTpye = Object.create(projectInfo);
+
+      if (linkType == "crawl") {
+        const data = {
+          domain: websiteVal
+        }
+        updateProjectInfo(data);
+      } else {
+        const data = {
+          links: [websiteVal]
+        }
+        updateProjectInfo(data);
+      }
+
+    }
+
+  }, [websiteVal, linkType]);
+
+  const handleUploadedDoc = (e: any, type: "drag" | "select") => {
     e.preventDefault();
-    setIsDrag(false);
+    if (type == "drag") setIsDrag(false);
 
     // Access the dropped files from the event
-    const files = e.dataTransfer.files;
+    const files = (type == "drag" ? e.dataTransfer.files : e.target.files);
+
+    console.log("files:", files[0]);
 
     // Handle the dropped files (e.g., display the image)
     if (files.length > 0) {
-      const file = files[0];
-      const reader = new FileReader();
 
-      reader.onload = (event: ProgressEvent<FileReader>) => {
-        if (event.target && event.target.result) {
-          // Display the dropped image
-          const imageSrc = event.target.result as string;
-          console.log("Dropped image source:", imageSrc);
+      uploadDocument(files[0]);
 
-          // You can update the UI to show the dropped image here
-        }
-      };
-
-      reader.readAsDataURL(file);
     }
   };
+
+  const getProjectInfo = async (projectId: string) => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_ENDPOINT}/projects/${projectId}`,
+        config
+      );
+
+      setProjectInfo(response.data);
+
+
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    if (id) getProjectInfo(id);
+  }, [id]);
+
   return (
     <PageLayout>
       {isDrag && (
@@ -53,7 +153,7 @@ function ContentCreatePage() {
       )}
       <div className="flex flex-col items-start justify-between">
         <div className="w-full flex items-center gap-4 pt-7 pb-7 sticky top-0 bg-milk z-[9999]">
-          <Link to={RoutesPath.PROJECTCONTENTS}>
+          <Link to={RoutesPath.PROJECTCONTENTS + "/" + id}>
             <Btn
               text="Contents"
               className="primary-btn fill stroke-icon"
@@ -87,20 +187,23 @@ function ContentCreatePage() {
                 name="name"
                 value={websiteVal}
                 onChange={handleAddWebsite}
+                onKeyDown={handleKeyDown}
                 placeholder=""
               />
             </div>
             <div className="flex items-center gap-3">
               <CheckBox
-                onCheckChange={() => handleCheckboxes}
+                onCheckChange={() => handleCheckboxes("crawl")}
+                checked={linkType == 'crawl'}
                 className="checkbox-primary !gap-2"
-                name="crawl"
+                name="link_type"
                 label="<p class='text-black text-xs font-secondary-medium'>Crawl</p>"
               />
               <CheckBox
-                onCheckChange={() => handleCheckboxes}
+                onCheckChange={() => handleCheckboxes("single")}
+                checked={linkType == 'single'}
                 className="checkbox-primary !gap-2"
-                name="single_page"
+                name="link_type"
                 label="<p class='text-black text-xs font-secondary-medium'>Single Page</p>"
               />
             </div>
@@ -116,7 +219,7 @@ function ContentCreatePage() {
               <div
                 onDragEnter={() => setIsDrag(true)}
                 onDragLeave={() => setIsDrag(false)}
-                onDrop={handleDrop}
+                onDrop={(e) => handleUploadedDoc(e, "drag")}
                 onDragOver={(e) => e.preventDefault()}
                 className="absolute z-[9999999] top-0 left-0 w-full h-full"
               ></div>
@@ -136,10 +239,15 @@ function ContentCreatePage() {
                   >
                     <Input
                       type="file"
+                      accept=".pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .odt, .epub, .csv, .txt"
+                      onChange={(e) => handleUploadedDoc(e, "select")}
                       className="absolute top-0 left-0 opacity-0 cursor-pointer"
                     />
                     Browse
                   </div>
+                </div>
+                <div>
+
                 </div>
               </div>
             </div>

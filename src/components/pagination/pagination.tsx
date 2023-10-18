@@ -1,12 +1,12 @@
 import ReactPaginate from "react-paginate";
 interface PaginationProps {
   pageCount: number;
-  onPageChange?: () => void;
+  onPageChange: (value: number) => void;
 }
 const PaginationComponent = ({ pageCount, onPageChange }: PaginationProps) => {
   return (
     <>
-      <div className="select-none hidden md:flex">
+      <div className="select-none hidden md:flex w-max m-auto">
         <ReactPaginate
           previousLabel={
             <svg
@@ -55,7 +55,7 @@ const PaginationComponent = ({ pageCount, onPageChange }: PaginationProps) => {
           pageCount={pageCount}
           marginPagesDisplayed={1}
           pageRangeDisplayed={5}
-          onPageChange={onPageChange}
+          onPageChange={({ selected }: { selected: number }) => onPageChange(selected)}
           containerClassName={"pagination flex items-center gap-[6px]"}
           activeClassName={"active"}
         />
@@ -109,7 +109,7 @@ const PaginationComponent = ({ pageCount, onPageChange }: PaginationProps) => {
           pageCount={pageCount}
           marginPagesDisplayed={1}
           pageRangeDisplayed={1}
-          onPageChange={onPageChange}
+          onPageChange={({ selected }: { selected: number }) => onPageChange(selected)}
           containerClassName={"pagination flex items-center gap-[6px]"}
           activeClassName={"active"}
         />

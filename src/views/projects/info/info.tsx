@@ -1,16 +1,22 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { Btn, Icon, Input, PageLayout, Tooltip } from "@/components/imports";
 import { RoutesPath } from "@/types/router";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { RobotImage } from "@/assets/imports";
+import axios from "axios";
+import { ProjectTpye } from "@/store/types";
 function ProjectInfo() {
+
+  const { id } = useParams();
+
   const [welcomeMessage, setWelcomeMessage] = useState("");
   const [agentName, setAgentName] = useState("");
-  const [themeColor, setThemeColor] = useState("#000000");
+  const [themeColor, setThemeColor] = useState("transparent");
   const [message, setMessage] = useState("");
   const [inputFields, setInputFields] = useState([""]);
-  const [chatActive, setChatActive] = useState(false);
+  const [chatActive, setChatActive] = useState("");
   const [embedActive, setEmbedActive] = useState(false);
+  const [projectInfo, setProjectInfo] = useState<ProjectTpye | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -26,22 +32,43 @@ function ProjectInfo() {
   const handleMessageSend = () => {
     alert("send message");
   };
-  const openChat = () => {
-    setChatActive(true);
+  const openChat = (type: string) => {
+    setChatActive(type);
     setEmbedActive(false);
   };
   const openEmbed = () => {
-    setChatActive(false);
+    setChatActive("");
     setEmbedActive(true);
   };
   const handleAddField = () => {
     setInputFields([...inputFields, ""]);
   };
-  const handleRemoveField = (index: number) => {
+  const handleRemoveField = useCallback(async (index: number) => {
+
     const newInputFields = [...inputFields];
     newInputFields.splice(index, 1);
-    setInputFields(newInputFields);
-  };
+
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const response = await axios.patch(
+        `${import.meta.env.VITE_API_ENDPOINT}/projects/${projectInfo?.id}`,
+        {
+          formFields: newInputFields
+        },
+        config
+      );
+      if (response.data) console.log("Sucessfully deleted!");
+      setInputFields(newInputFields);
+    } catch (error: any) {
+      console.log(error);
+    }
+
+  }, [projectInfo, inputFields]);
+
   const handleDynamicFormsDataChange = (index: number, value: string) => {
     const newInputFields = [...inputFields];
     newInputFields[index] = value;
@@ -62,20 +89,108 @@ function ProjectInfo() {
     });
   };
 
+  const updateProjectInfo = async (data: ProjectTpye) => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+
+      const response = await axios.patch(
+        `${import.meta.env.VITE_API_ENDPOINT}/projects/${id}`,
+        {
+          agentName: data.agentName,
+          description: data.description,
+          domain: data.domain,
+          name: data.name,
+          welcomeMessage: data.welcomeMessage,
+          formFields: data.formFields,
+          themeColor: data.themeColor
+        },
+        config
+      );
+
+      if (response.data) {
+        console.log("Updated Successfully!");
+      }
+
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
+
+  const handleKeyDown = useCallback((keyBoard: any, fieldType: string) => {
+    const _projectInfo = projectInfo;
+    if (!_projectInfo) return;
+    switch (fieldType) {
+      case "welcomeMessage":
+        _projectInfo.welcomeMessage = welcomeMessage
+        break;
+      case "agentName":
+        _projectInfo.agentName = agentName
+        break;
+      case "formFields":
+        _projectInfo.formFields = inputFields
+        break;
+      default:
+        break;
+    }
+    if (keyBoard.code == "Enter" || keyBoard.code == "NumpadEnter") {
+      updateProjectInfo(_projectInfo);
+    }
+  }, [projectInfo, welcomeMessage, agentName, inputFields]);
+
   const handleWelcomeInput = (e: ChangeEvent<HTMLInputElement>) => {
     setWelcomeMessage(e.target.value);
   };
   const handleAgentNameInput = (e: ChangeEvent<HTMLInputElement>) => {
     setAgentName(e.target.value);
   };
-  const handleThemeColor = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleThemeColor = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setThemeColor(e.target.value);
-  };
+    const _projectInfo = projectInfo;
+    if (!_projectInfo) return;
+    _projectInfo.themeColor = e.target.value
+    updateProjectInfo(_projectInfo);
+  }, [projectInfo]);
+
+  const accessToken = localStorage.getItem('access_token');
+
+  const getProjectInfo = async (projectId: string) => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_ENDPOINT}/projects/${projectId}`,
+        config
+      );
+
+      setProjectInfo(response.data);
+
+      setWelcomeMessage(response.data.welcomeMessage);
+      if (response.data.agentName) setAgentName(response.data.agentName);
+      setInputFields(response.data.formFields);
+      setThemeColor(response.data.themeColor);
+
+
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    if (id) getProjectInfo(id);
+  }, [id]);
+
   return (
     <PageLayout>
       <div className="flex items-center gap-4 pt-7 pb-7 sticky top-0 bg-milk z-[9999]">
         <h2 className="font-secondary-medium text-2xl text-black tracking-[-2%]">
-          Project Name
+          {projectInfo?.name}
         </h2>
         <Link to={RoutesPath.PROJECTS}>
           <Btn
@@ -93,47 +208,49 @@ function ProjectInfo() {
       <div className="w-full grid lg:grid-cols-2 gap-5">
         <div className="w-full flex flex-col gap-5">
           <div
-            onClick={openChat}
+            onClick={() => openChat("welcomeMessage")}
             className="w-full flex flex-col gap-5 bg-white px-5 py-4 rounded-[10px]"
           >
             <div className="flex items-center gap-4">
               <label htmlFor="welcome_message">Welcome Message</label>
               <Tooltip
                 type="info"
-                text="This is info section to elcome message, here! Detail goes here. This is info section to welcome message, here! Detail goes here. "
+                text="A greeting message when a user first opens the chatbot"
               />
             </div>
             <Input
               onInput={handleWelcomeInput}
               type="text"
               value={welcomeMessage}
+              onKeyDown={(e) => handleKeyDown(e, "welcomeMessage")}
               placeholder=""
             />
           </div>
           <div
-            onClick={openChat}
+            onClick={() => openChat("agentName")}
             className="w-full flex flex-col gap-5 bg-white px-5 py-4 rounded-[10px]"
           >
             <div className="flex items-center gap-4">
               <label htmlFor="welcome_message">Agent Name</label>
               <Tooltip
                 type="info"
-                text="This is info section to Agent Name, here! Detail goes here. This is info section to welcome message, here! Detail goes here. "
+                text="This will be displayed to users if they ask for the name of the chatbot."
               />
             </div>
             <Input
               onInput={handleAgentNameInput}
               type="text"
               value={agentName}
+              onKeyDown={(e) => handleKeyDown(e, "agentName")}
               placeholder=""
             />
           </div>
-          <div className="w-full flex flex-col gap-5 bg-white pr-2 py-4 rounded-[10px]">
+          <div className="w-full flex flex-col gap-5 bg-white pr-2 py-4 rounded-[10px]" onClick={() => openChat("formFields")}>
             <div className="flex items-center gap-4 px-5">
               <label htmlFor="welcome_message">Forms</label>
               <Tooltip
                 type="info"
-                text="This is info section to Agent Name, here! Detail goes here. This is info section to welcome message, here! Detail goes here. "
+                text="For lead generation, you can add forms to collect user information"
               />
               <Btn
                 text="Watch Tutorial"
@@ -163,13 +280,14 @@ function ProjectInfo() {
                   <Input
                     type="text"
                     value={value}
+                    onKeyDown={(e) => handleKeyDown(e, "formFields")}
                     onChange={(e) =>
                       handleDynamicFormsDataChange(index, e.target.value)
                     }
                   />
                   <div
                     onClick={() => handleRemoveField(index)}
-                    className="absolute top-[50%] translate-y-[-50%] right-5 cursor-pointer"
+                    className="absolute top-[50%] translate-y-[-50%] right-5 cursor-pointer delete"
                   >
                     <Icon
                       icon="delete"
@@ -182,13 +300,13 @@ function ProjectInfo() {
               ))}
             </div>
           </div>
-          <div className="w-full flex flex-col gap-5 bg-white px-5 py-4 rounded-[10px]">
+          <div className="w-full flex flex-col gap-5 bg-white px-5 py-4 rounded-[10px]" onClick={() => openChat("formFields")}>
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-4">
                 <label htmlFor="welcome_message">Theme Color</label>
                 <Tooltip
                   type="info"
-                  text="This is info section to Agent Name, here! Detail goes here. This is info section to welcome message, here! Detail goes here. "
+                  text="Perhaps a colour that compliments your brands colour scheme?"
                 />
               </div>
               <div className="relative flex items-center gap-2 group">
@@ -215,7 +333,7 @@ function ProjectInfo() {
               <label htmlFor="welcome_message">Embed Code</label>
               <Tooltip
                 type="info"
-                text="This is info section to Agent Name, here! Detail goes here. This is info section to welcome message, here! Detail goes here. "
+                text="Copy and paste this code into your website to embed the chatbot"
               />
             </div>
             <Btn
@@ -230,11 +348,10 @@ function ProjectInfo() {
           </div>
         </div>
         <div
-          className={`${
-            chatActive ? "h-[calc(100vh-131px)]" : "h-[calc(100vh-171px)]"
-          } sticky top-[95px] w-full hidden lg:flex pb-10 md:pb-0 bg-white rounded-[10px]`}
+          className={`${chatActive ? "h-[calc(100vh-131px)]" : "h-[calc(100vh-171px)]"
+            } sticky top-[95px] w-full hidden lg:flex pb-10 md:pb-0 bg-white rounded-[10px]`}
         >
-          {chatActive ? (
+          {chatActive && chatActive != "formFields" ? (
             <div className="w-full h-full rounded-[10px]">
               <div className="grid grid-rows-[1fr,auto] h-full flex flex-col mt-4">
                 <div className="flex flex-col gap-4 px-6 w-full pt-6">
@@ -243,11 +360,11 @@ function ProjectInfo() {
                     <div className="flex flex-col gap-2 max-w-[75%]">
                       <div className="p-4 pr-6 bg-gray-500 rounded-[12px] break-word w-full">
                         <p className="text-black2 leading-[20px]">
-                          {agentName
+                          {chatActive == "agentName"
                             ? "Hi, my name is " + agentName + "!"
                             : welcomeMessage
-                            ? welcomeMessage
-                            : ""}
+                              ? welcomeMessage
+                              : ""}
                         </p>
                       </div>
                       <p className="text-black2 text-[10px]">Bot 10:40PM</p>
@@ -307,7 +424,7 @@ function ProjectInfo() {
                       <div className="w-full break-all">
                         <span className="text-blue">&lt;script </span>
                         src="https://cdn.jsdelivr.net/gh/wisdomcsharp/hypewize-chatbot/chat.js"
-                        id="64f32b78bbb9c780db148a1f"{" "}
+                        id="{id}"{" "}
                         <span className="text-blue">&gt;&lt;/script&gt;</span>
                       </div>
                     </div>
@@ -330,7 +447,7 @@ function ProjectInfo() {
               </div>
             </div>
           ) : (
-            <div className="w-full h-full bg-blue rounded-[10px]">
+            <div className="w-full h-full rounded-[10px]" style={{ backgroundColor: themeColor }}>
               <div className="w-full flex justify-end pt-6 pr-6">
                 <div className="cursor-pointer">
                   <Icon icon="close" width={16} height={16} />
@@ -343,27 +460,14 @@ function ProjectInfo() {
                     next agent available.
                   </p>
                   <div className="w-full flex flex-col gap-5 bg-white h-full px-5 py-4 rounded-t-[10px]">
-                    <Input
-                      onInput={handleFormChange}
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      placeholder="Name *"
-                    />
-                    <Input
-                      onInput={handleFormChange}
-                      type="text"
-                      name="email"
-                      value={formData.email}
-                      placeholder="Email *"
-                    />
-                    <Input
-                      onInput={handleFormChange}
-                      type="number"
-                      name="phoneNumber"
-                      value={formData.phoneNumber}
-                      placeholder="Phone Number *"
-                    />
+                    {inputFields.map((fieldTitle: string, index: number) => <div key={index}>
+                      {fieldTitle ? <Input
+                        onInput={handleFormChange}
+                        type="text"
+                        name={fieldTitle}
+                        placeholder={fieldTitle + " *"}
+                      /> : <></>}
+                    </div>)}
                   </div>
                 </div>
                 <div className="w-full bg-white rounded-b-[10px] px-10">

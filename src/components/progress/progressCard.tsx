@@ -1,6 +1,6 @@
 import { ProgressCardProps } from "@/types/imports";
 import { Tooltip } from "../imports";
-import { CircularProgressbar} from "react-circular-progressbar";
+import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
 function ProgressCard({ title, tooltipText, text, progress }: ProgressCardProps) {
@@ -20,7 +20,7 @@ function ProgressCard({ title, tooltipText, text, progress }: ProgressCardProps)
           <div className="flex justify-center md:mt-9 md:mb-4">
             <CircularProgressbar
               strokeWidth={12}
-              value={progress}
+              value={progress < 1 ? 1 : progress}
               text={`${progress}%`}
             />
           </div>
