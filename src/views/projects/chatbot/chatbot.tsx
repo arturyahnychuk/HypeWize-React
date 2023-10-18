@@ -1,17 +1,19 @@
 import { useState, ChangeEvent, useCallback, useEffect, useRef } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { Icon, Input } from "@/components/imports";
 import { RobotImage } from "@/assets/imports";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
-import { MessageType, ProjectTpye } from "@/store/types";
+import { MessageType, ProjectType } from "@/store/types";
 
-function Chatbot() {
+import { MESSAGES_URL, PROJECTS_ROOT_URL } from "@/apis/endpoint";
 
+const Chatbot = () => {
   const { id } = useParams();
   const [message, setMessage] = useState("");
   const [chatActive, setChatActive] = useState(false);
-  const [project, setProject] = useState<ProjectTpye | null>(null);
+  const [project, setProject] = useState<ProjectType | null>(null);
   const [session, setSession] = useState<string>("");
   const [ipAddress, setIpaddress] = useState<string>("");
   const [messages, setMessages] = useState<MessageType[]>([]);
@@ -36,7 +38,7 @@ function Chatbot() {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_ENDPOINT}/projects/${id}/form`,
+        `${ PROJECTS_ROOT_URL }/${id}/form`,
         {
           session: session,
           formFields: data
@@ -55,7 +57,7 @@ function Chatbot() {
   const getMessageInfo = useCallback(async (projectId: string, sessionId: string) => {
 
     const messagesRes = await axios.get(
-      `${import.meta.env.VITE_API_ENDPOINT}/messages/${projectId}?session=${sessionId}`,
+      `${ MESSAGES_URL }/${projectId}?session=${sessionId}`,
 
     );
 
@@ -96,7 +98,7 @@ function Chatbot() {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_ENDPOINT}/messages/${id}`,
+        `${ MESSAGES_URL }/${id}`,
         {
           session: session,
           userAgent: navigator.userAgent,
@@ -143,7 +145,7 @@ function Chatbot() {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_ENDPOINT}/projects/${id}`,
+        `${ PROJECTS_ROOT_URL }/${id}`,
       );
       setProject(response.data);
       let _formData: string[] = [];

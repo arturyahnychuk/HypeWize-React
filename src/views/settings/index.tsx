@@ -1,12 +1,15 @@
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import axios from "axios";
+
 import { GoogleImage, HubspotImage } from "@/assets/imports";
 import { Btn, Icon, Input, PageLayout, Tooltip } from "@/components/imports";
 import useAuthStore from "@/store/auth";
 import { APIType } from "@/store/types";
-import axios from "axios";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 
-function SettingsPage() {
+import { APIS_URL, GOOGLE_AUTH_URL, HUBSPOT_AUTH_URL, SEND_VERIFICATION_EMAIL_URL, USERS_URL } from "@/apis/endpoint";
+
+const SettingsPage = () => {
   const [settingsData, setSettingsData] = useState({
     first_name: "",
     last_name: "",
@@ -25,12 +28,12 @@ function SettingsPage() {
 
   const handleHubspotConnect = () => {
     // setHubspotConntected(true);
-    location.replace(`${import.meta.env.VITE_API_ENDPOINT}/auth/hubspot`)
+    location.replace(`${ HUBSPOT_AUTH_URL }`);
   };
 
   const handleGoogleConnect = () => {
     // setGoogleConntected(true);
-    location.replace(`${import.meta.env.VITE_API_ENDPOINT}/auth/google`)
+    location.replace(`${ GOOGLE_AUTH_URL }`);
   };
 
   const handleKeyDown = async (keyBoard: any, fieldType: string) => {
@@ -53,7 +56,7 @@ function SettingsPage() {
     }
 
     await axios.patch(
-      `${import.meta.env.VITE_API_ENDPOINT}/users/${profileInfo?.id}` || "",
+      `${ USERS_URL }/${profileInfo?.id}` || "",
       data,
       config
     ).then(() => {
@@ -71,7 +74,7 @@ function SettingsPage() {
     };
 
     await axios.post(
-      `${import.meta.env.VITE_API_ENDPOINT}/auth/send-verification-email` || "",
+      `${ SEND_VERIFICATION_EMAIL_URL }` || "",
       { email: settingsData.email },
       config
     ).then(() => {
@@ -100,7 +103,7 @@ function SettingsPage() {
       };
 
       const res = await axios.delete(
-        `${import.meta.env.VITE_API_ENDPOINT}/apis/${api.id}`, config
+        `${ APIS_URL }/${api.id}`, config
       );
 
       console.log("res:", res);
@@ -128,7 +131,7 @@ function SettingsPage() {
       };
 
       const res = await axios.patch(
-        `${import.meta.env.VITE_API_ENDPOINT}/apis/${api.id}`,
+        `${ APIS_URL }/${api.id}`,
         {
           name: api.name
         },
@@ -153,7 +156,7 @@ function SettingsPage() {
       };
 
       const res = await axios.post(
-        `${import.meta.env.VITE_API_ENDPOINT}/apis`, {}, config
+        `${ APIS_URL }`, {}, config
       );
 
       console.log("res:", res);
@@ -171,7 +174,7 @@ function SettingsPage() {
         },
       };
       const response = await axios.get(
-        `${import.meta.env.VITE_API_ENDPOINT}/apis`,
+        `${ APIS_URL }`,
         config
       );
 

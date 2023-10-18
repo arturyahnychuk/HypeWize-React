@@ -1,7 +1,8 @@
+import { Link } from "react-router-dom";
 import { BillingType } from "@/store/types";
 import { Btn } from "../imports";
-import { Link } from "react-router-dom";
-function PricingCard({ info }: { info: BillingType }) {
+
+const PricingCard = ({ info }: { info: BillingType }) => {
   return (
     <div className="w-full rounded-[10px] bg-white">
       <div className="relative w-full h-[214px] bg-blue pt-6 rounded-[10px]">
@@ -67,7 +68,7 @@ function PricingCard({ info }: { info: BillingType }) {
             ))}
           </div>
         </div>
-        <Link to={info.managePlanUrl}>
+        <Link to={info.managePlanUrl} target="_blank">
           <Btn text="Manage Plan" className="primary-btn plan-btn fill w-[88%] mt-[52px] py-[18px] mx-auto flex justify-center" />
         </Link>
       </div>

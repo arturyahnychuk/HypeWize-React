@@ -8,8 +8,9 @@ interface HeaderProps {
 
 function Header({ onClick }: HeaderProps) {
   const handleClick = ()=> [
-    onClick() 
+    onClick()
   ]
+  
   return (
     <div className="flex lg:hidden w-full bg-white shadow-sm flex items-center justify-between py-[22px] px-6">
       <Link to={RoutesPath.HOME}>

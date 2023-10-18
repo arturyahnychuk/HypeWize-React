@@ -1,14 +1,15 @@
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import axios from "axios";
+
 import { Btn, Icon, Input, PageLayout, Tooltip } from "@/components/imports";
 import { RoutesPath } from "@/types/router";
-import { Link, useParams } from "react-router-dom";
 import { RobotImage } from "@/assets/imports";
-import axios from "axios";
-import { ProjectTpye } from "@/store/types";
-function ProjectInfo() {
+import { ProjectType } from "@/store/types";
 
-  const { id } = useParams();
+import { PROJECTS_ROOT_URL } from "@/apis/endpoint";
 
+const ProjectInfo = () => {
   const [welcomeMessage, setWelcomeMessage] = useState("");
   const [agentName, setAgentName] = useState("");
   const [themeColor, setThemeColor] = useState("transparent");
@@ -16,7 +17,7 @@ function ProjectInfo() {
   const [inputFields, setInputFields] = useState([""]);
   const [chatActive, setChatActive] = useState("");
   const [embedActive, setEmbedActive] = useState(false);
-  const [projectInfo, setProjectInfo] = useState<ProjectTpye | null>(null);
+  const [projectInfo, setProjectInfo] = useState<ProjectType | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -26,6 +27,9 @@ function ProjectInfo() {
     name: "",
     email: "",
   });
+  
+  const { id } = useParams();
+
   const handleMessageInput = (e: ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
   };
@@ -55,7 +59,7 @@ function ProjectInfo() {
         },
       };
       const response = await axios.patch(
-        `${import.meta.env.VITE_API_ENDPOINT}/projects/${projectInfo?.id}`,
+        `${ PROJECTS_ROOT_URL }/${projectInfo?.id}`,
         {
           formFields: newInputFields
         },
@@ -74,6 +78,7 @@ function ProjectInfo() {
     newInputFields[index] = value;
     setInputFields(newInputFields);
   };
+  
   const handleFormsDataChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormsData({
@@ -89,7 +94,7 @@ function ProjectInfo() {
     });
   };
 
-  const updateProjectInfo = async (data: ProjectTpye) => {
+  const updateProjectInfo = async (data: ProjectType) => {
     try {
       const config = {
         headers: {
@@ -98,7 +103,7 @@ function ProjectInfo() {
       };
 
       const response = await axios.patch(
-        `${import.meta.env.VITE_API_ENDPOINT}/projects/${id}`,
+        `${ PROJECTS_ROOT_URL }/${id}`,
         {
           agentName: data.agentName,
           description: data.description,
@@ -165,7 +170,7 @@ function ProjectInfo() {
         },
       };
       const response = await axios.get(
-        `${import.meta.env.VITE_API_ENDPOINT}/projects/${projectId}`,
+        `${ PROJECTS_ROOT_URL }/${projectId}`,
         config
       );
 

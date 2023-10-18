@@ -3,11 +3,12 @@ import React, { ChangeEvent, useState } from "react";
 import { Btn, Input, Textarea } from "../imports";
 import { Link, useNavigate } from "react-router-dom";
 import { RoutesPath } from "@/types/router";
-import { ProjectTpye } from "@/store/types";
+import { ProjectType } from "@/store/types";
 import axios from "axios";
+import { PROJECTS_ROOT_URL } from "@/apis/endpoint";
 
 interface ProjectsCardTypes {
-  info: ProjectTpye,
+  info: ProjectType,
   handleDelete: () => void;
 }
 function ProjectsCard({ info, handleDelete }: ProjectsCardTypes) {
@@ -53,7 +54,7 @@ function ProjectsCard({ info, handleDelete }: ProjectsCardTypes) {
       };
 
       const response = await axios.patch(
-        `${import.meta.env.VITE_API_ENDPOINT}/projects/${info.id}`,
+        `${ PROJECTS_ROOT_URL }/${info.id}`,
         {
           description: textVal,
           name: titleVal,

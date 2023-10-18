@@ -1,43 +1,37 @@
+import { useState } from "react";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
+import axios from 'axios';
+
 import { Btn, CheckBox, FormLayout, Input } from "@/components/imports";
 import { GoogleIcon } from "@/assets/imports";
 import { RoutesPath } from "@/types/router";
-import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { screenConfig } from "@/config/imports";
-import { useState } from "react";
-import axios from 'axios';
 import useAuthStore from "@/store/auth";
 
+import { GOOGLE_AUTH_URL, LOGIN_API_URL } from "@/apis/endpoint";
 
-function Login() {
-
+const Login = () => {
   const navigate = useNavigate();
-
   const cssColorIndex: number[] = useOutletContext();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const { setProfileInfo } = useAuthStore();
 
   const handleSubmit = async () => {
-
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_ENDPOINT}/auth/login` || "",
-        {
-          email,
-          password,
-        }
-      );
+        `${ LOGIN_API_URL }` || "", {
+            email,
+            password,
+        });
 
       setProfileInfo(response.data.user);
-
       localStorage.setItem("access_token", response.data.tokens.access.token);
 
       navigate("/projects");
-
     } catch (error: any) {
       console.error(error);
     }
-
   };
 
   const colorIndex = cssColorIndex[0]
@@ -77,7 +71,7 @@ function Login() {
         image={GoogleIcon}
         width={16}
         height={16}
-        onClick={() => location.replace(`${import.meta.env.VITE_API_ENDPOINT}/auth/google`)}
+        onClick={() => location.replace(`${ GOOGLE_AUTH_URL }`)}
         className="submit-btn text-black border border-gray-100 bg-transparent"
       />
       <p className="text-base font-secondary-medium text-black-50 text-center">

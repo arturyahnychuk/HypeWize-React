@@ -1,23 +1,20 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import axios from 'axios';
 
-export default function Google() {
+import { GOOGLE_AUTH_URL } from '@/apis/endpoint';
 
+const Google = () => {
+    const [confirmResult, setConfirmResult] = useState<string>("");
+    
     const [searchParams] = useSearchParams();
-
     const navigate = useNavigate();
 
     const code = searchParams.get("code");
 
-    const [confirmResult, setConfirmResult] = useState<string>("");
-
     // const accessToken = localStorage.getItem("access_token");
-
     const ConfirmGoogleAuth = async () => {
-
         try {
-
             // const config = {
             //     headers: {
             //         Authorization: `Bearer ${accessToken}`,
@@ -25,7 +22,7 @@ export default function Google() {
             // };
 
             const res = await axios.post(
-                `${import.meta.env.VITE_API_ENDPOINT}/auth/google?code=${code}`, {}
+                `${ GOOGLE_AUTH_URL }?code=${code}`, {}
             );
 
             if (res.data) {
@@ -43,9 +40,7 @@ export default function Google() {
     }
 
     useEffect(() => {
-
         if (code) ConfirmGoogleAuth();
-
     }, []);
 
     return (
@@ -56,3 +51,5 @@ export default function Google() {
         </div>
     )
 }
+
+export default Google;

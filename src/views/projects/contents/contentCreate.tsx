@@ -1,3 +1,7 @@
+import React, { useState, ChangeEvent, useEffect, useCallback } from "react";
+import { Link, useParams } from "react-router-dom";
+import axios from "axios";
+
 import {
   Btn,
   CheckBox,
@@ -6,28 +10,26 @@ import {
   Tooltip,
 } from "@/components/imports";
 import { RoutesPath } from "@/types/router";
-import { Link, useParams } from "react-router-dom";
-import React, { useState, ChangeEvent, useEffect, useCallback } from "react";
 import { DocsImage } from "@/assets/imports";
-import axios from "axios";
-import { ProjectTpye } from "@/store/types";
+import { ProjectType } from "@/store/types";
+import { PROJECTS_ROOT_URL } from "@/apis/endpoint";
 
 function ContentCreatePage() {
-
-  const { id } = useParams();
-
-  const [projectInfo, setProjectInfo] = useState<ProjectTpye | null>(null);
+  const [projectInfo, setProjectInfo] = useState<ProjectType | null>(null);
   const [websiteVal, setWebsteVal] = useState("");
   const [linkType, setLinkType] = useState<"crawl" | "single">("crawl");
+  const [isDrag, setIsDrag] = useState(false);
+
+  const { id } = useParams();
+  const accessToken = localStorage.getItem("access_token");
+  
   const handleAddWebsite = (e: ChangeEvent<HTMLInputElement>) => {
     setWebsteVal(e.target.value);
   };
+
   const handleCheckboxes = (linkType: "crawl" | "single") => {
     setLinkType(linkType);
   };
-  const [isDrag, setIsDrag] = useState(false);
-
-  const accessToken = localStorage.getItem("access_token");
 
   const updateProjectInfo = async (data: any) => {
     console.log("data:", data);
@@ -39,7 +41,7 @@ function ContentCreatePage() {
       };
 
       const response = await axios.patch(
-        `${import.meta.env.VITE_API_ENDPOINT}/projects/${id}`,
+        `${ PROJECTS_ROOT_URL }/${id}`,
         {
           ...data
         },
@@ -67,7 +69,7 @@ function ContentCreatePage() {
       };
 
       const response = await axios.post(
-        `${import.meta.env.VITE_API_ENDPOINT}/projects/${id}/upload`,
+        `${ PROJECTS_ROOT_URL }/${id}/upload`,
         files,
         config
       );
@@ -85,7 +87,7 @@ function ContentCreatePage() {
 
     if (keyBoard.code == "Enter" || keyBoard.code == "NumpadEnter") {
 
-      let _projectInfo: ProjectTpye = Object.create(projectInfo);
+      let _projectInfo: ProjectType = Object.create(projectInfo);
 
       if (linkType == "crawl") {
         const data = {
@@ -98,9 +100,7 @@ function ContentCreatePage() {
         }
         updateProjectInfo(data);
       }
-
     }
-
   }, [websiteVal, linkType]);
 
   const handleUploadedDoc = (e: any, type: "drag" | "select") => {
@@ -114,9 +114,7 @@ function ContentCreatePage() {
 
     // Handle the dropped files (e.g., display the image)
     if (files.length > 0) {
-
       uploadDocument(files[0]);
-
     }
   };
 
@@ -128,13 +126,11 @@ function ContentCreatePage() {
         },
       };
       const response = await axios.get(
-        `${import.meta.env.VITE_API_ENDPOINT}/projects/${projectId}`,
+        `${ PROJECTS_ROOT_URL }/${projectId}`,
         config
       );
 
       setProjectInfo(response.data);
-
-
     } catch (error: any) {
       console.log(error);
     }

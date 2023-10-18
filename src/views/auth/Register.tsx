@@ -1,31 +1,30 @@
+import { useCallback, useState } from "react";
+import { Link, useOutletContext } from "react-router-dom";
+import axios from "axios";
+
 import { Btn, CheckBox, FormLayout, Input } from "@/components/imports";
 import { GoogleIcon } from "@/assets/imports";
 import { RoutesPath } from "@/types/router";
-import { Link, useOutletContext } from "react-router-dom";
 import { screenConfig } from "@/config/imports";
-import axios from "axios";
-import { useCallback, useState } from "react";
 
-function Register() {
+import { REGISTER_API_URL } from "@/apis/endpoint";
 
-  const cssColorIndex: number[] = useOutletContext();
-  const colorIndex = cssColorIndex[0];
-
+const Register = () => {
   const [email, setEmail] = useState<string>("");
   const [firstname, setFirstname] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  
+  const cssColorIndex: number[] = useOutletContext();
+  const colorIndex = cssColorIndex[0];
 
   const handleSubmit = useCallback(async () => {
-
     try {
       const registerResponse = await axios.post(
-        `${import.meta.env.VITE_API_ENDPOINT}/auth/register` || "",
-        {
-          email,
-          password,
-          firstname
-        }
-      );
+        `${ REGISTER_API_URL }` || "", {
+            email,
+            password,
+            firstname
+        });
 
       console.log("Register Result:", registerResponse.data);
 

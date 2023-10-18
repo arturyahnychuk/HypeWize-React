@@ -1,23 +1,26 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 import { projectsFilterBtns } from "@/config/imports";
 import { filterBtnConfigTypes } from "@/types/imports";
 import { AddImage } from "@/assets/imports";
 import { Filter, PaginationComponent, ProjectsCard } from "@/components/imports";
-import axios from "axios";
-import { ProjectTpye } from "@/store/types";
-import { useNavigate } from "react-router-dom";
+import { ProjectType } from "@/store/types";
 
-function Projects() {
+import { PROJECTS_ROOT_URL, FETCH_PROJECTS_DATA_URL } from "@/apis/endpoint";
 
+const Projects = () => {
   const activeFilter: string = localStorage.getItem("grid_type") || "grid";
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [projects, setProjects] = useState<ProjectTpye[]>([]);
+  const [projects, setProjects] = useState<ProjectType[]>([]);
   const navigate = useNavigate();
 
   const handleFilter = (value: filterBtnConfigTypes["value"]) => {
     localStorage.setItem("grid_type", value);
     location.reload();
+    // setCurrentPage(0);
   };
 
   const accessToken = localStorage.getItem('access_token');
@@ -30,7 +33,7 @@ function Projects() {
         },
       };
       const response = await axios.get(
-        `${import.meta.env.VITE_API_ENDPOINT}/projects?limit=10&sortBy=createdAt:desc&page=${page + 1}`,
+        `${ FETCH_PROJECTS_DATA_URL }&page=${ page + 1 }`,
         config
       );
 
@@ -41,7 +44,7 @@ function Projects() {
     }
   };
 
-  const handleDelete = async (project: ProjectTpye) => {
+  const handleDelete = async (project: ProjectType) => {
     console.log("project:", project);
     try {
       const config = {
@@ -51,7 +54,7 @@ function Projects() {
       };
 
       await axios.delete(
-        `${import.meta.env.VITE_API_ENDPOINT}/projects/${project.id}`,
+        `${ PROJECTS_ROOT_URL }/${ project.id }`,
         config
       );
 
@@ -78,7 +81,7 @@ function Projects() {
       };
 
       const res = await axios.post(
-        `${import.meta.env.VITE_API_ENDPOINT}/projects`,
+        `${ PROJECTS_ROOT_URL }`,
         {},
         config
       );
@@ -115,7 +118,7 @@ function Projects() {
             </p>
           </div>
         </div>
-        {projects.map((project: ProjectTpye, index: number) => <ProjectsCard
+        {projects.map((project: ProjectType, index: number) => <ProjectsCard
           key={index}
           info={project}
           handleDelete={() => handleDelete(project)}

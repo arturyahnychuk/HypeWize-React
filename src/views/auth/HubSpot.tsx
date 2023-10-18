@@ -1,22 +1,21 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import axios from 'axios';
 
-export default function HubSpot() {
+import { HUBSPOT_AUTH_URL } from '@/apis/endpoint';
+
+const HubSpot = () => {
+    const [confirmResult, setConfirmResult] = useState<string>("");
 
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
-    const [confirmResult, setConfirmResult] = useState<string>("");
-
     const code = searchParams.get("code");
 
     const ConfirmHubSpotAuth = async () => {
-
         try {
-
             const res = await axios.post(
-                `${import.meta.env.VITE_API_ENDPOINT}/auth/hubspot?code=${code}`, {},
+                `${ HUBSPOT_AUTH_URL }?code=${code}`, {},
             );
 
             if (res.data) {
@@ -35,9 +34,7 @@ export default function HubSpot() {
     }
 
     useEffect(() => {
-
         if (code) ConfirmHubSpotAuth();
-
     }, []);
 
     return (
@@ -48,3 +45,5 @@ export default function HubSpot() {
         </div>
     )
 }
+
+export default HubSpot;

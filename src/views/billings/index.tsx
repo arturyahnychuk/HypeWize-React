@@ -1,31 +1,29 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 import { PageLayout, PricingCard } from "@/components/imports";
 import { BillingType } from "@/store/types";
-import axios from "axios";
-import { useEffect, useState } from "react";
 
-function BillingsPage() {
+import { BILLING_URL } from "@/apis/endpoint";
 
+const BillingsPage = () => {
   const [billing, setBilling] = useState<BillingType | null>(null);
-
   const accessToken = localStorage.getItem("access_token");
 
   const getBillingInfo = async () => {
-
-
-
     try {
       const config = {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       };
+
       const response = await axios.get(
-        `${import.meta.env.VITE_API_ENDPOINT}/billing`,
+        `${ BILLING_URL }`,
         config
       );
 
       setBilling(response.data);
-
     } catch (error: any) {
       console.log(error);
     }

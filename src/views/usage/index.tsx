@@ -1,15 +1,17 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 import { PageLayout, ProgressCard } from "@/components/imports";
 import { BillingType, UsageType } from "@/store/types";
-import axios from "axios";
-import { useEffect, useState } from "react";
 
-function UsagePage() {
+import { BILLING_URL, USAGE_STATS_URL } from "@/apis/endpoint";
 
-  const accessToken = localStorage.getItem("access_token");
-
+const UsagePage = () => {
   const [usageInfo, setUsageInfo] = useState<UsageType | null>(null);
   const [billing, setBilling] = useState<BillingType | null>(null);
-
+  
+  const accessToken = localStorage.getItem("access_token");
+  
   const getUsageInfo = async () => {
     try {
       const config = {
@@ -18,7 +20,7 @@ function UsagePage() {
         },
       };
       const response = await axios.get(
-        `${import.meta.env.VITE_API_ENDPOINT}/stats`,
+        `${ USAGE_STATS_URL }`,
         config
       );
 
@@ -38,7 +40,7 @@ function UsagePage() {
         },
       };
       const response = await axios.get(
-        `${import.meta.env.VITE_API_ENDPOINT}/billing`,
+        `${ BILLING_URL }`,
         config
       );
 

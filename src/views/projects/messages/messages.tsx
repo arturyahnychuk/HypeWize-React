@@ -1,14 +1,15 @@
-import { Btn, Icon, Input, PageLayout, PaginationComponent, Table } from "@/components/imports";
-import { DisplayMessageType, MessageType, ProjectTpye, TagType } from "@/store/types";
-import { RoutesPath } from "@/types/router";
-import axios from "axios";
 import { useState, ChangeEvent, useEffect, useCallback } from "react";
 import { Link, useParams } from "react-router-dom";
 import Select from "react-select";
+import axios from "axios";
 
+import { Btn, Icon, Input, PageLayout, PaginationComponent, Table } from "@/components/imports";
+import { DisplayMessageType, MessageType, ProjectType, TagType } from "@/store/types";
+import { RoutesPath } from "@/types/router";
 
+import { MESSAGES_URL, METADATA_URL, PROJECTS_ROOT_URL, PROJECT_TAGS_URL } from "@/apis/endpoint";
 
-function ProjectMessages() {
+const ProjectMessages = () => {
 
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -17,7 +18,7 @@ function ProjectMessages() {
   const [tags, setTags] = useState<TagType[]>([]);
   const templateMessages = JSON.parse(localStorage.getItem("temp_messages") || "[{}]");
   const [displayMessages, setDisplayMessages] = useState<DisplayMessageType[]>(templateMessages ? templateMessages : []);
-  const [projectInfo, setProjectInfo] = useState<ProjectTpye | null>(null);
+  const [projectInfo, setProjectInfo] = useState<ProjectType | null>(null);
   const { id } = useParams();
 
   const handleFilter = useCallback((selectedOption: any) => {
@@ -135,7 +136,7 @@ function ProjectMessages() {
         },
       };
       const response = await axios.get(
-        `${import.meta.env.VITE_API_ENDPOINT}/messages/${projectId}?page=${page + 1}&limit=25${tagStringList ? ('&tags=' + tagStringList) : ""}`,
+        `${ MESSAGES_URL }/${projectId}?page=${page + 1}&limit=25${tagStringList ? ('&tags=' + tagStringList) : ""}`,
         config
       );
 
@@ -156,7 +157,7 @@ function ProjectMessages() {
         },
       };
       const response = await axios.get(
-        `${import.meta.env.VITE_API_ENDPOINT}/tags?project=${projectId}`,
+        `${ PROJECT_TAGS_URL }?project=${projectId}`,
         config
       );
 
@@ -183,7 +184,7 @@ function ProjectMessages() {
       }
 
       const metaDataRes = await axios.get(
-        `${import.meta.env.VITE_API_ENDPOINT}/metadata?session=${sessionsString}`,
+        `${ METADATA_URL }?session=${sessionsString}`,
         config
       ).then((response) => response.data.results);
 
@@ -218,7 +219,7 @@ function ProjectMessages() {
         },
       };
       const response = await axios.get(
-        `${import.meta.env.VITE_API_ENDPOINT}/projects/${projectId}`,
+        `${ PROJECTS_ROOT_URL }/${projectId}`,
         config
       );
 

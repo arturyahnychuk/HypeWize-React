@@ -1,19 +1,17 @@
+import React, { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import React, { useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
 
-export default function VerifyEmail() {
+import { VERIFY_EMAIL_URL } from '@/apis/endpoint';
 
+const VerifyEmail = () => {
     const [searchParams] = useSearchParams();
 
     const token = searchParams.get("token");
-
     const accessToken = localStorage.getItem("access_token");
 
     const verifyEmail = async () => {
-
         try {
-
             const config = {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
@@ -21,7 +19,7 @@ export default function VerifyEmail() {
             };
 
             const res = await axios.post(
-                `${import.meta.env.VITE_API_ENDPOINT}/auth/verify-email?token=${token}`, {}, config
+                `${ VERIFY_EMAIL_URL }?token=${token}`, {}, config
             );
 
             console.log("res:", res);
@@ -31,12 +29,12 @@ export default function VerifyEmail() {
     }
 
     useEffect(() => {
-
         if (token) verifyEmail();
-
     }, []);
 
     return (
         <></>
     )
 }
+
+export default VerifyEmail;

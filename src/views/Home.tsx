@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-function Home() {
+const Home = () => {
 
   const navigate = useNavigate();
   const accessToken = localStorage.getItem("access_token");
@@ -19,4 +19,5 @@ function Home() {
     </div>
   );
 }
+
 export default Home;

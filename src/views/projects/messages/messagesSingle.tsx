@@ -1,3 +1,7 @@
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { ChangeEvent, useState, useEffect, useCallback } from "react";
+import axios from "axios";
+
 import { RobotImage } from "@/assets/imports";
 import {
   Btn,
@@ -8,13 +12,13 @@ import {
   Textarea,
 } from "@/components/imports";
 import { RoutesPath } from "@/types/router";
-import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { ChangeEvent, useState, useEffect, useCallback } from "react";
 import { filterBtnConfigTypes } from "@/types/imports";
-import { MessageType, ProjectTpye } from "@/store/types";
-import axios from "axios";
+import { MessageType, ProjectType } from "@/store/types";
 
-function MessagesSingle() {
+import { MESSAGES_URL, METADATA_URL, PROJECTS_ROOT_URL } from "@/apis/endpoint";
+
+
+const MessagesSingle = () => {
 
   const [searchParams] = useSearchParams();
   const { id } = useParams();
@@ -28,7 +32,7 @@ function MessagesSingle() {
   const [filterVal, setFilterVal] = useState("messages");
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [collectedData, setCollectedData] = useState<any[]>([]);
-  const [projecInfo, setProjectInfo] = useState<ProjectTpye | null>(null);
+  const [projecInfo, setProjectInfo] = useState<ProjectType | null>(null);
   const [metaDataId, setMetaDataId] = useState<string>("");
 
   const session = searchParams.get("session");
@@ -44,19 +48,19 @@ function MessagesSingle() {
         },
       };
       const messagesRes = await axios.get(
-        `${import.meta.env.VITE_API_ENDPOINT}/messages/${projectId}?session=${sessionId}`,
+        `${ MESSAGES_URL }/${projectId}?session=${sessionId}`,
         config
       );
 
       setMessages(messagesRes.data.results);
 
       const metaDataRes = await axios.get(
-        `${import.meta.env.VITE_API_ENDPOINT}/metadata?project=${projectId}&session=${sessionId}`,
+        `${ METADATA_URL }?project=${projectId}&session=${sessionId}`,
         config
       );
 
       const collectedDataRes = await axios.get(
-        `${import.meta.env.VITE_API_ENDPOINT}/projects/${projectId}/form?session=${sessionId}`,
+        `${ PROJECTS_ROOT_URL }/${projectId}/form?session=${sessionId}`,
         config
       );
 
@@ -78,7 +82,7 @@ function MessagesSingle() {
         },
       };
       const response = await axios.get(
-        `${import.meta.env.VITE_API_ENDPOINT}/projects/${projectId}`,
+        `${ PROJECTS_ROOT_URL }/${projectId}`,
         config
       );
 
@@ -132,7 +136,7 @@ function MessagesSingle() {
       };
       if (!metaDataId) {
         const response = await axios.post(
-          `${import.meta.env.VITE_API_ENDPOINT}/metadata`,
+          `${ METADATA_URL }`,
           {
             project: projecInfo.id,
             session,
@@ -148,7 +152,7 @@ function MessagesSingle() {
         }
       } else {
         const response = await axios.patch(
-          `${import.meta.env.VITE_API_ENDPOINT}/metadata/${metaDataId}`,
+          `${ METADATA_URL }/${metaDataId}`,
           {
             tags: [...tags, tagVal],
           },
@@ -183,7 +187,7 @@ function MessagesSingle() {
       };
       if (!metaDataId) {
         const response = await axios.post(
-          `${import.meta.env.VITE_API_ENDPOINT}/metadata`,
+          `${ METADATA_URL }`,
           {
             project: projecInfo.id,
             session,
@@ -199,7 +203,7 @@ function MessagesSingle() {
         }
       } else {
         const response = await axios.patch(
-          `${import.meta.env.VITE_API_ENDPOINT}/metadata/${metaDataId}`,
+          `${ METADATA_URL }/${metaDataId}`,
           {
             notes: noteVal
           },
@@ -231,7 +235,7 @@ function MessagesSingle() {
       const _tags = tags.filter((each) => each != item);
 
       const response = await axios.patch(
-        `${import.meta.env.VITE_API_ENDPOINT}/metadata/${metaDataId}`,
+        `${ METADATA_URL }/${metaDataId}`,
         {
           tags: _tags,
         },

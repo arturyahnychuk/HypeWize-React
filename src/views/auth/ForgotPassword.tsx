@@ -1,17 +1,20 @@
-import { Btn, FormLayout, Input } from "@/components/imports";
-import { RoutesPath } from "@/types/router";
-import { Link, useOutletContext } from "react-router-dom";
-import { screenConfig } from "@/config/imports";
 import { useState } from "react";
+import { Link, useOutletContext } from "react-router-dom";
 import axios from "axios";
 
-function ForgotPassword() {
+import { Btn, FormLayout, Input } from "@/components/imports";
+import { RoutesPath } from "@/types/router";
+import { screenConfig } from "@/config/imports";
+
+import { FORGOT_PASSWORD_URL } from "@/apis/endpoint";
+
+const ForgotPassword = () => {
   const [email, setEmail] = useState<string>("");
 
   const handleSubmit = async () => {
     if (!email) return;
     await axios.post(
-      `${import.meta.env.VITE_API_ENDPOINT}/auth/forgot-password` || "",
+      `${ FORGOT_PASSWORD_URL }` || "",
       { email },
     ).then(() => {
       console.log("Reset Password Email Sent!");

@@ -1,3 +1,7 @@
+import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import axios from "axios";
+
 import {
   Btn,
   CheckBox,
@@ -7,15 +11,12 @@ import {
   PaginationComponent,
   Textarea,
 } from "@/components/imports";
-import { ContentType, ProjectTpye } from "@/store/types";
+import { ContentType, ProjectType } from "@/store/types";
 import { RoutesPath } from "@/types/router";
-import axios from "axios";
-import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
 
-function ContentsPage() {
+import { CONTENTS_URL, PROJECTS_ROOT_URL } from "@/apis/endpoint";
 
-
+const ContentsPage = () => {
   const [contentCurrentPage, setContentCurrentPage] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -25,7 +26,7 @@ function ContentsPage() {
   const [startRemovingDuplicates, setStartRemovingDuplicates] = useState(false);
   const { id } = useParams();
   const [isContentEdit, setIsContentEdit] = useState(false);
-  const [projectInfo, setProjectInfo] = useState<ProjectTpye | null>(null);
+  const [projectInfo, setProjectInfo] = useState<ProjectType | null>(null);
   const [contents, setContents] = useState<ContentType[]>([]);
   const [selectedContent, setSelectedContent] = useState<ContentType[]>([]);
   const [contentValues, setContentValues] = useState<ContentType[]>([]);
@@ -42,7 +43,7 @@ function ContentsPage() {
         },
       };
       await axios.delete(
-        `${import.meta.env.VITE_API_ENDPOINT}/contents/${content.contentType.includes("document") ? "documents/" : ""}${content.documentId || content._id}`,
+        `${ CONTENTS_URL }/${content.contentType.includes("document") ? "documents/" : ""}${content.documentId || content._id}`,
         config
       );
 
@@ -109,7 +110,7 @@ function ContentsPage() {
         },
       };
       const response = await axios.get(
-        `${import.meta.env.VITE_API_ENDPOINT}/contents/?project=${id}&search=${contentSearchValue}&contentType=${searchType}&page=${currentPage + 1}&limit=25&sortBy=createdAt:desc`,
+        `${ CONTENTS_URL }/?project=${id}&search=${contentSearchValue}&contentType=${searchType}&page=${currentPage + 1}&limit=25&sortBy=createdAt:desc`,
         config
       );
 
@@ -146,7 +147,7 @@ function ContentsPage() {
         },
       };
       const response = await axios.get(
-        `${import.meta.env.VITE_API_ENDPOINT}/contents/?project=${projectId}&page=${page + 1}&limit=25&sortBy=createdAt:desc`,
+        `${ CONTENTS_URL }/?project=${projectId}&page=${page + 1}&limit=25&sortBy=createdAt:desc`,
         config
       );
 
@@ -167,7 +168,7 @@ function ContentsPage() {
         },
       };
       const response = await axios.get(
-        `${import.meta.env.VITE_API_ENDPOINT}/projects/${projectId}`,
+        `${ PROJECTS_ROOT_URL }/${projectId}`,
         config
       );
 
@@ -185,7 +186,6 @@ function ContentsPage() {
   }, [id, currentPage]);
 
   useEffect(() => {
-
     const threshold = 230;
     const cont = document.getElementById("scroll-container");
     let _previousOffset = 0;
@@ -193,7 +193,6 @@ function ContentsPage() {
     let _currentPage = 1;
 
     if (cont) {
-
       cont.addEventListener("scroll", () => {
 
         const _next = document.getElementById(`page${_currentPage + 1}`);
@@ -234,7 +233,7 @@ function ContentsPage() {
     if (item.documentId) {
 
       const docContentsRes = await axios.get(
-        `${import.meta.env.VITE_API_ENDPOINT}/contents?documentId=${item.documentId}&project=${item.project}`,
+        `${ CONTENTS_URL }?documentId=${item.documentId}&project=${item.project}`,
         config
       );
 
@@ -516,7 +515,7 @@ function ContentsPage() {
                               <path
                                 d="M5 1L11 7M11 7L17 13M11 7L17 1M11 7L5 13"
                                 stroke="#8C8FA7"
-                                stroke-width="2"
+                                strokeWidth="2"
                                 stroke-linecap="round"
                               />
                             </g>

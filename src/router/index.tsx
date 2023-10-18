@@ -31,6 +31,7 @@ import useAuthStore from "@/store/auth";
 import { useEffect } from "react";
 import HubSpot from "@/views/auth/HubSpot";
 import Google from "@/views/auth/Google";
+import { USERS_URL } from "@/apis/endpoint";
 
 
 const ProtectedRoute: React.FC<any> = ({ component }) => {
@@ -49,7 +50,7 @@ const ProtectedRoute: React.FC<any> = ({ component }) => {
         },
       };
       const response = await axios.get(
-        `${import.meta.env.VITE_API_ENDPOINT}/users/${id}`,
+        `${ USERS_URL }/${id}`,
         config
       );
 

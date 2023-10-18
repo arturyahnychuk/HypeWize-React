@@ -1,11 +1,14 @@
-import { Btn, FormLayout, Input } from "@/components/imports";
-import { RoutesPath } from "@/types/router";
-import { Link, useNavigate, useOutletContext, useSearchParams } from "react-router-dom";
-import { screenConfig } from "@/config/imports";
 import { useCallback, useEffect, useState } from "react";
+import { Link, useNavigate, useOutletContext, useSearchParams } from "react-router-dom";
 import axios from "axios";
 
-function ResetPassword() {
+import { Btn, FormLayout, Input } from "@/components/imports";
+import { RoutesPath } from "@/types/router";
+import { screenConfig } from "@/config/imports";
+
+import { RESET_PASSWORD_URL } from "@/apis/endpoint";
+
+const ResetPassword = () => {
   const handleSubmit = (): void => {
     // alert("Submited");
   };
@@ -27,7 +30,7 @@ function ResetPassword() {
       // };
 
       const res = await axios.post(
-        `${import.meta.env.VITE_API_ENDPOINT}/auth/reset-password?token=${searchParams.get('token')}`, {
+        `${ RESET_PASSWORD_URL }?token=${searchParams.get('token')}`, {
         password: password
       }
       );
