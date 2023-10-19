@@ -254,7 +254,7 @@ const ContentsPage = () => {
   return (
     <PageLayout>
       <div className="flex items-center justify-between gap-4 h-full">
-        <div className="w-full grid lg:grid-cols-2 gap-[10px]">
+        <div className="w-full h-screen grid lg:grid-cols-2 gap-[10px]">
           <div className="w-full pb-4">
             <div className="pt-7 pb-[20px] lg:pb-[34px] sticky top-0 bg-milk z-[9999]">
               <div className="hidden lg:flex items-center gap-4">
