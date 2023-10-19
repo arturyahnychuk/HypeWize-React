@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import axios from "axios";
 
@@ -8,6 +8,7 @@ import { RoutesPath } from "@/types/router";
 import { screenConfig } from "@/config/imports";
 
 import { REGISTER_API_URL } from "@/apis/endpoint";
+import { REGISTER_PAGE_TITLE } from "@/config/utils";
 
 const Register = () => {
   const [email, setEmail] = useState<string>("");
@@ -17,6 +18,10 @@ const Register = () => {
   const cssColorIndex: number[] = useOutletContext();
   const navigate = useNavigate();
   const colorIndex = cssColorIndex[0];
+
+  useEffect(() => {
+    document.title = REGISTER_PAGE_TITLE
+  });
 
   const handleSubmit = useCallback(async () => {
     axios.post(

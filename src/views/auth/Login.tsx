@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import axios from 'axios';
 
@@ -9,6 +9,7 @@ import { screenConfig } from "@/config/imports";
 import useAuthStore from "@/store/auth";
 
 import { GOOGLE_AUTH_URL, LOGIN_API_URL } from "@/apis/endpoint";
+import { LOGIN_PAGE_TITLE } from "@/config/utils";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -16,6 +17,10 @@ const Login = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const { setProfileInfo } = useAuthStore();
+  
+  useEffect(() => {
+    document.title = LOGIN_PAGE_TITLE
+  }, []);
 
   const handleSubmit = async () => {
     try {

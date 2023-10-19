@@ -5,12 +5,17 @@ import { PageLayout, ProgressCard } from "@/components/imports";
 import { BillingType, UsageType } from "@/store/types";
 
 import { BILLING_URL, USAGE_STATS_URL } from "@/apis/endpoint";
+import { USAGE_PAGE_TITLE } from "@/config/utils";
 
 const UsagePage = () => {
   const [usageInfo, setUsageInfo] = useState<UsageType | null>(null);
   const [billing, setBilling] = useState<BillingType | null>(null);
   
   const accessToken = localStorage.getItem("access_token");
+
+  useEffect(() => {
+    document.title = USAGE_PAGE_TITLE;
+}, []);
   
   const getUsageInfo = async () => {
     try {

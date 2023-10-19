@@ -8,6 +8,7 @@ import useAuthStore from "@/store/auth";
 import { APIType } from "@/store/types";
 
 import { APIS_URL, GOOGLE_AUTH_URL, HUBSPOT_AUTH_URL, SEND_VERIFICATION_EMAIL_URL, USERS_URL } from "@/apis/endpoint";
+import { SETTINGS_PAGE_TITLE } from "@/config/utils";
 
 const SettingsPage = () => {
   const [settingsData, setSettingsData] = useState({
@@ -25,6 +26,10 @@ const SettingsPage = () => {
   const [selectedApi, setSelectedApi] = useState<APIType | null>(null);
 
   const accessToken = localStorage.getItem("access_token");
+
+  useEffect(() => {
+    document.title = SETTINGS_PAGE_TITLE;
+}, []);
 
   const handleHubspotConnect = () => {
     // setHubspotConntected(true);

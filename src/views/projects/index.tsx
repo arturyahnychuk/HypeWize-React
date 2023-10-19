@@ -9,6 +9,7 @@ import { Filter, PaginationComponent, ProjectsCard } from "@/components/imports"
 import { ProjectType } from "@/store/types";
 
 import { PROJECTS_ROOT_URL, FETCH_PROJECTS_DATA_URL } from "@/apis/endpoint";
+import { PROJECTS_PAGE_TITLE } from "@/config/utils";
 
 const Projects = () => {
   const activeFilter: string = localStorage.getItem("grid_type") || "grid";
@@ -16,6 +17,10 @@ const Projects = () => {
   const [totalPages, setTotalPages] = useState<number>(1);
   const [projects, setProjects] = useState<ProjectType[]>([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = PROJECTS_PAGE_TITLE;
+}, []);
 
   const handleFilter = (value: filterBtnConfigTypes["value"]) => {
     localStorage.setItem("grid_type", value);

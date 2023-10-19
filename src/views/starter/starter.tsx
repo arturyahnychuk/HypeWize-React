@@ -9,6 +9,7 @@ import { RoutesPath } from "@/types/imports";
 import useAuthStore from "@/store/auth";
 
 import { PROJECTS_ROOT_URL, STARTER_GUID_URL, USERS_URL } from "@/apis/endpoint";
+import { STARTER_GUIDE_PAGE_TITLE } from "@/config/utils";
 
 const StarterPage = () => {
   const [starterGuideInfo, setStarterGuideInfo] = useState<StarterGuideType | null>(null);
@@ -18,6 +19,10 @@ const StarterPage = () => {
   const navigate = useNavigate();
   const { profileInfo, setProfileInfo } = useAuthStore();
   const accessToken = localStorage.getItem("access_token");
+
+  useEffect(() => {
+    document.title = STARTER_GUIDE_PAGE_TITLE;
+}, []);
 
   const getStarterGuideInfo = async () => {
     try {
