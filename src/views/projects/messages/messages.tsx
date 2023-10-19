@@ -192,7 +192,7 @@ const ProjectMessages = () => {
         _displayMessages.push({
           ip: messages[index].ipAddress,
           detail: messages[index].question,
-          tags: metaDataRes?.find((item: any) => item.session == messages[index].session)?.tags || [],
+          tags: metaDataRes?.find((item: any) => item.project == messages[index].project)?.tags || [],
           date: messages[index].createdAt,
           project: messages[index].project,
           session: messages[index].session
