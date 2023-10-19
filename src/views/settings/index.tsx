@@ -37,30 +37,30 @@ const SettingsPage = () => {
   };
 
   const handleKeyDown = async (keyBoard: any, fieldType: string) => {
-
-    if (keyBoard.code == "Enter" || keyBoard.code == "NumpadEnter") handleUpdateUserName(fieldType);
-
+    if (keyBoard.code == "Enter" || keyBoard.code == "NumpadEnter") {
+      handleUpdateUserProfile(fieldType);
+    }
   };
 
-  const handleUpdateUserName = useCallback(async (fieldType: string) => {
+  const handleUpdateUserProfile = useCallback(async (fieldType: string) => {
     const config = {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     };
 
-    const data = fieldType == "firstname" ? {
-      firstname: settingsData.first_name
-    } : {
-      lastname: settingsData.last_name
+    const profileUpdate = {
+      firstname: settingsData.first_name,
+      lastname: settingsData.last_name,
+      email: settingsData.email
     }
 
     await axios.patch(
       `${ USERS_URL }/${profileInfo?.id}` || "",
-      data,
+      profileUpdate,
       config
-    ).then(() => {
-      console.log("Verification Email Sent!");
+    ).then((response) => {
+      console.log("User Profile Update!", response.data);
     }).catch((err) => {
       console.log(err);
     });
@@ -258,9 +258,10 @@ const SettingsPage = () => {
                 name="email"
                 id="email"
                 className="w-full"
+                onChange={handleFormsDataChange}
+                onKeyDown={(e) => handleKeyDown(e, "email")}
+                defaultValue={settingsData.email}
                 placeholder=""
-                disabled
-                value={settingsData.email}
               />
             </div>
           </div>
