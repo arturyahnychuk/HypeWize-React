@@ -6,6 +6,7 @@ import { Btn, CheckBox, FormLayout, Input } from "@/components/imports";
 import { GoogleIcon } from "@/assets/imports";
 import { RoutesPath } from "@/types/router";
 import { screenConfig } from "@/config/imports";
+import useAuthStore from "@/store/auth";
 
 import { REGISTER_API_URL } from "@/apis/endpoint";
 import { REGISTER_PAGE_TITLE } from "@/config/utils";
@@ -17,6 +18,8 @@ const Register = () => {
   
   const cssColorIndex: number[] = useOutletContext();
   const navigate = useNavigate();
+  const { setProfileInfo } = useAuthStore();
+
   const colorIndex = cssColorIndex[0];
 
   useEffect(() => {
@@ -30,11 +33,14 @@ const Register = () => {
           password,
           firstname
       }).then(response => {
-        console.log("Register Result:", response.data);
-        if(response.data.user)
-          navigate("/projects");
-        else
-          alert(response.data.message);
+        const { user, message, tokens } = response.data;
+        if (user) {
+            setProfileInfo(user);
+            localStorage.setItem("access_token", tokens.access.token);
+            navigate("/projects");
+        } else {
+            alert(message);
+        }
       }).catch(error => {
         console.log(error.response.data.message);
         alert(error.response.data.message);
