@@ -275,7 +275,7 @@ const ProjectInfo = () => {
                 height={16}
               />
             </div>
-            <div className="h-full max-h-[130px] overflow-auto custom-scrollbar pl-5 pr-2 ">
+            <div className="h-[130px] overflow-auto custom-scrollbar pl-5 pr-2">
               {inputFields.map((value, index) => (
                 <div
                   key={index}

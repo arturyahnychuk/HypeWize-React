@@ -26,6 +26,7 @@ export const HUBSPOT_AUTH_URL = `${ API_ROOT_URL }/auth/hubspot`;
 export const GOOGLE_AUTH_URL = `${ API_ROOT_URL }/auth/google`;
 export const SEND_VERIFICATION_EMAIL_URL = `${ API_ROOT_URL }/auth/send-verification-email`;
 export const APIS_URL = `${ API_ROOT_URL }/apis`;
+
 export const FORGOT_PASSWORD_URL = `${ API_ROOT_URL }/forgot-password`;
 export const RESET_PASSWORD_URL = `${ API_ROOT_URL }/reset-password`;
 export const VERIFY_EMAIL_URL = `${ API_ROOT_URL }/verify-email`;
