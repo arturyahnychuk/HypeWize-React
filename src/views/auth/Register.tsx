@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { Link, useOutletContext } from "react-router-dom";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import axios from "axios";
 
 import { Btn, CheckBox, FormLayout, Input } from "@/components/imports";
@@ -15,41 +15,27 @@ const Register = () => {
   const [password, setPassword] = useState<string>("");
   
   const cssColorIndex: number[] = useOutletContext();
+  const navigate = useNavigate();
   const colorIndex = cssColorIndex[0];
 
   const handleSubmit = useCallback(async () => {
-    try {
-      const registerResponse = await axios.post(
-        `${ REGISTER_API_URL }` || "", {
-            email,
-            password,
-            firstname
-        });
+    axios.post(
+      `${ REGISTER_API_URL }` || "", {
+          email,
+          password,
+          firstname
+      }).then(response => {
+        console.log("Register Result:", response.data);
+        if(response.data.user)
+          navigate("/projects");
+        else
+          alert(response.data.message);
+      }).catch(error => {
+        console.log(error.response.data.message);
+        alert(error.response.data.message);
+      });
 
-      console.log("Register Result:", registerResponse.data);
-
-      // if (registerResponse.data?.user?.email) {
-
-      //   const config = {
-      //     headers: {
-      //       Authorization: `Bearer ${registerResponse.data.tokens.access.token}`,
-      //     },
-      //   };
-
-      //   await axios.post(
-      //     `${import.meta.env.VITE_API_ENDPOINT}/auth/send-verification-email` || "",
-      //     { email },
-      //     config
-      //   ).then(() => {
-      //     console.log("Verification Email Sent!");
-      //   }).catch((err) => {
-      //     console.log(err);
-      //   });
-      // }
-
-    } catch (error: any) {
-      console.error(error);
-    }
+    console.log("Register Result:");
 
   }, [email, firstname, password]);
 

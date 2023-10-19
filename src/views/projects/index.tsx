@@ -79,7 +79,7 @@ const Projects = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       };
-
+      console.log("----- Create Project -----", config);
       const res = await axios.post(
         `${ PROJECTS_ROOT_URL }`,
         {},
