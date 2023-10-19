@@ -37,6 +37,15 @@ export interface ContentType {
     _id: string;
 }
 
+export interface ContentSearchParamsType {
+    project: number;
+    search?: string;
+    contentType?: string;
+    page: number;
+    limit: number;
+    sortBy: string;
+}
+
 export interface DisplayMessageType {
     ip: string,
     project: string,

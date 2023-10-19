@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, json, useParams } from "react-router-dom";
 import axios from "axios";
 
 import {
@@ -11,7 +11,7 @@ import {
   PaginationComponent,
   Textarea,
 } from "@/components/imports";
-import { ContentType, ProjectType } from "@/store/types";
+import { ContentType, ProjectType, ContentSearchParamsType } from "@/store/types";
 import { RoutesPath } from "@/types/router";
 
 import { CONTENTS_URL, PROJECTS_ROOT_URL } from "@/apis/endpoint";
@@ -109,17 +109,37 @@ const ContentsPage = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       };
-      const response = await axios.get(
-        `${ CONTENTS_URL }/?project=${id}&search=${contentSearchValue}&contentType=${searchType}&page=${currentPage + 1}&limit=25&sortBy=createdAt:desc`,
-        config
-      );
 
-      setContents(response.data.results);
-      if (response.data.results.length) setSelectedContent(response.data.results[0]);
-      else setSelectedContent([]);
-      setTotalResults(response.data.totalResults);
-      openAddContent(response.data.results[0]);
-      setTotalPages(response.data.totalPages);
+      const jsonData: ContentSearchParamsType = {
+        project: id,
+        ...(contentSearchValue !== '' && { search: contentSearchValue }),
+        ...(searchType !== '' && { contentType: searchType }),
+        page: (currentPage + 1).toString(),
+        limit: "25",
+        sortBy: "createdAt:desc"
+      };
+
+      const params = new URLSearchParams(jsonData);
+      const searchURL = `${CONTENTS_URL}/?${params.toString()}`;
+
+      axios.get(
+        searchURL,        
+        config
+      ).then(response => {
+        const { results, totalResults, totalPages } = response.data;
+        setContents(results);
+        
+        if (results.length) 
+          setSelectedContent(results[0]);        
+        else 
+          setSelectedContent([]);
+        setTotalResults(totalResults);
+        openAddContent(results[0]);
+        setTotalPages(totalPages);
+      }).catch(error => {
+        console.log(error)
+      });     
+      
     } catch (error: any) {
       console.log(error);
     }
