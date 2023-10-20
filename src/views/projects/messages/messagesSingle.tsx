@@ -38,6 +38,7 @@ const MessagesSingle = () => {
   const session = searchParams.get("session");
   const accessToken = localStorage.getItem('access_token');
 
+  const suggestedTags = ["Editable", "Tags", "English", "Russian"];
 
   const getMessageInfo = async (projectId: string, sessionId: string) => {
 
@@ -459,6 +460,22 @@ const MessagesSingle = () => {
                       value={tagVal}
                       placeholder=""
                     />
+                     <span className="success stroke hover-green text-sm text-green !px-0 lg:!pl-5">
+                      Suggested Tags
+                    </span>
+                    <div className="flex flex-wrap gap-[10px]">
+                      {
+                        suggestedTags.map((tag:string, index: number) => (
+                          <>
+                            <div 
+                              className="flex items-center gap-1 px-3 py-[7px] capitalize rounded-full bg-milkLight text-xs text-gray-300"
+                              key={ index }>
+                              { tag }
+                            </div>
+                          </>
+                        ))
+                      }
+                    </div>
                   </div>
                 )}
               </div>
