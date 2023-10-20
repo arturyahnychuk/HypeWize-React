@@ -12,15 +12,17 @@ function Table({ data }: TableProps) {
   if (!data || data.length === 0) {
     return (
       <div className="flex items-center justify-center h-[calc(70vh)]">
-          <div className="bg-[#f5f5fe] inset-0 flex flex-col items-center justify-center border border-green px-10 py-10 w-56 h-52">
+        <div className="rounded-xl overflow-hidden border-gradient gap-0 inset-0 flex flex-col items-center justify-center p-[2px] w-52 h-52">
+          <div className="flex flex-col items-center rounded-xl justify-center bg-[#f5f5fe] w-full h-full">
             <img
-              className="x-[30px] sm:w-[46px]"
+              className="x-[50px] sm:w-[66px]"
               src={ RobotImage }
               alt="Robot Image" />
-            <span className="font-sans">
+            <span className="font-sans px-1 py-5">
               No Messages.
             </span>
           </div>
+        </div>
       </div>
     );
   }
