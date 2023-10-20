@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { RoutesPath } from "@/types/router";
 import { MessageType } from "@/store/types";
+import { RobotImage } from "@/assets/imports";
 
 interface TableProps {
   data: any[];
@@ -9,7 +10,19 @@ interface TableProps {
 function Table({ data }: TableProps) {
 
   if (!data || data.length === 0) {
-    return <div>No data available.</div>;
+    return (
+      <div className="flex items-center justify-center h-[calc(70vh)]">
+          <div className="bg-[#f5f5fe] inset-0 flex flex-col items-center justify-center border border-green px-10 py-10 w-56 h-52">
+            <img
+              className="x-[30px] sm:w-[46px]"
+              src={ RobotImage }
+              alt="Robot Image" />
+            <span className="font-sans">
+              No Messages.
+            </span>
+          </div>
+      </div>
+    );
   }
 
   const navigate = useNavigate();
