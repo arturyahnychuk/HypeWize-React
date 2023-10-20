@@ -1,5 +1,7 @@
 import { useCallback, useState, useEffect } from "react";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 
 import { Btn, CheckBox, FormLayout, Input } from "@/components/imports";
@@ -43,7 +45,7 @@ const Register = () => {
         }
       }).catch(error => {
         console.log(error.response.data.message);
-        alert(error.response.data.message);
+        toast.error("Sign up Failed");
       });
 
     console.log("Register Result:");
@@ -52,6 +54,17 @@ const Register = () => {
 
   return (
     <FormLayout title="Sign up" onSubmit={handleSubmit}>
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <Input
         type="text"
         onChange={(e) => setFirstname(e.target.value)}

@@ -390,7 +390,7 @@ const ContentsPage = () => {
                 )}
               </div>
             </div>
-            <div className="w-full bg-white rounded-[10px] px-5">
+            <div className="w-full bg-white rounded-[10px] px-5 overflow-auto">
               {contents.map((item: ContentType, index: number) => (
                 <div
                   key={index}
