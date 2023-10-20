@@ -2,7 +2,7 @@ import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 
-import { Btn, Icon, Input, PageLayout, Tooltip } from "@/components/imports";
+import { Btn, Icon, Input, PageLayout, Textarea, Tooltip } from "@/components/imports";
 import { RoutesPath } from "@/types/router";
 import { RobotImage } from "@/assets/imports";
 import { ProjectType } from "@/store/types";
@@ -18,6 +18,7 @@ const ProjectInfo = () => {
   const [chatActive, setChatActive] = useState("");
   const [embedActive, setEmbedActive] = useState(false);
   const [projectInfo, setProjectInfo] = useState<ProjectType | null>(null);
+  const [updateStatus, setUpdateStatus] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -118,6 +119,12 @@ const ProjectInfo = () => {
 
       if (response.data) {
         console.log("Updated Successfully!");
+        setUpdateStatus(fieldType);
+
+        //Reset the status after 2s
+        setTimeout(() => {
+            setUpdateStatus(null);
+        }, 1000);
       }
 
     } catch (error: any) {
@@ -142,7 +149,7 @@ const ProjectInfo = () => {
         break;
     }
     if (keyBoard.code == "Enter" || keyBoard.code == "NumpadEnter") {
-      updateProjectInfo(_projectInfo);
+      updateProjectInfo(_projectInfo, fieldType);
     }
   }, [projectInfo, welcomeMessage, agentName, inputFields]);
 
@@ -228,6 +235,8 @@ const ProjectInfo = () => {
               type="text"
               value={welcomeMessage}
               onKeyDown={(e) => handleKeyDown(e, "welcomeMessage")}
+              updateStatus={ updateStatus }
+              inputName="welcomeMessage"
               placeholder=""
             />
           </div>
@@ -247,6 +256,8 @@ const ProjectInfo = () => {
               type="text"
               value={agentName}
               onKeyDown={(e) => handleKeyDown(e, "agentName")}
+              updateStatus={ updateStatus }
+              inputName="agentName"
               placeholder=""
             />
           </div>
@@ -275,7 +286,7 @@ const ProjectInfo = () => {
                 height={16}
               />
             </div>
-            <div className="h-[130px] overflow-auto custom-scrollbar pl-5 pr-2">
+            <div className="h-[50px] overflow-auto custom-scrollbar pl-5 pr-2 ">
               {inputFields.map((value, index) => (
                 <div
                   key={index}
@@ -289,6 +300,8 @@ const ProjectInfo = () => {
                     onChange={(e) =>
                       handleDynamicFormsDataChange(index, e.target.value)
                     }
+                    updateStatus={ updateStatus }
+                    inputName="formField"
                   />
                   <div
                     onClick={() => handleRemoveField(index)}
@@ -304,6 +317,23 @@ const ProjectInfo = () => {
                 </div>
               ))}
             </div>
+          </div>
+          <div className="w-full flex flex-col gap-5 bg-white px-5 py-4 rounded-[10px]"
+          >
+            <div className="flex items-center gap-4">
+              <label htmlFor="welcome_message">Form Guidline</label>
+              <Tooltip
+                type="info"
+                text="This will be displayed to users if they ask for how to use this."
+              />
+            </div>
+            <Textarea
+              // onInput={handleAgentNameInput}
+              defaultValue="Please fill out the form below to start chatting with the
+              next agent available."
+              onKeyDown={(e) => handleKeyDown(e, "guidLine")}
+              placeholder=""
+            />
           </div>
           <div className="w-full flex flex-col gap-5 bg-white px-5 py-4 rounded-[10px]" onClick={() => openChat("formFields")}>
             <div className="flex items-center justify-between w-full">
@@ -333,8 +363,8 @@ const ProjectInfo = () => {
               </div>
             </div>
           </div>
-          <div className="w-full flex flex-col gap-5 bg-white px-5 py-4 rounded-[10px]">
-            <div className="flex items-center gap-4">
+          <div className="w-full flex flex-row items-center justify-between gap-5 bg-white px-5 py-4 rounded-[10px]">
+          <div className="flex flex-row items-center gap-4">
               <label htmlFor="welcome_message">Embed Code</label>
               <Tooltip
                 type="info"
@@ -348,7 +378,7 @@ const ProjectInfo = () => {
               name="code"
               width={20}
               height={20}
-              className="primary-btn bg-blue fill justify-center !py-3"
+              className="primary-btn bg-blue fill items-center w-3/5 justify-center !py-3"
             />
           </div>
         </div>
@@ -384,6 +414,8 @@ const ProjectInfo = () => {
                         value={message}
                         placeholder="Type your message here"
                         className="!py-5"
+                        updateStatus={ updateStatus }
+                        inputName="formField"
                       />
                       <div
                         onClick={handleMessageSend}
@@ -466,11 +498,14 @@ const ProjectInfo = () => {
                   </p>
                   <div className="w-full flex flex-col gap-5 bg-white h-full px-5 py-4 rounded-t-[10px]">
                     {inputFields.map((fieldTitle: string, index: number) => <div key={index}>
-                      {fieldTitle ? <Input
+                      {fieldTitle ? 
+                      <Input
                         onInput={handleFormChange}
                         type="text"
                         name={fieldTitle}
                         placeholder={fieldTitle + " *"}
+                        updateStatus={ updateStatus }
+                        inputName="formField"
                       /> : <></>}
                     </div>)}
                   </div>

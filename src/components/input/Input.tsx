@@ -4,10 +4,14 @@ import React, { InputHTMLAttributes, useState } from "react";
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   showhide?: boolean; // additional
   className?: string;
+  updateStatus?: string | null;
+  inputName?: string;
 }
 
 const Input: React.FC<InputProps> = ({
   className='',
+  updateStatus,
+  inputName,
   showhide = false,
   ...props
 }) => {
@@ -31,7 +35,7 @@ const Input: React.FC<InputProps> = ({
   return (
     <div className="relative w-full input-parent">
       <input
-        className={`w-full font-secondary-regular text-sm placeholder:text-gray-300 px-[19px] py-[15px] bg-transparent rounded-[6px] border border-gray-100 focus:border-gray-300 outline-none transition-all ${className}`}
+        className={`w-full font-secondary-regular text-sm placeholder:text-gray-300 px-[19px] py-[15px] bg-transparent rounded-[6px] border border-gray-100 focus:border-gray-300 outline-none transition-all ${className} ${ updateStatus === inputName ? "bg-emerald-300 transition ease-in-out duration-500" : ""}`}
         {...props}
       />
       {showhide && (
