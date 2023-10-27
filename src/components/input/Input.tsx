@@ -6,12 +6,14 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   className?: string;
   updateStatus?: string | null;
   inputName?: string;
+  error?: string;
 }
 
 const Input: React.FC<InputProps> = ({
   className='',
   updateStatus,
   inputName,
+  error,
   showhide = false,
   ...props
 }) => {
@@ -35,7 +37,10 @@ const Input: React.FC<InputProps> = ({
   return (
     <div className="relative w-full input-parent">
       <input
-        className={`w-full font-secondary-regular text-sm placeholder:text-gray-300 px-[19px] py-[15px] bg-transparent rounded-[6px] border border-gray-100 focus:border-gray-300 outline-none transition-all ${className} ${ updateStatus === inputName ? "bg-emerald-300 transition ease-in-out duration-500" : ""}`}
+        className={`w-full font-secondary-regular text-sm placeholder:text-gray-300 px-[19px] py-[15px] rounded-[6px] border 
+        ${error ? "border-red" : "border-gray-100" }
+        focus:border-gray-300 outline-none transition-all
+        ${className} ${ updateStatus === inputName ? "bg-emerald-300 transition ease-in-out duration-500" : ""}`}
         {...props}
       />
       {showhide && (

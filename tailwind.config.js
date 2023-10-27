@@ -47,4 +47,9 @@ export default {
     },
   },
   plugins: [],
+  utilities: {
+    display: {
+      inline: "inline-block"
+    }
+  }
 };

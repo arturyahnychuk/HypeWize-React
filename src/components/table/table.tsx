@@ -1,8 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
+
 import { RoutesPath } from "@/types/router";
 import { MessageType } from "@/store/types";
 import { RobotImage } from "@/assets/imports";
-
 interface TableProps {
   data: any[];
 }
@@ -12,17 +12,17 @@ function Table({ data }: TableProps) {
   if (!data || data.length === 0) {
     return (
       <div className="flex items-center justify-center h-[calc(70vh)]">
-        <div className="rounded-xl overflow-hidden border-gradient gap-0 inset-0 flex flex-col items-center justify-center p-[2px] w-52 h-52">
-          <div className="flex flex-col items-center rounded-xl justify-center bg-[#f5f5fe] w-full h-full">
-            <img
-              className="x-[50px] sm:w-[66px]"
-              src={ RobotImage }
-              alt="Robot Image" />
-            <span className="font-sans px-1 py-5">
-              No Messages.
-            </span>
+          <div className="rounded-xl overflow-hidden border-gradient gap-0 inset-0 flex flex-col items-center justify-center p-[2px] w-52 h-52">
+            <div className="flex flex-col items-center rounded-xl justify-center bg-[#f5f5fe] w-full h-full">
+              <img
+                className="x-[50px] sm:w-[66px]"
+                src={ RobotImage }
+                alt="Robot Image" />
+              <span className="font-sans px-1 py-5">
+                No Messages.
+              </span>
+            </div>
           </div>
-        </div>
       </div>
     );
   }

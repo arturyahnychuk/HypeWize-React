@@ -12,8 +12,8 @@ const BillingsPage = () => {
   const accessToken = localStorage.getItem("access_token");
 
   useEffect(() => {
-    document.title = BILLINGS_PAGE_TITLE
-  })
+    document.title = BILLINGS_PAGE_TITLE;
+  }, []);
 
   const getBillingInfo = async () => {
     try {

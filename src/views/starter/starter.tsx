@@ -21,8 +21,8 @@ const StarterPage = () => {
   const accessToken = localStorage.getItem("access_token");
 
   useEffect(() => {
-    document.title = STARTER_GUIDE_PAGE_TITLE;
-}, []);
+      document.title = STARTER_GUIDE_PAGE_TITLE;
+  }, []);
 
   const getStarterGuideInfo = async () => {
     try {

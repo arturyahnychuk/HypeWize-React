@@ -4,85 +4,171 @@ import axios from "axios";
 
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { Icon, Input } from "@/components/imports";
-import { RobotImage } from "@/assets/imports";
+import { CloseImage, RobotImage } from "@/assets/imports";
 import { MessageType, ProjectType } from "@/store/types";
 
 import { MESSAGES_URL, PROJECTS_ROOT_URL } from "@/apis/endpoint";
 
 const Chatbot = () => {
-  const { id } = useParams();
-  const [message, setMessage] = useState("");
-  const [chatActive, setChatActive] = useState(false);
   const [project, setProject] = useState<ProjectType | null>(null);
+
+  const [chatActive, setChatActive] = useState(false);
+
+  const [messages, setMessages] = useState<MessageType[]>([]);
+  const [message, setMessage] = useState("");
+  const [messageDisable, setMessageDisable] = useState(false);
+
   const [session, setSession] = useState<string>("");
   const [ipAddress, setIpaddress] = useState<string>("");
-  const [messages, setMessages] = useState<MessageType[]>([]);
-  // const [lastMessage, setLastMessage] = useState<MessageType>();
-  const scrollRef = useRef(null);
 
   const [formData, setFormData] = useState<string[]>([]);
+  const [fullScreen, setFullScreen] = useState(true);
+
+  const scrollRef = useRef(null);
+  const inputRef = useRef(null);
+  const messageContainerRef = useRef(null);
+
+  const { id } = useParams();
+
+  useEffect(() => {
+    axios
+      .get(`${ PROJECTS_ROOT_URL }/${id}`)
+      .then(response => {
+        response.data.createAt = formatDate(response.data.createdAt);
+
+        setProject(response.data);
+
+        const _formData: string[] = [];
+        const { formFields } = response.data;
+
+        formFields.map(() => {
+          _formData.push("");
+        });
+
+        setFormData(_formData);
+
+        if (formFields.length == 0) {
+          setChatActive(true);
+        }
+      });
+    setSessionHandle();
+
+    if(localStorage.getItem("messages") !== null) {
+      const tempMessages = localStorage.getItem("messages");
+      setMessages(JSON.parse(tempMessages));
+    }
+  }, [id, session, ipAddress]);
+
+  useEffect(() => {
+    if(inputRef.current) {
+      inputRef.current.focus();
+    }
+  },[ messageDisable, message ]);
+
+  useEffect(() => {
+    if(messageContainerRef.current) {
+      messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+    }
+  }, []);
+
+  const setSessionHandle = async () => {
+    const fp = await FingerprintJS.load();
+    const result = await fp.get();
+    setSession(result.visitorId);
+
+    axios
+      .get("https://ipapi.co/json")
+      .then(res => {
+          setIpaddress(res.data.ip);
+      })
+      .catch(error => {
+          console.log(error);
+      });
+  }
+
   const handleMessageSend = () => {
     sendMessage();
   };
-  const startChat = useCallback(async () => {
+
+  const handleCloseFullScreen = () => {
+    setFullScreen(fullScreen => !fullScreen);
+  }
+
+  const startChat = useCallback(() => {
     console.log("formData:", formData)
     if (!project || !id) return;
     const data = project.formFields.reduce((acc: any, curr) => {
-
       acc[curr] = "";
+
       return acc;
     }, {});
+
     for (let i = 0; i < project.formFields.length; i++) {
       data[project.formFields[i]] = formData[i]
     }
 
-    try {
-      const response = await axios.post(
-        `${ PROJECTS_ROOT_URL }/${id}/form`,
-        {
+    axios
+      .post(`${ PROJECTS_ROOT_URL }/${id}/form`,{
           session: session,
           formFields: data
+        })
+      .then(response => {
+        if (response.data) {
+          setChatActive(true);
+          // getMessageInfo(id, session);
         }
-      );
-      if (response.data) {
-        setChatActive(true);
-        getMessageInfo(id, session);
-      }
-    } catch (error: any) {
-      console.log("error:", error);
-    }
-
+      })
+      .catch(error => {
+          console.log(error);
+      });
+    
   }, [formData]);
 
-  const getMessageInfo = useCallback(async (projectId: string, sessionId: string) => {
-
-    const messagesRes = await axios.get(
-      `${ MESSAGES_URL }/${projectId}?session=${sessionId}`,
-
-    );
-
-    setMessages(messagesRes.data.results);
+  const getMessageInfo = useCallback((projectId: string, sessionId: string) => {
+    axios
+      .get(`${ MESSAGES_URL }/${projectId}?session=${sessionId}`)
+      .then(response => {
+        console.log("messages response : ",response);
+        setMessages(response.data.results);
+      })
+      .catch(error => {
+          console.log(error);
+      });
 
   }, [session]);
 
   const handleChangeMessage = (value: string): void => {
     setMessage(value);
   };
+
   const handleKeyDown = useCallback(async (keyBoard: any) => {
-
     if (keyBoard.code == "Enter" || keyBoard.code == "NumpadEnter") {
+      // sendMessage();
       sendMessage();
+      setMessage("");
     }
-
   }, [message]);
 
-  const sendMessage = useCallback(async () => {
-    if (!id || !project) return;
+  const getAnswer = async (ipAddress: string, message: string) => {
+    try {
+      const response = await axios.post(
+          `${ MESSAGES_URL }/${id}`, {
+            session: session,
+            userAgent: navigator.userAgent,
+            ipAddress: ipAddress,
+            question: message
+      });
 
-    console.log({ session, ipAddress })
+      return response.data.answer;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
-    let _messages = messages.slice(0);
-    let data: MessageType = {
+  const sendMessage = async () => {
+    setMessageDisable(true);
+
+    const data: MessageType = {
       project: project.id,
       user: project.user,
       session: session,
@@ -90,96 +176,86 @@ const Chatbot = () => {
       answer: "",
       userAgent: navigator.userAgent,
       ipAddress: ipAddress,
-      createdAt: new Date().toLocaleDateString(),
+      createdAt: formatDate(new Date().toLocaleString()),
       updatedAt: ""
     };
-    _messages.push(data);
-    setMessages(_messages);
 
-    try {
-      const response = await axios.post(
-        `${ MESSAGES_URL }/${id}`,
-        {
-          session: session,
-          userAgent: navigator.userAgent,
-          ipAddress: ipAddress,
-          question: message
-        }
-      );
+    setMessages([...messages, data]);
 
-      if (response.data) {
-        let _messages = [...messages];
-        let data = _messages[_messages.length - 1];
-        data = { ...data, updatedAt: new Date().toLocaleDateString(), answer: response.data.answer };
-        _messages[_messages.length - 1] = data;
-        setMessages(_messages);
-        setTimeout(() => {
-          scrollToBottom();
-          setMessage("");
-        }, 500);
-      }
-    } catch (error) {
-      console.log("Error sending message:", error);
-    }
+    const answer = await getAnswer(ipAddress, message);
 
-  }, [session, ipAddress, message]);
+    data.answer = answer;
+    data.updatedAt = formatDate(new Date().toLocaleString());
 
+    setMessages([...messages, data]);
+    localStorage.setItem("messages", JSON.stringify([...messages, data]))
+    setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+
+    setMessageDisable(false);
+  }
 
   const scrollToBottom = useCallback(() => {
-    // @ts-ignore
-    const scrollComponent = scrollRef.current?.scrollComponent;
-    if (scrollComponent) {
-      const scrollHeight = scrollComponent.scrollHeight;
-      scrollComponent.parentElement.scrollTo(0, scrollHeight);
+    if(scrollRef.current) {
+      scrollRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end"
+      });
     }
   }, [scrollRef]);
 
   const handleFormData = (value: string, index: number): void => {
-    let _formData = formData.slice(0);
+    const _formData = formData.slice(0);
     _formData[index] = value;
     setFormData(_formData);
   };
 
-  const navigate = useNavigate();
-
-  const fetchData = async () => {
-    try {
-      const response = await axios.get(
-        `${ PROJECTS_ROOT_URL }/${id}`,
-      );
-      setProject(response.data);
-      let _formData: string[] = [];
-      response.data.formFields.map(() => {
-        _formData.push("");
-      });
-      setFormData(_formData);
-      if (response.data.formFields.length == 0) {
-        setChatActive(true);
-      }
-
-      const fp = await FingerprintJS.load();
-      const result = await fp.get();
-      setSession(result.visitorId);
-
-      const ipResponse = await axios.get("https://ipapi.co/json");
-      setIpaddress(ipResponse.data.ip);
-
-    } catch (error: any) {
-      console.log("error:", error);
+  const formatDate = (date: string | Date) => {
+    console.log("---- date : ", date);
+    let formattedDate: Date;
+  
+    if (!date) {
+      formattedDate = new Date();
+    } else if (!(date instanceof Date)) {
+      formattedDate = new Date(date);
+    } else {
+      formattedDate = date;
     }
-  };
 
-  useEffect(() => {
-    fetchData();
-  }, [id]);
+    const now = new Date();
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
 
-  useEffect(() => {
-    console.log("messages:", messages);
-  }, [messages]);
+    const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+
+    if (formattedDate.toDateString() === now.toDateString()) {
+      return `Today @ ${formattedDate.toLocaleTimeString('en-US', options)}`;
+    } else if (formattedDate.toDateString() === yesterday.toDateString()) {
+      return `Yesterday @ ${formattedDate.toLocaleTimeString('en-US', options)}`;
+    } else {
+      const day = formattedDate.getDate().toString().padStart(2, '0');
+      const month = (formattedDate.getMonth() + 1).toString().padStart(2, '0');
+      const year = formattedDate.getFullYear();
+      return `${day}/${month}/${year} @ ${formattedDate.toLocaleTimeString('en-US', options)}`;
+    }
+  }
 
   return (
     <>
-      {project ? <div className="w-full h-screen">
+      {project ?
+      <div className="w-full h-screen">
+        <div className="flex lg:hidden w-full shadow-sm items-center justify-between py-[22px] px-6 absolute top-0" style={{ backgroundColor: project?.themeColor }}>
+          <h1 className="text-white text-2xl font-main-semibold tracking-[-2%]">
+            Live Chat
+          </h1>
+          <div
+            onClick={handleCloseFullScreen}
+            className="lg:hidden mt-2 flex cursor-pointer opacity-80 hover:opacity-100"
+          >
+            <img width={20} src={CloseImage} alt="" />
+          </div>
+        </div>
         {!chatActive ? (
           <>
             <div className="w-full h-full sm:px-5 sm:pb-5 sm:pt-[38px]" style={{ backgroundColor: project?.themeColor }}>
@@ -207,6 +283,8 @@ const Chatbot = () => {
                             placeholder={`${item} *`}
                             value={formData[index]}
                             onChange={(e) => handleFormData(e.target.value, index)}
+                            inputName="name"
+                            updateStatus=""
                           />
                           )}
                       </div>
@@ -264,13 +342,14 @@ const Chatbot = () => {
         ) : (
           <>
             <div className="w-full h-full">
-              <div className="w-full h-full grid grid grid-rows-[auto,1fr] bg-white px-[19px] pr-[9px] sm:pr-[19px]">
+              <div className="w-full h-full grid grid-rows-[auto,1fr] bg-white px-[19px] pr-[9px] sm:pr-[19px]">
                 {/* */}
                 <div className="w-full h-full">
                   <div className="w-full h-full grid grid-rows-[1fr,auto] gap-1">
-                    <div className="w-full h-[calc(100vh-138px)] sm:h-[calc(100vh-138px)] pr-3 custom-scrollbar overflow-auto pt-4">
-                      <div className="w-full h-full flex flex-col gap-[11px]">
-                        <div className="flex items-start gap-4 h-full">
+                    <div className={`flex flex-col-reverse items-end w-full 
+                      ${ (project.subscription == "paid") ? "h-[calc(100vh-80px)] sm:h-[calc(100vh-80px)]" : "h-[calc(100vh-130px)] sm:h-[calc(100vh-130px)]"} pr-3 pt-4`}>
+                      <div className="w-full h-auto flex flex-col gap-[11px] custom-scrollbar overflow-auto" ref={messageContainerRef}>
+                        <div className="flex items-start gap-4 h-auto px-1">
                           <img
                             src={RobotImage}
                             alt="Robot"
@@ -282,38 +361,53 @@ const Chatbot = () => {
                                 {project?.welcomeMessage}
                               </p>
                             </div>
-                            <p className="text-black2 text-[10px]">{project?.createdAt ? new Date(project?.createdAt).toLocaleString() : new Date().toLocaleString()}</p>
+                            <p className="text-black2 text-[10px]">
+                                { project?.createdAt }
+                            </p>
                           </div>
                         </div>
-                        {messages.map((message: MessageType, index: number) => (
-                          <div className="flex flex-col gap-4 px-6 h-full w-full" key={index}>
-                            <div className="flex items-start justify-end gap-4 h-full">
+                        {
+                        messages.map((message: MessageType, index: number) => (
+                          <div className="flex flex-col gap-4 px-1 h-auto w-full" key={index}>
+                            <div className="flex items-start justify-end gap-4 h-auto">
                               <div className="flex flex-col gap-2 max-w-[75%]">
                                 <div className="p-4 pr-6 rounded-[12px] w-full" style={{ backgroundColor: project?.themeColor }}>
                                   <p className="text-white text-xs lg:text-sm leading-[20px]">
-                                    {message.question}
+                                    { message.question }
                                   </p>
                                 </div>
                                 <p className="text-black2 text-[10px] text-end">
-                                  <p className="text-black2 text-[10px]">{new Date(message.createdAt).toLocaleString()}</p>
+                                  <p className="text-black2 text-[10px]">
+                                    { message.createdAt }
+                                  </p>
                                 </p>
                               </div>
                             </div>
-                            <div className="flex items-start gap-4 h-full">
-                              <img
-                                src={RobotImage}
-                                alt="Robot"
-                                className="mt-[11px] w-[30px] sm:w-[46px]"
-                              />
-                              <div className="flex flex-col gap-2 max-w-[75%]">
-                                <div className="p-4 pr-6 bg-gray-500 rounded-[12px] w-full">
-                                  <p className="text-xs lg:text-sm text-black2 leading-[20px] ">
-                                    {message.answer}
+                            {
+                              messageDisable && (index == (messages.length -1)) ?
+                              <div className="flex flex-row justify-start p-2 bg-gray-500 rounded-lg w-16 animate-pulse">
+                                <div className="h-3 bg-gray-300 rounded-full w-[80%] mx-[1px]"></div>
+                                <div className="h-3 bg-gray-300 rounded-full w-[70%] mx-[1px]"></div>
+                                <div className="h-3 bg-gray-300 rounded-full w-[60%] mx-[1px]"></div>
+                              </div> :
+                              <div className="flex items-start gap-4 h-auto" ref={scrollRef}>
+                                <img
+                                  src={RobotImage}
+                                  alt="Robot"
+                                  className="mt-[11px] w-[30px] sm:w-[46px]"
+                                />
+                                <div className="flex flex-col gap-2 max-w-[75%]">
+                                  <div className="p-4 pr-6 bg-gray-500 rounded-[12px] w-full">
+                                    <p className="text-xs lg:text-sm text-black2 leading-[20px] ">
+                                      { message.answer }
+                                    </p>
+                                  </div>
+                                  <p className="text-black2 text-[10px]">
+                                    { message.createdAt }
                                   </p>
                                 </div>
-                                <p className="text-black2 text-[10px]">{new Date(message.createdAt).toLocaleString()}</p>
                               </div>
-                            </div>
+                            }
                           </div>
                         ))}
                       </div>
@@ -328,6 +422,11 @@ const Chatbot = () => {
                             name="message"
                             value={message}
                             className="!py-5 hidden sm:flex"
+                            inputName="message"
+                            updateStatus=""
+                            disabled={ messageDisable }
+                            autoFocus
+                            ref = { inputRef }
                           />
                           <Input
                             onChange={(e) => handleChangeMessage(e.target.value)}
@@ -337,6 +436,11 @@ const Chatbot = () => {
                             placeholder="Type your message here"
                             value={message}
                             className="!py-5 sm:hidden flex text-xs"
+                            inputName="message"
+                            updateStatus=""
+                            disabled={ messageDisable }
+                            autoFocus
+                            ref = { inputRef }
                           />
                           <div
                             onClick={handleMessageSend}

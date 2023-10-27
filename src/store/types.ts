@@ -26,6 +26,14 @@ export interface MessageType {
     updatedAt: string;
 }
 
+export interface MetaDataType {
+    id: string;
+    project: string,
+    user: string;
+    session: string;
+    tags: string[];
+}
+
 export interface ContentType {
     project: string;
     url?: string;
@@ -35,10 +43,11 @@ export interface ContentType {
     documentId?: string;
     user: string;
     _id: string;
+    id?: string;
 }
 
 export interface ContentSearchParamsType {
-    project: number;
+    project: string | undefined;
     search?: string;
     contentType?: string;
     page: number;

@@ -28,46 +28,75 @@ import { DefaultLayout, AuthLayout } from "@/components/imports";
 import { RoutesPath } from "@/types/imports";
 import axios from "axios";
 import useAuthStore from "@/store/auth";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import HubSpot from "@/views/auth/HubSpot";
 import Google from "@/views/auth/Google";
-import { USERS_URL } from "@/apis/endpoint";
+import { REFRESH_TOKENS_URL, USERS_URL } from "@/apis/endpoint";
+import CheckoutSession from "@/views/checkout/CheckoutSession";
+import { REQUEST_CONFIG } from "@/config/auth";
 
 
 const ProtectedRoute: React.FC<any> = ({ component }) => {
-
-  const accessToken = localStorage.getItem('access_token') || '';
-  const { decodedToken, isExpired } = useJwt(accessToken);
-  const { setProfileInfo } = useAuthStore();
   const navigate = useNavigate();
+  const accessToken = localStorage.getItem('access_token') || '';
+  const refreshToken = localStorage.getItem("refresh_token") || "";
+  
+  const {
+    decodedToken: decodedAccessToken,
+    isExpired: isAccessTokenExpired
+  } = useJwt(accessToken);
 
-  const getUserInfo = async (token: string, id: string) => {
+  const {
+    decodedToken: decodedRefreshToken,
+    isExpired: isRefreshTokenExpired
+  } = useJwt(refreshToken);
 
-    try {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      const response = await axios.get(
-        `${ USERS_URL }/${id}`,
-        config
-      );
-
-      setProfileInfo(response.data);
-
-    } catch (error: any) {
-      console.log("error:", error);
-    }
-
-  }
+  const { setProfileInfo } = useAuthStore();
 
   useEffect(() => {
-    // @ts-ignore
-    if (decodedToken?.sub && !isExpired) { getUserInfo(accessToken, decodedToken?.sub); }
-  }, [decodedToken]);
+    if (decodedAccessToken?.sub && !isAccessTokenExpired) {
+      console.log("user id --------", decodedAccessToken?.sub);
+      getUserInfo(accessToken, decodedAccessToken?.sub);
+    }
+    // } else if (!isRefreshTokenExpired) {
+    //   refreshTokenValue();
+    // } else {
+    //   localStorage.setItem("access_token", "");
+    //   localStorage.setItem("refresh_token", "");
+    //   navigate("/auth/login");
+    // }
+  }, [decodedAccessToken]);
 
-  if (accessToken && !isExpired) {
+  const refreshTokenValue = () => {
+    axios
+      .post(`${ REFRESH_TOKENS_URL }`, {
+        refreshToken: refreshToken
+      },REQUEST_CONFIG)
+      .then(response => {
+          const { access, refresh } = response.data;
+
+          localStorage.setItem("access_token", access.token);
+          localStorage.setItem("refresh_token", refresh.token);
+          getUserInfo(access.token, decodedAccessToken?.sub);
+      })
+      .catch(error => {
+          console.log("refresh token error : ", error);
+      })
+  }
+
+  const getUserInfo = (token: string, id: string) => {
+      axios
+        .get(`${ USERS_URL }/${id}`, REQUEST_CONFIG)
+        .then(response => {
+          console.log("----------------user info : ", response.data);
+            setProfileInfo(response.data);
+        })
+        .catch(error => {
+            console.log(error);
+        });
+  }
+
+  if (!isAccessTokenExpired && !isRefreshTokenExpired) {
     return <>{component}</>;
   } else {
     return <Navigate to="/auth/login" replace />;
@@ -168,6 +197,10 @@ const routes = createBrowserRouter([
         path: RoutesPath.STARTER_GUIDE,
         element: <StarterPage />,
       },
+      {
+        path: RoutesPath.CREATE_CHECKOUT_SESSION,
+        element: <CheckoutSession/>
+      }
     ],
   },
 ]);

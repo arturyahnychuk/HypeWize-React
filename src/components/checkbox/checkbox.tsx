@@ -6,12 +6,14 @@ interface CheckBoxProps extends InputHTMLAttributes<HTMLInputElement> {
   className?: string;
 }
 
-function CheckBox({ checked, className, onCheckChange, ...props }: CheckBoxProps) {
+function CheckBox({ checked, className, onCheckChange, disabled, ...props }: CheckBoxProps) {
   const [internalChecked, setInternalChecked] = useState(checked || false);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   useEffect(() => {
     setInternalChecked(checked || false);
-  }, [checked]);
+    setIsDisabled(disabled);
+  }, [checked, disabled]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newChecked = event.target.checked;
@@ -38,6 +40,7 @@ function CheckBox({ checked, className, onCheckChange, ...props }: CheckBoxProps
         {...props}
         checked={internalChecked}
         onChange={handleChange}
+        disabled={ isDisabled }
       />
       <div className="peer-checked:bg-redLight w-[17px] h-[17px] rounded-[2px] border border-gray-100 peer-checked:border-transparent flex items-center justify-center">
         {internalChecked && (

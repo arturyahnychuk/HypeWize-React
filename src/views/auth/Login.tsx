@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import axios from 'axios';
+import { ToastContainer, toast } from "react-toastify";
 
 import { Btn, CheckBox, FormLayout, Input } from "@/components/imports";
 import { GoogleIcon } from "@/assets/imports";
@@ -17,43 +18,93 @@ const Login = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const { setProfileInfo } = useAuthStore();
-  
+  const [error, setError] = useState({email: "", password: ""});
+
   useEffect(() => {
-    document.title = LOGIN_PAGE_TITLE
+    document.title = LOGIN_PAGE_TITLE;
   }, []);
 
-  const handleSubmit = async () => {
-    try {
-      const response = await axios.post(
-        `${ LOGIN_API_URL }` || "", {
+  const handleChangeEmail = (event) => {
+    setEmail(event.target.value);
+    setError({});
+  }
+
+  const handleChangePassword = (event) => {
+    setPassword(event.target.value);
+    setError({});
+  }
+
+  const handleSubmit = () => {
+    if(email && password) {
+      axios
+        .post(`${ LOGIN_API_URL }` || "", {
             email,
             password,
+        })
+        .then(response => {
+          const { user, tokens } = response.data;
+
+          console.log("test response --------", tokens);
+          setProfileInfo(user);
+
+          localStorage.setItem("access_token", tokens.access.token);
+          localStorage.setItem("refresh_token", tokens.refresh.token);
+
+          navigate("/projects");
+        }).catch(error => {
+          const { code, message } = error.response.data;
+          console.log(code, message);
+          if(code == 401) {
+            setError({
+              email : "incorrect email",
+              password : "incorrect password"
+            });
+          }
+          toast.error("Login Failed");
         });
+    } else {
+      const errors = {email : "", password : ""};
+      if(email == "")
+        errors.email = "email can't be empty";
+      if(password == "")
+        errors.password = "password can't be empty";
 
-      setProfileInfo(response.data.user);
-      localStorage.setItem("access_token", response.data.tokens.access.token);
-
-      navigate("/projects");
-    } catch (error: any) {
-      console.error(error);
+      setError(errors);
     }
   };
 
   const colorIndex = cssColorIndex[0]
   return (
     <FormLayout title="Login" onSubmit={handleSubmit}>
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <Input
         type="text"
         placeholder="Email address"
         id="email_address"
-        onChange={(e) => { setEmail(e.target.value) }}
+        onChange={e => handleChangeEmail(e)}
+        inputName="email"
+        updateStatus=""
+        error={ error.email }
       />
       <Input
         type="password"
         placeholder="Password"
         id="password"
-        onChange={(e) => { setPassword(e.target.value) }}
+        onChange={e => handleChangePassword(e)}
         showhide
+        inputName="password"
+        updateStatus=""
+        error={ error.password }
       />
       <div className="w-full flex items-center justify-between">
         <CheckBox
@@ -70,7 +121,11 @@ const Login = () => {
           Forgot Password?
         </Link>
       </div>
-      <Btn bgStyle={screenConfig[colorIndex].color} type="submit" text="Login" className="submit-btn bg-redLight" />
+      <Btn
+        bgStyle={screenConfig[colorIndex].color} 
+        type="submit"
+        text="Login"
+        className="submit-btn bg-redLight" />
       <Btn
         text="Login"
         image={GoogleIcon}

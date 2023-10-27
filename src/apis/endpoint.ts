@@ -2,6 +2,7 @@ const API_ROOT_URL = `${import.meta.env.VITE_API_ENDPOINT}`;
 // Authentication APIs
 export const LOGIN_API_URL = `${ API_ROOT_URL }/auth/login`;
 export const REGISTER_API_URL = `${ API_ROOT_URL }/auth/register`;
+export const REFRESH_TOKENS_URL = `${ API_ROOT_URL }/auth/refresh_tokens`;
 
 // Projects APIs
 export const PROJECTS_ROOT_URL = `${ API_ROOT_URL }/projects`
@@ -26,7 +27,10 @@ export const HUBSPOT_AUTH_URL = `${ API_ROOT_URL }/auth/hubspot`;
 export const GOOGLE_AUTH_URL = `${ API_ROOT_URL }/auth/google`;
 export const SEND_VERIFICATION_EMAIL_URL = `${ API_ROOT_URL }/auth/send-verification-email`;
 export const APIS_URL = `${ API_ROOT_URL }/apis`;
+export const FORGOT_PASSWORD_URL = `${ API_ROOT_URL }/auth/forgot-password`;
+export const RESET_PASSWORD_URL = `${ API_ROOT_URL }/auth/reset-password`;
+export const VERIFY_EMAIL_URL = `${ API_ROOT_URL }/auth/verify-email`;
 
-export const FORGOT_PASSWORD_URL = `${ API_ROOT_URL }/forgot-password`;
-export const RESET_PASSWORD_URL = `${ API_ROOT_URL }/reset-password`;
-export const VERIFY_EMAIL_URL = `${ API_ROOT_URL }/verify-email`;
+
+// Payment API
+export const PAYMENT_API = `${ API_ROOT_URL }/payments`;

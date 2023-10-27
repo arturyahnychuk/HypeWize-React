@@ -19,8 +19,8 @@ const Projects = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = PROJECTS_PAGE_TITLE;
-}, []);
+      document.title = PROJECTS_PAGE_TITLE;
+  }, []);
 
   const handleFilter = (value: filterBtnConfigTypes["value"]) => {
     localStorage.setItem("grid_type", value);
@@ -66,7 +66,6 @@ const Projects = () => {
       console.log("Deleted Successfully!");
       // @ts-ignore
       document.getElementById(project.id).style.display = "none";
-
 
     } catch (error: any) {
       console.log(error);

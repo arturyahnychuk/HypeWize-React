@@ -17,38 +17,56 @@ const Register = () => {
   const [email, setEmail] = useState<string>("");
   const [firstname, setFirstname] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  
   const cssColorIndex: number[] = useOutletContext();
   const navigate = useNavigate();
   const { setProfileInfo } = useAuthStore();
 
   const colorIndex = cssColorIndex[0];
 
-  useEffect(() => {
-    document.title = REGISTER_PAGE_TITLE
-  });
+ useEffect(() => {
+    document.title = REGISTER_PAGE_TITLE;
+ }, [])
 
-  const handleSubmit = useCallback(async () => {
-    axios.post(
-      `${ REGISTER_API_URL }` || "", {
-          email,
-          password,
-          firstname
-      }).then(response => {
-        const { user, message, tokens } = response.data;
-        if (user) {
-            setProfileInfo(user);
-            localStorage.setItem("access_token", tokens.access.token);
-            navigate("/projects");
-        } else {
-            alert(message);
-        }
-      }).catch(error => {
-        console.log(error.response.data.message);
-        toast.error("Sign up Failed");
-      });
+  const handleSubmit = useCallback(() => {
+      axios.post(
+        `${ REGISTER_API_URL }` || "", {
+            email,
+            password,
+            firstname
+        }).then(response => {
+          const { user, tokens } = response.data;
 
-    console.log("Register Result:");
+          const { access_token } = tokens.access;
+          const { refresh_token } = tokens.refresh;
+
+          setProfileInfo(user);
+          localStorage.setItem("access_token", access_token);
+          localStorage.setItem("refresh_token", refresh_token);
+          navigate("/projects");
+
+        }).catch(error => {
+            console.log(error.response.data.message);
+            toast.error("Sign up Failed");
+        });
+
+      // if (registerResponse.data?.user?.email) {
+
+      //   const config = {
+      //     headers: {
+      //       Authorization: `Bearer ${registerResponse.data.tokens.access.token}`,
+      //     },
+      //   };
+
+      //   await axios.post(
+      //     `${import.meta.env.VITE_API_ENDPOINT}/auth/send-verification-email` || "",
+      //     { email },
+      //     config
+      //   ).then(() => {
+      //     console.log("Verification Email Sent!");
+      //   }).catch((err) => {
+      //     console.log(err);
+      //   });
+      // }
 
   }, [email, firstname, password]);
 
@@ -70,18 +88,24 @@ const Register = () => {
         onChange={(e) => setFirstname(e.target.value)}
         placeholder="Full name"
         id="full_name"
+        inputName="FirstName"
+        updateStatus=""
       />
       <Input
         type="text"
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Email address"
         id="email_address"
+        inputName="email"
+        updateStatus=""
       />
       <Input
         type="password"
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Password"
         id="password" showhide
+        updateStatus=""
+        inputName="password"
       />
       <CheckBox
         checked={true} // Provide the initial state as a prop

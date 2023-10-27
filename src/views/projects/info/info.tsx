@@ -19,6 +19,7 @@ const ProjectInfo = () => {
   const [embedActive, setEmbedActive] = useState(false);
   const [projectInfo, setProjectInfo] = useState<ProjectType | null>(null);
   const [updateStatus, setUpdateStatus] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -28,7 +29,7 @@ const ProjectInfo = () => {
     name: "",
     email: "",
   });
-  
+
   const { id } = useParams();
 
   const handleMessageInput = (e: ChangeEvent<HTMLInputElement>) => {
@@ -95,7 +96,7 @@ const ProjectInfo = () => {
     });
   };
 
-  const updateProjectInfo = async (data: ProjectType) => {
+  const updateProjectInfo = async (data: ProjectType, fieldType: string) => {
     try {
       const config = {
         headers: {
@@ -120,7 +121,7 @@ const ProjectInfo = () => {
       if (response.data) {
         console.log("Updated Successfully!");
         setUpdateStatus(fieldType);
-
+        
         //Reset the status after 2s
         setTimeout(() => {
             setUpdateStatus(null);
@@ -156,9 +157,11 @@ const ProjectInfo = () => {
   const handleWelcomeInput = (e: ChangeEvent<HTMLInputElement>) => {
     setWelcomeMessage(e.target.value);
   };
+
   const handleAgentNameInput = (e: ChangeEvent<HTMLInputElement>) => {
     setAgentName(e.target.value);
   };
+
   const handleThemeColor = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setThemeColor(e.target.value);
     const _projectInfo = projectInfo;
@@ -187,7 +190,6 @@ const ProjectInfo = () => {
       if (response.data.agentName) setAgentName(response.data.agentName);
       setInputFields(response.data.formFields);
       setThemeColor(response.data.themeColor);
-
 
     } catch (error: any) {
       console.log(error);
@@ -286,7 +288,7 @@ const ProjectInfo = () => {
                 height={16}
               />
             </div>
-            <div className="h-[50px] overflow-auto custom-scrollbar pl-5 pr-2 ">
+            <div className="h-[60px] overflow-auto custom-scrollbar pl-5 pr-2 ">
               {inputFields.map((value, index) => (
                 <div
                   key={index}
@@ -318,23 +320,26 @@ const ProjectInfo = () => {
               ))}
             </div>
           </div>
-          <div className="w-full flex flex-col gap-5 bg-white px-5 py-4 rounded-[10px]"
-          >
-            <div className="flex items-center gap-4">
-              <label htmlFor="welcome_message">Form Guidline</label>
-              <Tooltip
-                type="info"
-                text="This will be displayed to users if they ask for how to use this."
-              />
-            </div>
-            <Textarea
-              // onInput={handleAgentNameInput}
-              defaultValue="Please fill out the form below to start chatting with the
-              next agent available."
-              onKeyDown={(e) => handleKeyDown(e, "guidLine")}
-              placeholder=""
-            />
-          </div>
+          {
+            (inputFields.length > 0) ? (
+              <div className="w-full flex flex-col gap-5 bg-white px-5 py-4 rounded-[10px]">
+                <div className="flex items-center gap-4">
+                  <label htmlFor="welcome_message">Form Guidline</label>
+                  <Tooltip
+                    type="info"
+                    text="This will be displayed to users if they ask for how to use this."
+                  />
+                </div>
+                <Textarea
+                  // onInput={handleAgentNameInput}
+                  defaultValue="Please fill out the form below to start chatting with the next agent available."
+                  onKeyDown={(e) => handleKeyDown(e, "guidLine")}
+                  placeholder=""
+                />
+              </div>
+            ) : <></>
+          }
+
           <div className="w-full flex flex-col gap-5 bg-white px-5 py-4 rounded-[10px]" onClick={() => openChat("formFields")}>
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-4">
@@ -364,7 +369,7 @@ const ProjectInfo = () => {
             </div>
           </div>
           <div className="w-full flex flex-row items-center justify-between gap-5 bg-white px-5 py-4 rounded-[10px]">
-          <div className="flex flex-row items-center gap-4">
+            <div className="flex flex-row items-center gap-4">
               <label htmlFor="welcome_message">Embed Code</label>
               <Tooltip
                 type="info"
@@ -493,8 +498,7 @@ const ProjectInfo = () => {
               <div className="grid grid-rows-[1fr,auto] h-full flex flex-col mt-4">
                 <div className="flex flex-col gap-4 px-6 w-full items-center">
                   <p className="text-md font-secondaty-medium text-white text-center tracking-[-2%] w-full  max-w-[356px]">
-                    Please fill out the form below to start chatting with the
-                    next agent available.
+                    Please fill out the form below to start chatting with the next agent available.
                   </p>
                   <div className="w-full flex flex-col gap-5 bg-white h-full px-5 py-4 rounded-t-[10px]">
                     {inputFields.map((fieldTitle: string, index: number) => <div key={index}>

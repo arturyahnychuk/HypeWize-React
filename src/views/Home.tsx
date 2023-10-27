@@ -4,13 +4,23 @@ import { useNavigate } from "react-router-dom";
 const Home = () => {
 
   const navigate = useNavigate();
-  const accessToken = localStorage.getItem("access_token");
+  
+  const getToken= () => {
+    const expires = localStorage.getItem("token_expiration") || "";
+    const currentTime = new Date().getTime().toString();
+    console.log("expires log ---", expires);
+    if(expires > currentTime) {
+      return localStorage.getItem("access_token");
+    } else {
+      return "";
+    }
+  }
 
   useEffect(() => {
-    if (!accessToken) {
-      navigate("/auth/login");
-    } else {
+    if (getToken == "") {
       navigate("/projects");
+    } else {
+      navigate("/auth/login");
     }
   }, []);
   return (

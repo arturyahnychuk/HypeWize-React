@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useOutletContext, useSearchParams } from "react-router-dom";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 
 import { Btn, FormLayout, Input } from "@/components/imports";
 import { RoutesPath } from "@/types/router";
@@ -19,42 +20,43 @@ const ResetPassword = () => {
   const [confirmResult, setConfirmResult] = useState<string>("");
   const colorIndex = cssColorIndex[0];
 
-  const handleResetPassword = useCallback(async () => {
-
-    try {
-
-      // const config = {
-      //     headers: {
-      //         Authorization: `Bearer ${accessToken}`,
-      //     },
-      // };
-
-      const res = await axios.post(
-        `${ RESET_PASSWORD_URL }?token=${searchParams.get('token')}`, {
-        password: password
-      }
-      );
-
-      if (res.data) {
-        setConfirmResult("Google Connected Successfully");
-        localStorage.setItem("access_token", res.data.tokens.access.token);
-        // console.log(res.data);
-        navigate("/auth/login");
-      }
-      else setConfirmResult("Error, please check log");
-
-      console.log("res:", res);
-    } catch (error) {
-      console.log(error);
-    }
-  }, [searchParams, password]);
-
   useEffect(() => {
     console.log("confirmResult:", confirmResult);
   }, [confirmResult]);
 
+  const handleResetPassword = useCallback(async () => {
+      axios
+        .post(`${ RESET_PASSWORD_URL }?token=${searchParams.get('token')}`, {
+            password: password
+          })
+        .then(response => {
+            const { tokens } = response.data;
+
+            toast.info("Password Reset Successfully");
+
+            setConfirmResult("Google Connected Successfully");
+            localStorage.setItem("access_token", tokens.access.token);
+
+            navigate("/auth/login");
+        })
+        .catch(error => {
+            console.log(error);
+        });
+  }, [searchParams, password]);
+
   return (
     <FormLayout title="Reset Password" onSubmit={handleSubmit}>
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <Input
         type="password"
         placeholder="password"
@@ -62,6 +64,8 @@ const ResetPassword = () => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         showhide
+        inputName="resetPassword"
+        updateStatus=""
       />
       <Btn
         bgStyle={screenConfig[colorIndex]?.color}

@@ -170,6 +170,7 @@ const ProjectMessages = () => {
 
   const getMetaData = async (messages: MessageType[]) => {
     const _displayMessages: DisplayMessageType[] = [];
+
     try {
       const config = {
         headers: {
@@ -184,7 +185,7 @@ const ProjectMessages = () => {
       }
 
       const metaDataRes = await axios.get(
-        `${ METADATA_URL }?session=${sessionsString}`,
+        `${ METADATA_URL }?project=${id}&session=${sessionsString}&limit=25`,
         config
       ).then((response) => response.data.results);
 
@@ -192,7 +193,7 @@ const ProjectMessages = () => {
         _displayMessages.push({
           ip: messages[index].ipAddress,
           detail: messages[index].question,
-          tags: metaDataRes?.find((item: any) => item.project == messages[index].project)?.tags || [],
+          tags: metaDataRes?.find((item: any) => item.session == messages[index].session)?.tags || [],
           date: messages[index].createdAt,
           project: messages[index].project,
           session: messages[index].session

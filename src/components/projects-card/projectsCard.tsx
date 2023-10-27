@@ -42,8 +42,6 @@ function ProjectsCard({ info, handleDelete }: ProjectsCardTypes) {
 
   const accessToken = localStorage.getItem('access_token');
 
-
-
   const save = async (e: any) => {
     e.preventDefault();
     try {
@@ -142,6 +140,8 @@ function ProjectsCard({ info, handleDelete }: ProjectsCardTypes) {
                   onChange={handleTitleInput}
                   value={titleVal}
                   className="!py-2"
+                  inputName="projectTitle"
+                  updateStatus=""
                 />
               </div>
             )}

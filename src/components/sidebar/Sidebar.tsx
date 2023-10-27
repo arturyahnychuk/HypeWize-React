@@ -235,6 +235,7 @@ function Sidebar({ navbarActive, onNavClose }: SidebarProps) {
             <NavLink
               onClick={() => {
                 localStorage.removeItem("access_token");
+                localStorage.removeItem("refresh_token");
                 navigate("/auth/login");
               }}
               to="#"

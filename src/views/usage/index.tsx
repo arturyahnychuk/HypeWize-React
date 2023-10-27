@@ -12,11 +12,11 @@ const UsagePage = () => {
   const [billing, setBilling] = useState<BillingType | null>(null);
   
   const accessToken = localStorage.getItem("access_token");
-
-  useEffect(() => {
-    document.title = USAGE_PAGE_TITLE;
-}, []);
   
+  useEffect(() => {
+      document.title = USAGE_PAGE_TITLE;
+  }, []);
+
   const getUsageInfo = async () => {
     try {
       const config = {

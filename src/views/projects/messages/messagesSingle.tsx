@@ -13,9 +13,10 @@ import {
 } from "@/components/imports";
 import { RoutesPath } from "@/types/router";
 import { filterBtnConfigTypes } from "@/types/imports";
-import { MessageType, ProjectType } from "@/store/types";
+import { MessageType, MetaDataType, ProjectType } from "@/store/types";
 
-import { MESSAGES_URL, METADATA_URL, PROJECTS_ROOT_URL } from "@/apis/endpoint";
+import { MESSAGES_URL, METADATA_URL, PROJECTS_ROOT_URL, PROJECT_TAGS_URL } from "@/apis/endpoint";
+import { REQUEST_CONFIG } from "@/config/auth";
 
 
 const MessagesSingle = () => {
@@ -33,12 +34,38 @@ const MessagesSingle = () => {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [collectedData, setCollectedData] = useState<any[]>([]);
   const [projecInfo, setProjectInfo] = useState<ProjectType | null>(null);
+  const [projectTags, setProjectTags] = useState([]);
+
   const [metaDataId, setMetaDataId] = useState<string>("");
+  const [metaData, setMetaData] = useState<MetaDataType | null>(null);
 
   const session = searchParams.get("session");
   const accessToken = localStorage.getItem('access_token');
 
-  const suggestedTags = ["Editable", "Tags", "English", "Russian"];
+  useEffect(() => {
+    if (!id || !session) return;
+
+    const handleResize = () => {
+      if (window.innerWidth <= 1024) {
+        setTabletSize(true);
+        return;
+      }
+      setFilterVal('messages')
+      setTabletSize(false);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    getMessageInfo(id, session);
+    getProjectInfo(id);
+    getMetaData(id);
+    getTagsData(id);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+
+}, [id, session]);
 
   const getMessageInfo = async (projectId: string, sessionId: string) => {
 
@@ -94,39 +121,45 @@ const MessagesSingle = () => {
     }
   }
 
-  useEffect(() => {
-
-    if (!id || !session) return;
-
-    const handleResize = () => {
-      if (window.innerWidth <= 1024) {
-        setTabletSize(true);
-        return;
+  const getMetaData = async (projectId: string) => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${ accessToken }`
       }
-      setFilterVal('messages')
-      setTabletSize(false);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
+    }
 
-    getMessageInfo(id, session);
-    getProjectInfo(id);
+    axios
+      .get(`${ METADATA_URL }/?project=${ projectId }`, config)
+      .then(response => {
+          setMetaData(response.data.results[0]);
+      })
+      .catch(errors => {
+          console.log(errors);
+      })
+  }
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-
-  }, [id, session]);
-
+  const getTagsData = (projectId: string) => {
+    axios
+      .get(`${ PROJECT_TAGS_URL }?project=${ projectId }`, REQUEST_CONFIG)
+      .then(response => {
+          setProjectTags(response.data.results);
+      })
+      .catch(error => {
+          console.log(error);
+      })
+  }
   const handleTagVal = (e: ChangeEvent<HTMLInputElement>) => {
     setTagVal(e.target.value);
   };
+
   const openAddTag = () => {
     setAddTags(true);
   };
+
   const closeAddTag = () => {
     setAddTags(false);
   };
+
   const handleAddTag = useCallback(async () => {
     if (!projecInfo) return;
     try {
@@ -172,12 +205,15 @@ const MessagesSingle = () => {
     }
     setAddTags(false);
   }, [tagVal, projecInfo, session, tags, metaDataId]);
+
   const openEditNote = () => {
     setEditNote(true);
   };
+
   const closeEditNote = () => {
     setEditNote(false);
   };
+
   const handleEditNote = useCallback(async () => {
     if (!projecInfo) return;
     try {
@@ -224,6 +260,7 @@ const MessagesSingle = () => {
   const handleNoteVal = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setNoteVal(e.target.value);
   };
+  
   const handleRemoveTag = useCallback(async (item: string, index: number) => {
 
     try {
@@ -429,7 +466,7 @@ const MessagesSingle = () => {
               </div>
             </div>
             <div className="lg:pt-3 pb-5 lg:py-5 pr-2">
-              <div className={`${addTag ? 'h-[calc(100vh-349px)]' : 'h-[calc(100vh-349px)]'} lg:max-h-[125px] px-5 overflow-auto custom-scrollbar pr-[7px]`}>
+              <div className={`${addTag ? 'h-[calc(100vh-149px)]' : 'h-[calc(100vh-149px)]'} lg:max-h-[200px] px-5 overflow-auto custom-scrollbar pr-[7px]`}>
                 {!addTag ? (
                   <div className="flex flex-wrap gap-[10px]">
                     {tags.map((tag: string, tagIndex: number) => (
@@ -459,18 +496,22 @@ const MessagesSingle = () => {
                       onChange={handleTagVal}
                       value={tagVal}
                       placeholder=""
+                      inputName="tagName"
+                      updateStatus=""
                     />
-                     <span className="success stroke hover-green text-sm text-green !px-0 lg:!pl-5">
+                    <span className="success stroke hover-green text-sm text-green !px-0 lg:!pl-5">
                       Suggested Tags
                     </span>
                     <div className="flex flex-wrap gap-[10px]">
                       {
-                        suggestedTags.map((tag:string, index: number) => (
+                        projectTags?.filter(tags => tags.name.includes(tagVal))
+                              .map((tag:object, index: number) => (
                           <>
-                            <div 
-                              className="flex items-center gap-1 px-3 py-[7px] capitalize rounded-full bg-milkLight text-xs text-gray-300"
+                            <div
+                              className="flex items-center gap-1 px-3 py-[7px] capitalize rounded-full bg-milkLight text-xs text-gray-300 hover:cursor-pointer"
+                              onClick={() => setTagVal(tag.name)}
                               key={ index }>
-                              { tag }
+                              { tag.name }
                             </div>
                           </>
                         ))

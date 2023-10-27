@@ -23,5 +23,8 @@ export const RoutesPath = {
   BILLINGS: "/billings",
   USAGE: "/usage",
 
-  SETTINGS: "/settings"
+  SETTINGS: "/settings",
+  
+  // checkout session
+  CREATE_CHECKOUT_SESSION: "/payments/create-checkout-session"
 };

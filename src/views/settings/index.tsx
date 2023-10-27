@@ -9,6 +9,8 @@ import { APIType } from "@/store/types";
 
 import { APIS_URL, GOOGLE_AUTH_URL, HUBSPOT_AUTH_URL, SEND_VERIFICATION_EMAIL_URL, USERS_URL } from "@/apis/endpoint";
 import { SETTINGS_PAGE_TITLE } from "@/config/utils";
+import { REQUEST_CONFIG } from "@/config/auth";
+import { ToastContainer, toast } from "react-toastify";
 
 const SettingsPage = () => {
   const [settingsData, setSettingsData] = useState({
@@ -17,6 +19,7 @@ const SettingsPage = () => {
     email: "",
   });
   const [isVerified, setIsVerified] = useState(false);
+  const [isSendVerifyEmail, setIsSendVerifyEmail] = useState(false);
 
   const { profileInfo } = useAuthStore();
   const [googleConntected, setGoogleConntected] = useState(false);
@@ -24,12 +27,13 @@ const SettingsPage = () => {
   const [apis, setApis] = useState<APIType[]>([]);
   const [isCopied, setIsCopied] = useState<string>("");
   const [selectedApi, setSelectedApi] = useState<APIType | null>(null);
+  const [updateStatus, setUpdateStatus] = useState("");
 
   const accessToken = localStorage.getItem("access_token");
 
   useEffect(() => {
-    document.title = SETTINGS_PAGE_TITLE;
-}, []);
+      document.title = SETTINGS_PAGE_TITLE;
+  }, []);
 
   const handleHubspotConnect = () => {
     // setHubspotConntected(true);
@@ -54,7 +58,7 @@ const SettingsPage = () => {
       },
     };
 
-    const profileUpdate = {
+    const profileUpdata = {
       firstname: settingsData.first_name,
       lastname: settingsData.last_name,
       email: settingsData.email
@@ -62,36 +66,55 @@ const SettingsPage = () => {
 
     await axios.patch(
       `${ USERS_URL }/${profileInfo?.id}` || "",
-      profileUpdate,
+      profileUpdata,
       config
-    ).then((response) => {
+    ).then(response => {
       console.log("User Profile Update!", response.data);
+      setUpdateStatus(fieldType);
+      setTimeout(() => {
+        setUpdateStatus("");
+      }, 1000);
+      if(fieldType == "email") {
+        setIsSendVerifyEmail(false);
+        setIsVerified(false);
+      }
     }).catch((err) => {
       console.log(err);
     });
   }, [settingsData])
 
   const handleSentVerify = useCallback(async () => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
-
     await axios.post(
-      `${ SEND_VERIFICATION_EMAIL_URL }` || "",
-      { email: settingsData.email },
-      config
+      `${ SEND_VERIFICATION_EMAIL_URL }` || "",{
+        email: settingsData.email
+      },
+      REQUEST_CONFIG
     ).then(() => {
       console.log("Verification Email Sent!");
+      toast.info("Verification Email Sent!");
+      setIsSendVerifyEmail(true);
     }).catch((err) => {
       console.log(err);
     });
 
   }, [settingsData]);
 
+  const sentVerificationMail = !isSendVerifyEmail ? (
+    <p
+      onClick={handleSentVerify}
+      className="text-sm text-orange font-secondary-regular tracking-[-2%] cursor-pointer"
+    >
+      Send Verification Link
+    </p>
+  ): <p
+        className="text-sm text-green font-secondary-regular tracking-[-2%] cursor-pointer"
+      >
+        Email Sent
+      </p>
+
   const handleFormsDataChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
     setSettingsData({
       ...settingsData,
       [name]: value,
@@ -221,6 +244,8 @@ const SettingsPage = () => {
                 id="first_name"
                 className="w-full"
                 placeholder=""
+                inputName="firstname"
+                updateStatus={ updateStatus }
                 value={settingsData.first_name}
                 onChange={handleFormsDataChange}
                 onKeyDown={(e) => handleKeyDown(e, "firstname")}
@@ -234,6 +259,8 @@ const SettingsPage = () => {
                 id="last_name"
                 className="w-full"
                 placeholder=""
+                inputName="lastname"
+                updateStatus={ updateStatus }
                 value={settingsData.last_name}
                 onChange={handleFormsDataChange}
                 onKeyDown={(e) => handleKeyDown(e, "lastname")}
@@ -249,24 +276,21 @@ const SettingsPage = () => {
                   <p className="text-sm text-green font-secondary-regular tracking-[-2%]">
                     verified
                   </p>
-                ) : (
-                  <p
-                    onClick={handleSentVerify}
-                    className="text-sm text-orange font-secondary-regular tracking-[-2%] cursor-pointer"
-                  >
-                    Send Verification Link
-                  </p>
-                )}
+                ) : sentVerificationMail
+                }
               </div>
               <Input
                 type="text"
                 name="email"
                 id="email"
                 className="w-full"
+                // disabled
                 onChange={handleFormsDataChange}
                 onKeyDown={(e) => handleKeyDown(e, "email")}
                 defaultValue={settingsData.email}
                 placeholder=""
+                inputName="email"
+                updateStatus={ updateStatus }
               />
             </div>
           </div>
@@ -423,6 +447,17 @@ const SettingsPage = () => {
           </div>
         </div>
       </div>
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </PageLayout>
   );
 }
